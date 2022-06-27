@@ -177,134 +177,263 @@ photo10 = PhotoImage(file = "images/text-message.png")
 
 #--------------------TAB-4  RECURRING-ASHBY---------------------
 
+
  #---------------------------------------------------------------------------------generate recurring invoice popups
-def generate_recurring_noinvoice(): 
+def gn_inv_rir_in(): 
   #  if result=='ok': 
    messagebox.showinfo("F-Billing Revolution 2022", "No recurring invoices are ready today")
 
-def generate_recurring_invoice_success():  
+def gn_inv_sucss():  
    messagebox.showinfo("F-Billing Revolution 2022", "1 new invoice successfully created.")
    
 #----------------------------------------------------------------------------------------------------print invoice
   
-def print_invoice_recurring():
+def rir_prnt_inv_rir():
 
-  def property1():
-    propert=Toplevel()
-    propert.title("Microsoft Print To PDF Advanced Document Settings")
-    propert.geometry("670x500+240+150")
+        from reportlab.pdfgen import canvas
+            # from tkdocviewer import *
+        from reportlab.lib import colors
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+        from reportlab.lib.pagesizes import letter, inch
+    # try:
+        pdf = canvas.Canvas("recurring_reports/CInvoice.pdf", pagesize=letter)
+        # cus_id=cus_main_tree.item(cus_main_tree.focus())["values"][3]
+        # sqlt= 'select * from customer where businessname=%s'
+        # sqlt_val=(cus_id,)
+        # fbcursor.execute(sqlt,sqlt_val)
+        # cus_ft=fbcursor.fetchone()
 
-    def property2():
-      propert1=Toplevel()
-      propert1.title("Microsoft Print To PDF Advanced Document Settings")
-      propert1.geometry("670x500+240+150")
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(27,768, company[1])
+        text=company[2]
+        wraped_text="\n".join(wrap(text,30))
+        htg=wraped_text.split('\n')
+            
+        vg=len(htg)
+        if vg>0:
+                pdf.drawString(30,752,htg[0])
+                print("1")
+                if vg>1:
+                  pdf.drawString(30,738,htg[1])
+                  print("2")
+                  if vg>2:
+                      pdf.drawString(30,725,htg[2])
+                      print("3")
+                      if vg>3:
+                          pdf.drawString(30,712,htg[3])
+                          print("4")
+                      else:
+                          pass
+                  else:
+                      pass
+                else:
+                    pass
+                
+        else:
+                pass
+        pdf.drawString(35,700,company[4])
+        pdf.drawString(490,760, "Invoice Report")
 
-      name=Label(propert1, text="Microsoft Print To PDF Advanced Document Settings").place(x=10, y=5)
-      paper=Label(propert1, text="Paper/Output").place(x=30, y=35)
-      size=Label(propert1, text="Paper size").place(x=55, y=65)
-      n = StringVar()
-      search = ttk.Combobox(propert1, width = 28, textvariable = n )
-      search['values'] = ('letter')
-      search.place(x=150,y=65)
-      search.current(0)
-      copy=Label(propert1, text="Copy Count:").place(x=55, y=95)
-      nocopy = Spinbox(propert1,from_=0,to=100000000, width=28).place(x=150, y=95)    
+        # pdf.drawString(460,700,"Customer ID:"+str(cus_ft[0]))
+        # pdf.drawString(28,695,"__________________________________________________________________________________")
+        # pdf.drawString(31,680,"Bill To:")
+        # pdf.drawString(31,668,cus_ft[4])
+        # text=cus_ft[5]
+        # wraped_text="\n".join(wrap(text,30))
+        # htg=wraped_text.split('\n')
+            
+        # vg=len(htg)
+        # if vg>0:
+        #         pdf.drawString(30,654,htg[0])
+        #         print("1")
+        #         if vg>1:
+        #           pdf.drawString(30,640,htg[1])
+        #           print("2")
+        #           if vg>2:
+        #               pdf.drawString(30,626,htg[2])
+        #               print("3")
+        #               if vg>3:
+        #                   pdf.drawString(30,612,htg[3])
+        #                   print("4")
+        #               else:
+        #                   pass
+        #           else:
+        #               pass
+        #         else:
+        #             pass
+                
+        # else:
+        #         pass
 
-      btn=Button(propert1,text="OK", width=10,).place(x=390, y=425)
-      btn=Button(propert1,text="Cancel", width=10,).place(x=490, y=425) 
+        # pdf.drawString(400,680,"Ship To:")
+        # pdf.drawString(400,668,cus_ft[6])
+        # text=cus_ft[7]
+        # wraped_text="\n".join(wrap(text,30))
+        # htg=wraped_text.split('\n')
+            
+        # vg=len(htg)
+        # if vg>0:
+        #         pdf.drawString(400,654,htg[0])
+        #         print("1")
+        #         if vg>1:
+        #           pdf.drawString(400,640,htg[1])
+        #           print("2")
+        #           if vg>2:
+        #               pdf.drawString(400,626,htg[2])
+        #               print("3")
+        #               if vg>3:
+        #                   pdf.drawString(400,612,htg[3])
+        #                   print("4")
+        #               else:
+        #                   pass
+        #           else:
+        #               pass
+        #         else:
+        #             pass
+                
+        # else:
+        #         pass
+
+        # pdf.drawString(28,606,"__________________________________________________________________________________")
 
 
+        # pdf.drawString(28,591,"__________________________________________________________________________________")
+        # pdf.drawString(28,591,"Invoice No           Date        Due Date     Recurring      Status        Invoice Total    Total Paid   Balance      ")
+        
+        
+        # sqlr= 'select currencysign from company'
+        # fbcursor.execute(sqlr)
+        # crncy=fbcursor.fetchone()
+          
+        # crc=crncy[0]
+        # sqlrt= 'select currsignplace from company'
+        # fbcursor.execute(sqlrt)
+        # post_rp=fbcursor.fetchone()
+        # ps_cr=post_rp[0]
+        # count=0
+        # sql_inv_dt='SELECT * FROM invoice where businessname=%s'
+        # inv_valuz=(cus_id,)
+        # fbcursor.execute(sql_inv_dt,inv_valuz)
+        # tre=fbcursor.fetchall()
+        # x=571
+
+        # for i in tre:
+        #               if x==38 or x==50:
+        #                   pdf.showPage()
+        #                   x=750
+        #               else:
+        #                   if i[24] is None:
+        #                       dfh="No"
+        #                   else:
+        #                       dfh="Yes"
+        #                   if ps_cr=="before amount":
+        #                       pdf.drawString(28,x,str(i[1]))
+                        
+        #                       pdf.drawString(100,x,str(i[2]))
+        #                       pdf.drawString(168,x,str(i[3]))
+        #                       pdf.drawString(250,x,dfh)
+        #                       pdf.drawString(315,x,str(i[5])) 
+        #                       pdf.drawString(380,x,str(crc)+str(i[8]))
+        #                       pdf.drawString(460,x,str(crc)+str(i[9]))
+        #                       pdf.drawString(522,x,str(crc)+str(i[10]))
+                              
+        #                   elif ps_cr=="after amount":
+        #                       pdf.drawString(28,x,str(i[1]))
+        #                       pdf.drawString(100,x,str(i[2]))
+        #                       pdf.drawString(168,x,str(i[3]))
+        #                       pdf.drawString(250,x,str(dfh))
+        #                       pdf.drawString(315,x,str(i[5])) 
+        #                       pdf.drawString(380,x,str(i[8])+str(crc))
+        #                       pdf.drawString(460,x,str(i[9])+str(crc))
+        #                       pdf.drawString(522,x,str(i[10])+str(crc))
+                              
+        #                   elif ps_cr=="before amount with space":
+        #                       pdf.drawString(28,x,str(i[1]))
+                        
+        #                       pdf.drawString(100,x,str(i[2]))
+        #                       pdf.drawString(168,x,str(i[3]))
+        #                       pdf.drawString(250,x,str(dfh))
+        #                       pdf.drawString(315,x,str(i[5])) 
+        #                       pdf.drawString(380,x,str(crc)+" "+str(i[8]))
+        #                       pdf.drawString(460,x,str(crc)+" "+str(i[9]))
+        #                       pdf.drawString(522,x,str(crc)+" "+str(i[10]))
+                              
+                              
+        #                   elif ps_cr=="after amount with space":
+        #                       pdf.drawString(28,x,str(i[1]))
+        #                       pdf.drawString(100,x,str(i[2]))
+        #                       pdf.drawString(168,x,str(i[3]))
+        #                       pdf.drawString(250,x,str(dfh))
+        #                       pdf.drawString(315,x,str(i[5])) 
+        #                       pdf.drawString(380,x,str(i[8])+" "+str(crc))
+        #                       pdf.drawString(460,x,str(i[9])+" "+str(crc))
+        #                       pdf.drawString(522,x,str(i[10])+" "+str(crc))
+                          
+        #                   else:
+        #                       pass
+                        
+        #               count += 1
+                    
+        #               x-=15
+        # sql_inv_t="select sum(invoicetot),sum(totpaid), sum(balance) from invoice where businessname=%s"
+        # sql_inv_t_val=(cus_id,)
+        # fbcursor.execute(sql_inv_t,sql_inv_t_val)
+        # inv_ttt=fbcursor.fetchone() 
+        # pdf.drawString(28,x,"__________________________________________________________________________________")
+        # if ps_cr=="before amount":
+                              
+        #                       pdf.drawString(28,x-13,"")
+                        
+        #                       pdf.drawString(100,x-13,"")
+        #                       pdf.drawString(168,x-13,"")
+        #                       pdf.drawString(250,x-13,"-Summary-")
+        #                       pdf.drawString(315,x-13,"") 
+        #                       pdf.drawString(380,x-13,str(crc)+str(inv_ttt[0]))
+        #                       pdf.drawString(460,x-13,str(crc)+str(inv_ttt[1]))
+        #                       pdf.drawString(522,x-13,str(crc)+str(inv_ttt[2]))
+        # elif ps_cr=="after amount":
+                            
+        #                       pdf.drawString(28,x-13,"")
+        #                       pdf.drawString(100,x-13,"")
+        #                       pdf.drawString(168,x-13,"-Summary-")
+        #                       pdf.drawString(250,x-13,"")
+        #                       pdf.drawString(315,x-13,"") 
+        #                       pdf.drawString(380,x-13,str(inv_ttt[0])+str(crc))
+        #                       pdf.drawString(460,x-13,str(inv_ttt[1])+str(crc))
+        #                       pdf.drawString(522,x-13,str(inv_ttt[2])+str(crc))
+        # elif ps_cr=="before amount with space":
+        #                       pdf.drawString(28,x-13,"")
+                        
+        #                       pdf.drawString(100,x-13,"")
+        #                       pdf.drawString(168,x-13,"-Summary-")
+        #                       pdf.drawString(250,x-13,"")
+        #                       pdf.drawString(315,x-13,"") 
+        #                       pdf.drawString(380,x-13,str(crc)+" "+str(inv_ttt[0]))
+        #                       pdf.drawString(460,x-13,str(crc)+" "+str(inv_ttt[1]))
+        #                       pdf.drawString(522,x-13,str(crc)+" "+str(inv_ttt[2]))
+        # elif ps_cr=="after amount with space":
+        #                       pdf.drawString(28,x-13,"")
+        #                       pdf.drawString(100,x-13,"")
+        #                       pdf.drawString(168,x-13,"-Summary-")
+        #                       pdf.drawString(250,x-13,"")
+        #                       pdf.drawString(315,x-13,"") 
+        #                       pdf.drawString(380,x-13,str(inv_ttt[0])+" "+str(crc))
+        #                       pdf.drawString(460,x-13,str(inv_ttt[1])+" "+str(crc))
+        #                       pdf.drawString(522,x-13,str(inv_ttt[2])+" "+str(crc))
+        # else:
+        #                 pass
 
 
-      okbtn=Button(propert1,text="OK", width=10,).place(x=390, y=425)
-      canbtn=Button(propert1,text="Cancel", width=10,).place(x=490, y=425)  
-      
-      
-   
-    style = ttk.Style()
-    style.theme_use('default')
-    style.configure('TNotebook.Tab', background="#999999", padding=5)
-    property_Notebook = ttk.Notebook(propert)
-    property_Frame = Frame(property_Notebook, height=500, width=670)
-    property_Notebook.add(property_Frame, text="Layout")
-    property_Notebook.place(x=0, y=0)
-
-    name=Label(property_Frame, text="Orientation:").place(x=10, y=5)
-    n = StringVar()
-    search = ttk.Combobox(property_Frame, width = 23, textvariable = n )
-    search['values'] = ('Portrait')
-    search.place(x=10,y=25)
-    search.current(0)
-
-    text=Text(property_Frame,width=50).place(x=250, y=5,height=350)
-
-    btn=Button(property_Frame, text="Advanced",command=property2).place(x=450, y=370)
-    btn=Button(property_Frame,text="OK", width=10,).place(x=390, y=410)
-    btn=Button(property_Frame, text="Cancel", width=10,).place(x=490, y=410)  
-
-
-    
-  if(False):
-      messagebox.showwarning("FBilling Revelution 2020", "Customer is required, Please select customer for this invoice\nbefore printing")
-  elif(False):
-      messagebox.showinfo("FBilling Revelution 2020", "Print job has been completed.")
-  else:
-      print1=Toplevel()
-      print1.title("Print")
-      print1.geometry("670x400+240+150")
-      
-      printerframe=LabelFrame(print1, text="Printer", height=80, width=650)
-      printerframe.place(x=7, y=5)      
-      name=Label(printerframe, text="Name:").place(x=10, y=5)
-      e1= ttk.Combobox(printerframe, width=40).place(x=70, y=5)
-      where=Label(printerframe, text="Where:").place(x=10, y=30)
-      printocheckvar=IntVar()
-      printochkbtn=Checkbutton(printerframe,text="Print to file",variable=printocheckvar,onvalue=1,offvalue=0,height=1,width=10)
-      printochkbtn.place(x=450, y=30)
-      btn=Button(printerframe, text="Properties", width=10,command=property1).place(x=540, y=5)
-
-      pageslblframe=LabelFrame(print1, text="Pages", height=140, width=320)
-      pageslblframe.place(x=10, y=90)
-      radvar=IntVar()
-      radioall=Radiobutton(pageslblframe, text="All", variable=radvar, value="1").place(x=10, y=5)
-      radiocpage=Radiobutton(pageslblframe, text="Current Page", variable=radvar, value="2").place(x=10, y=25)
-      radiopages=Radiobutton(pageslblframe, text="Pages: ", variable=radvar, value="3").place(x=10, y=45)
-      pagecountentry = Entry(pageslblframe, width=23).place(x=80, y=47)
-      pageinfolabl=Label(pageslblframe, text="Enter page numbers and/or page ranges\nseperated by commas. For example:1,3,5-12")
-      pageinfolabl.place(x=5, y=75)
-
-      copylblframe=LabelFrame(print1, text="Copies", height=140, width=320)
-      copylblframe.place(x=335, y=90)
-      nolabl=Label(copylblframe, text="Number of copies").place(x=5, y=5)      
-      noentry = Entry(copylblframe, width=18).place(x=130, y=5)      
-      one=Frame(copylblframe, width=30, height=40, bg="black").place(x=20, y=40)     
-      two=Frame(copylblframe, width=30, height=40, bg="grey").place(x=15, y=45)     
-      three=Frame(copylblframe, width=30, height=40, bg="white").place(x=10, y=50)      
-      four=Frame(copylblframe, width=30, height=40, bg="black").place(x=80, y=40)      
-      fiv=Frame(copylblframe, width=30, height=40, bg="grey").place(x=75, y=45)      
-      six=Frame(copylblframe, width=30, height=40, bg="white").place(x=70, y=50)      
-      collatecheckvar=IntVar()
-      collatechkbtn=Checkbutton(copylblframe,text="Collate",variable=collatecheckvar,onvalue=1,offvalue=0,height=1,width=10)
-      collatechkbtn.place(x=130, y=70)
-
-      othrlblframe=LabelFrame(print1, text="Other", height=120, width=320)
-      othrlblframe.place(x=10, y=235)
-      printlb=Label(othrlblframe, text="Print").place(x=5, y=0)
-      dropprint = ttk.Combobox(othrlblframe, width=23).place(x=80, y=0)
-      orderlb=Label(othrlblframe, text="Order").place(x=5, y=25)
-      dropord = ttk.Combobox(othrlblframe, width=23).place(x=80, y=25)
-      duplexlb=Label(othrlblframe, text="Duplex").place(x=5, y=50)
-      droplex = ttk.Combobox(othrlblframe, width=23).place(x=80, y=50)
-
-      prmodelblframe=LabelFrame(print1, text="Print mode", height=120, width=320)
-      prmodelblframe.place(x=335, y=235)
-      dropscal = ttk.Combobox(prmodelblframe, width=30).place(x=5, y=5)
-      poslb=Label(prmodelblframe, text="Print on sheet").place(x=5, y=35)
-      droppos = ttk.Combobox(prmodelblframe, width=10).place(x=155, y=35)
-
-      okbtn=Button(print1, text="Ok", width=10).place(x=460, y=370)
-      canbtn=Button(print1, text="Cancel", width=10).place(x=560, y=370)
-
+        pdf.save()
+        win32api.ShellExecute(0,"","recurring_reports\CInvoice.pdf",None,".",0)
+    # except:
+    #   pass
 #----------------------------------------------------------------------------------------------------------email
       
 def email_invoice_recurring():
@@ -443,17 +572,161 @@ def savesettings():
    messagebox.showinfo("F-Billing Revolution 2022", "Your E-mail configuration settings has been saved.")
 
 
-def printpreviewinvoice_recurring():
-  preview = Toplevel()
-  preview.title("F-Billing Revolution Invoice Report ")
-  p2= PhotoImage(file = "images/fbicon.png")
-  preview.iconphoto(False, p1)
-  preview.geometry("1800x1800+0+0")
-  canvas = Canvas(preview)
-  canvas.place(relwidth=1, relheight=1,x=250,y=10) 
-  paperheigth = preview.winfo_fpixels('1m') * 297
-  paperwidth = preview.winfo_fpixels('1m') * 210
-  canvas.create_rectangle(20, 20, 20+paperwidth, 20+paperheigth, outline='', fill='white')  
+def prview_rir_inv():
+    rir_in_preview = Toplevel()
+    rir_in_preview.title("F-Billing Revolution Invoice Report ")
+    rir_in_p2= PhotoImage(file = "images/fbicon.png")
+    rir_in_preview.iconphoto(False, rir_in_p2)
+    rir_in_preview.geometry("1800x1800+0+0")
+    rir_in_frame = Frame(rir_in_preview,width=1500,height=1800,bg="red")
+    rir_in_frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    rir_in_frame.place(x=0,y=30)
+    rir_in_canvas=Canvas(rir_in_frame,bg='grey',width=1400,height=1200,scrollregion=(0,0,1500, 1200))
+
+
+    rir_in_vertibar=Scrollbar(rir_in_frame,orient=VERTICAL)
+    rir_in_vertibar.pack(side=RIGHT,fill=Y)
+    rir_in_vertibar.config(command=rir_in_canvas.yview)
+    rir_in_canvas.config(width=1338,height=710)
+
+    rir_in_canvas.config(yscrollcommand=rir_in_vertibar.set)
+    rir_in_canvas.pack(expand=True,side=LEFT,fill=BOTH)
+
+    rir_in_paperheigth = rir_in_preview.winfo_fpixels('1m') * 297
+    rir_in_paperwidth = rir_in_preview.winfo_fpixels('1m') * 210
+    rir_in_canvas.create_rectangle(265, 20, 265+rir_in_paperwidth, 20+rir_in_paperheigth, outline='orange', fill='white')
+    rir_company = "SELECT * from company"
+    fbcursor.execute(rir_company)
+    rir_company= fbcursor.fetchone()
+
+  # try:
+    # rir_id=rir_main_tree.item(rir_main_tree.focus())["values"][3]
+
+    # rir_main_table_sql="select * from orders where businessname=%s"
+    # rir_main_table_sql_val=(rir_id,)
+    # fbcursor.execute(rir_main_table_sql,rirrir_main_table_sql_val)
+    # main_tb_val=fbcursor.fetchone()
+
+    sqlr= 'select currencysign from company'
+    fbcursor.execute(sqlr)
+    crncy=fbcursor.fetchone()
+    crc=crncy[0]
+    sqlrt= 'select currsignplace from company'
+    fbcursor.execute(sqlrt)
+    post_rp=fbcursor.fetchone()
+    ps_cr=post_rp[0]
+    
+    #-------------------------------------------------------------------------------------------------Heder data--------
+    labelcmp=Label(rir_in_canvas,text=rir_company[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+    window = rir_in_canvas.create_window(300,80, anchor="nw", window=labelcmp)
+
+    labelcmpl=Label(rir_in_canvas,text=rir_company[2], bg="white",font=("Helvetica", 9),anchor="nw", width=50,justify=LEFT, height=6)
+    windowl = rir_in_canvas.create_window(300,120, anchor="nw", window=labelcmpl)
+    rir_in_canvas.create_text(950,100, text="Invoices List",font=("Helvetica", 16), justify='right')
+    rir_in_canvas.create_text(350,228,text=rir_company[4],fill='black',font=("Helvetica", 8), justify='left')
+    # rir_in_canvas.create_text(953,220,text="Customer ID:"+str(main_tb_val[0]),fill='black',font=("Helvetica", 12), justify='right')
+
+    # rir_sql5="select * from customer where businessname=%s"
+    # rir_sql5_vals=(rir_id,)
+    # fbcursor.execute(rir_sql5,rir_sql5_vals)
+    # rir_det=fbcursor.fetchone()
+    # rir_in_canvas.create_line(1038,235,280,235,fill="black", width=2)
+    
+    # rir_in_canvas.create_text(330,260,text="Bill To:",fill='black',font=("Helvetica", 12), justify='right')
+    # labelcmp=Label(rir_in_canvas,text=rir_det[4] , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=1)
+    # window = rir_in_canvas.create_window(305,275, anchor="nw", window=labelcmp)
+    # text=rir_det[5]
+    # wraped_text="\n".join(wrap(text,30))
+    # labelcmp=Label(rir_in_canvas,text=wraped_text , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=4)
+    # window = rir_in_canvas.create_window(305,295, anchor="nw", window=labelcmp)
+
+    # rir_in_canvas.create_text(720,260,text="Ship To:",fill='black',font=("Helvetica", 12), justify='right')
+    # labelcmp=Label(rir_in_canvas,text=rir_det[6] , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=1)
+    # window = rir_in_canvas.create_window(690,275, anchor="nw", window=labelcmp)
+    # text=rir_det[7]
+    # wraped_text="\n".join(wrap(text,30))
+    # labelcmp=Label(rirrir_in_canvas,text=wraped_text , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=4)
+    # window = rir_in_canvas.create_window(690,295, anchor="nw", window=labelcmp)
+    # #---------------------------------------------------------------------------------------------------Table Data
+
+    # style=ttk.Style()
+    # style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+    # style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+    # style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+    # # Add a Treeview widge
+                        
+    # rir_prv_tree=ttk.Treeview(rir_in_canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7","c8"), show='headings', height=30, style='mystyle.Treeview')
+    # rir_prv_tree.column("# 1", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 1", text="Invoice No")
+    # rir_prv_tree.column("# 2", anchor=E, stretch=NO, width=80)
+    # rir_prv_tree.heading("# 2", text="Date")
+    # rir_prv_tree.column("# 3", anchor=E, stretch=NO, width=80)
+    # rir_prv_tree.heading("# 3", text="Due Date")
+    # rir_prv_tree.column("# 4", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 4", text="Recurring")
+    # rir_prv_tree.column("# 5", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 5", text="Status")
+    # rir_prv_tree.column("# 6", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 6", text="Invoice Total")
+    # rir_prv_tree.column("# 7", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 7", text="Total Paid")
+    # rir_prv_tree.column("# 8", anchor=E, stretch=NO, width=100)
+    # rir_prv_tree.heading("# 8", text="Balance")
+
+    # sql_qry="select * from invoice where businessname=%s"
+    # sql_qryvlz=(rir_id,)
+    # fbcursor.execute(sql_qry,sql_qryvlz)
+    # tre=fbcursor.fetchall() 
+    # for record in rir_prv_tree.get_children():
+    #   rir_prv_tree.delete(record)
+        
+
+    # count=0
+    # for i in tre:
+    #   if i[24] is None:
+    #     dfh="No"
+    #   else:
+    #     dfh="Yes"
+    #   if ps_cr=="before amount":
+    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], crc+str(i[8]), crc+str(i[9]), crc+str(i[10])))
+                      
+    #   elif ps_cr=="after amount":
+    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                        
+    #   elif ps_cr=="before amount with space":
+    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], crc+" "+str(i[8]), crc+" "+str(i[9]), crc+" "+str(i[10])))
+                        
+    #   elif ps_cr=="after amount with space":
+    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5],  str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                        
+                    
+    #   else:
+    #     pass
+    #   count += 1
+    # rir_prv_tree.insert('', 'end',text="1",values=('','','','','','','',''))
+    # rir_prv_tree.insert('', 'end',text="1",values=('','','-End List-','','','Invoice Total','Total Paid','Balance'))
+    # sql_inv_t="select sum(invoicetot),sum(totpaid), sum(balance) from invoice where businessname=%s"
+    # sql_inv_t_val=(rir_id,)
+    # fbcursor.execute(sql_inv_t,sql_inv_t_val)
+    # inv_ttt=fbcursor.fetchone() 
+    
+    # if ps_cr=="before amount":
+    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',crc+str(inv_ttt[0]),crc+str(inv_ttt[1]),crc+str(inv_ttt[2])))
+    # elif ps_cr=="after amount":
+    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',str(inv_ttt[0])+crc,str(inv_ttt[1])+crc,str(inv_ttt[2])+crc))
+    # elif ps_cr=="before amount with space":
+    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',crc+" "+str(inv_ttt[0]),crc+" "+str(inv_ttt[1]),crc+" "+str(inv_ttt[2])))
+    # elif ps_cr=="after amount with space":
+    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',str(inv_ttt[0])+" "+crc,str(inv_ttt[1])+" "+crc,str(inv_ttt[2])+" "+crc))
+    # else:
+    #   pass
+    
+
+
+    # window = rir_in_canvas.create_window(280, 320, anchor="nw", window=rir_prv_tree)
+  # except:
+  #   pass 
 
 #------------------------------------------------------------------------------------------------convert to invoice
 def convert():
@@ -462,7 +735,7 @@ def convert():
   else:
       messagebox.destroy()
 #--------------------------------------------------------------------------------------------------search in invoice 
-def search_invoice_recurring():  
+def srh_rir():  
     top = Toplevel()     
     top.title("Find Text")   
     top.geometry("600x250+390+250")
@@ -504,118 +777,13 @@ def search_invoice_recurring():
 
 #--------------------------calculator-recurring----------------------
 
-def calculator_recurring():
-  root = Tk()
-  root.geometry("312x324")
-  root.resizable(0, 0)  # prevent from resizing the window
-  root.title("GUI Calculator")
-
-  def btn_click(item):
-    global expression
-    expression = expression + str(item)
-    input_text.set(expression)
-
-  def bt_clear():
-    global expression
-    expression = ""
-    input_text.set("")
-
-
-  def bt_equal():
-    global expression
-    result = str(eval(expression))  # 'eval':This function is used to evaluates the string expression directly
-    input_text.set(result)
-    expression = ""
-
-  expression = ""
-
-  input_text = StringVar()
-
-  input_frame = Frame(root, width=312, height=50, bd=0, highlightbackground="#cce6ff", highlightcolor="black",
-                    highlightthickness=2)
-
-  input_frame.pack(side=TOP)
-
-# Let us create a input field inside the 'Frame'
-
-  input_field = Entry(input_frame, font=('arial', 18, 'bold'), textvariable=input_text, width=50, bg="#ffffff", bd=0,
-                    justify=RIGHT)
-
-  input_field.grid(row=0, column=0)
-
-  input_field.pack(ipady=10)  # 'ipady' internal padding
-
-# frame' for the button below the 'input_frame'
-
-  btns_frame = Frame(root, width=312, height=272.5, bg="grey")
-
-  btns_frame.pack()
-
-# first row
-
-  clear = Button(btns_frame, text="C", fg="black", width=32, height=3, bd=0, bg="#a3c2c2", cursor="hand2",
-               command=lambda: bt_clear()).grid(row=0, column=0, columnspan=3, padx=1, pady=1)
-
-  divide = Button(btns_frame, text="/", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-                command=lambda: btn_click("/")).grid(row=0, column=3, padx=1, pady=1)
-
-# second row
-
-  seven = Button(btns_frame, text="7", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(7)).grid(row=1, column=0, padx=1, pady=1)
-
-  eight = Button(btns_frame, text="8", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(8)).grid(row=1, column=1, padx=1, pady=1)
-
-  nine = Button(btns_frame, text="9", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(9)).grid(row=1, column=2, padx=1, pady=1)
-
-  multiply = Button(btns_frame, text="*", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-                  command=lambda: btn_click("*")).grid(row=1, column=3, padx=1, pady=1)
-
-# third row
-
-  four = Button(btns_frame, text="4", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(4)).grid(row=2, column=0, padx=1, pady=1)
-
-  five = Button(btns_frame, text="5", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(5)).grid(row=2, column=1, padx=1, pady=1)
-
-  six = Button(btns_frame, text="6", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(6)).grid(row=2, column=2, padx=1, pady=1)
-
-  minus = Button(btns_frame, text="-", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-               command=lambda: btn_click("-")).grid(row=2, column=3, padx=1, pady=1)
-
-# fourth row
-
-  one = Button(btns_frame, text="1", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(1)).grid(row=3, column=0, padx=1, pady=1)
-
-  two = Button(btns_frame, text="2", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(2)).grid(row=3, column=1, padx=1, pady=1)
-
-  three = Button(btns_frame, text="3", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(3)).grid(row=3, column=2, padx=1, pady=1)
-
-  plus = Button(btns_frame, text="+", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-              command=lambda: btn_click("+")).grid(row=3, column=3, padx=1, pady=1)
-
-# fourth row
-
-  zero = Button(btns_frame, text="0", fg="black", width=21, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(0)).grid(row=4, column=0, columnspan=2, padx=1, pady=1)
-
-  point = Button(btns_frame, text=".", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-               command=lambda: btn_click(".")).grid(row=4, column=2, padx=1, pady=1)
-
-  equals = Button(btns_frame, text="=", fg="black", width=10, height=3, bd=0, bg="#ffa31a", cursor="hand2",
-                command=lambda: bt_equal()).grid(row=4, column=3, padx=1, pady=1)
+def clcu_rcrir():
+  subprocess.Popen('C:\\Windows\\System32\\calc.exe')
 
 
 #edit/view invoice in recurring 
 
-def view_invoice_recurring():
+def view_invs_rir():
   pop=Toplevel(rirmidFrame)
   pop.title("Invoice")
   pop.geometry("950x690+150+0")
@@ -758,11 +926,7 @@ def view_invoice_recurring():
     btn1=Button(cuselection,compound = LEFT,image=tick,text="Edit selected customer", width=150,command=create_newcustomer_recurring).place(x=250, y=610)
     btn1=Button(cuselection,compound = LEFT,image=tick, text="Add new customer", width=150,command=create_newcustomer_recurring).place(x=435, y=610)
     btn1=Button(cuselection,compound = LEFT,image=cancel ,text="Cancel", width=60).place(x=740, y=610)   
-
-
-
-    
-
+ 
   #add new line item
   def newline_recurring():
     newselection=Toplevel()
@@ -966,21 +1130,13 @@ def view_invoice_recurring():
 
     scrollbar = Scrollbar(newselection)
     scrollbar.place(x=640, y=45, height=560)
-    scrollbar.config( command=tree.yview )
+    scrollbar.config( command=ctegorytree.yview )
    
 
     btn1=Button(newselection,compound = LEFT,image=tick ,text="ok", width=60).place(x=15, y=610)
     btn1=Button(newselection,compound = LEFT,image=tick , text="Edit product/Service", width=150,command=product).place(x=250, y=610)
     btn1=Button(newselection,compound = LEFT,image=tick , text="Add product/Service", width=150,command=product).place(x=435, y=610)
     btn1=Button(newselection,compound = LEFT,image=cancel ,text="Cancel", width=60).place(x=740, y=610)
-
-
-
-  # #preview message if customer  is not
-  # def previewline():
-  #   messagebox.showerror("F-Billing Revolution","line is required,please select customer for this order before printing.")
-
-
   
   #sms notification
   def sms_recurring():
@@ -1106,7 +1262,7 @@ def view_invoice_recurring():
     messagebox.askyesno("F-Billing Revolution","Are you sure to avoid this invoice?\nAll products will be placed back into stock and all payemnts will be voided.")
   
   #delete line item  
-  def delete_recurring():
+  def rir_delete():
     messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before deleting line item .")
     
     
@@ -1127,16 +1283,16 @@ def view_invoice_recurring():
   add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=newline_recurring)
   add.pack(side="left", pady=3, ipadx=4)
 
-  dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=delete_recurring)
+  dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
   dele.pack(side="left", pady=3, ipadx=4)
 
   w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=5)
 
-  prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=printpreviewinvoice_recurring)
+  prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=prview_rir_inv)
   prev.pack(side="left", pady=3, ipadx=4)
 
-  prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=print_invoice_recurring)
+  prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_prnt_inv_rir)
   prin.pack(side="left", pady=3, ipadx=4)
 
   w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
@@ -1161,31 +1317,60 @@ def view_invoice_recurring():
   w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=5)
 
-  calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=calculator_recurring)
+  calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
   calc.pack(side="left", pady=3, ipadx=4)
 
   fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
   fir1Frame.pack(side="top", fill=X)
 
+  cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
+  
+  sdrt_qsy='select businessname from customer'
+  fbcursor.execute(sdrt_qsy)
+  dtl_rir=fbcursor.fetchall()
+
   labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
   labelframe1.place(x=10,y=5,width=640,height=160)
   order = Label(labelframe1, text="Order to").place(x=10,y=5)
-  e1 = ttk.Combobox(labelframe1, value="Hello",width=28).place(x=80,y=5)
+
+  cust_selction_nm=StringVar()
+  e1 = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
+  e1['values']=dtl_rir
+  e1.place(x=80,y=5)
+  e1.insert(0,cusr_selct)
+
+
+  sdrt_qsy='select * from customer where businessname=%s'
+  sdrt_qry_qtr=(cust_selction_nm.get(),)
+  fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
+  dtl_rir_cus=fbcursor.fetchone()
+
+  
   address=Label(labelframe1,text="Address").place(x=10,y=30)
-  e2=Text(labelframe1,width=23).place(x=80,y=30,height=70)
+  e2=Text(labelframe1,width=23)
+  e2.insert(1.0,str(dtl_rir_cus[5]))
+  e2.place(x=80,y=30,height=70)
   ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
-  e3=Entry(labelframe1,width=30).place(x=402,y=3)
+  e3=Entry(labelframe1,width=30)
+  e3.insert(0,str(dtl_rir_cus[6]))
+  e3.place(x=402,y=3)
   address1=Label(labelframe1,text="Address").place(x=340,y=30)
-  e4=Text(labelframe1,width=23).place(x=402,y=30,height=70)
+  e4=Text(labelframe1,width=23)
+  e4.insert(1.0,str(dtl_rir_cus[7]))
+  e4.place(x=402,y=30,height=70)
 
   btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>").place(x=280, y=50)
   
   labelframe2 = LabelFrame(fir1Frame,text="")
   labelframe2.place(x=10,y=130,width=640,height=42)
   email=Label(labelframe2,text="Email").place(x=10,y=5)
-  e5=Entry(labelframe2,width=30).place(x=80,y=5)
+  e5=Entry(labelframe2,width=30)
+  e5.insert(0,str(dtl_rir_cus[9]))
+  e5.place(x=80,y=5)
   sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
-  e6=Entry(labelframe2,width=30).place(x=402,y=5)
+  e6=Entry(labelframe2,width=30)
+  e6.insert(0,str(dtl_rir_cus[12]))
+  e6.place(x=402,y=5)
     
   labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
   labelframe.place(x=652,y=5,width=290,height=170)
@@ -1256,7 +1441,7 @@ def view_invoice_recurring():
   myNotebook.add(noteFrame,compound="left",  text="Private notes")
   myNotebook.add(documentFrame,compound="left",  text="Documents")
   myNotebook.pack(expand = 1, fill ="both")  
-
+  # --------------------------------------------------------------------------------------Invoice in edit
   labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
   labelframe1.place(x=1,y=1,width=800,height=170)
   cost1=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
@@ -1330,6 +1515,56 @@ def view_invoice_recurring():
   total1=Label(summaryfrme, text="$0.00").place(x=130 ,y=105)
   balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
   balance1=Label(summaryfrme, text="$0.00").place(x=130 ,y=126)
+#---------------------------------------------------------------------------------------recuring frame
+  labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
+  labelframe2.place(x=1,y=1,width=730,height=170)
+  checkvarStatus5=IntVar()
+  stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Recurring",onvalue =0 ,offvalue = 1)
+  stp_rir.place(x=40,y=5)
+
+  text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
+  rir_spn_bx = Spinbox(labelframe2,from_=1,to=1000000,width=15,justify=RIGHT)
+  rir_spn_bx.place(x=270,y=30)
+
+  cust_selction_nm=StringVar()
+  e1 = ttk.Combobox(labelframe2,width=15, textvariable=cust_selction_nm)
+  e1['values']=('month(s)',"day(s)")
+  e1.place(x=380,y=30)
+  e1.insert(0,cusr_selct)
+
+  dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
+  dt_nxt_inv=DateEntry(labelframe2,width=15)
+  dt_nxt_inv.place(x=380,y=60)
+
+  checkvarStatus5=IntVar()
+  stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Stop Recurring After",onvalue =0 ,offvalue = 1)
+  stp_rir.place(x=240,y=85)
+  dt_stp_inv=DateEntry(labelframe2,width=15)
+  dt_stp_inv.place(x=380,y=90)
+
+
+  
+#-------------------------------------------------------------------------------------------payment frame
+  labelframe3 = LabelFrame(payementFrame,text="",font=("arial",15))
+  labelframe3.place(x=1,y=1,width=730,height=170)
+
+  pym_rir_tr=ttk.Treeview(labelframe3, height=7)
+  pym_rir_tr["columns"]=["1","2","3","4","5"]
+  pym_rir_tr.column("#0", width=20)
+  pym_rir_tr.column("1", width=200)
+  pym_rir_tr.column("2", width=100)
+  pym_rir_tr.column("3", width=100)
+  pym_rir_tr.column("4", width=200)
+  pym_rir_tr.column("5", width=100)
+  pym_rir_tr.heading("#0",text="", anchor=W)
+  pym_rir_tr.heading("1",text="Payment ID")
+  pym_rir_tr.heading("2",text="Payement Date")
+  pym_rir_tr.heading("3",text="Paid By")  
+  pym_rir_tr.heading("4",text="Description")
+  pym_rir_tr.heading("5",text="Amount")
+  
+  pym_rir_tr.place(x=0, y=0)
+  
 
   fir5Frame=Frame(pop,height=38,width=210)
   fir5Frame.place(x=735,y=485)
@@ -1351,24 +1586,24 @@ w.pack(side="left", padx=(5, 2))
 w = Canvas(rirmidFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(0, 5))
 
-rir_gen = Button(rirmidFrame,compound="top", text="Generate recurring\n invoices",relief=RAISED, image=video,bg="#f8f8f2", fg="black", height=55, bd=1, width=95,command=generate_recurring_invoice_success)
+rir_gen = Button(rirmidFrame,compound="top", text="Generate recurring\n invoices",relief=RAISED, image=video,bg="#f8f8f2", fg="black", height=55, bd=1, width=95,command=gn_inv_sucss)
 rir_gen.pack(side="left", pady=3, ipadx=4)
 
 
 w = Canvas(rirmidFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
 
-rir_edit_lbl = Button(rirmidFrame,compound="top", text="View/Edit\nInvoice",relief=RAISED, image=photo1,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=view_invoice_recurring) 
+rir_edit_lbl = Button(rirmidFrame,compound="top", text="View/Edit\nInvoice",relief=RAISED, image=photo1,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=view_invs_rir) 
 rir_edit_lbl.pack(side="left")
 
 
 w = Canvas(rirmidFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
 
-rirpreviewLabel = Button(rirmidFrame,compound="top", text="Print Preview",relief=RAISED, image=photo4,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=printpreviewinvoice_recurring)
+rirpreviewLabel = Button(rirmidFrame,compound="top", text="Print Preview",relief=RAISED, image=photo4,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command= prview_rir_inv)
 rirpreviewLabel.pack(side="left")
 
-rir_pr_label = Button(rirmidFrame,compound="top", text="Print Invoice",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=print_invoice_recurring)
+rir_pr_label = Button(rirmidFrame,compound="top", text="Print Invoice",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=rir_prnt_inv_rir)
 rir_pr_label.pack(side="left")
 
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
@@ -1381,7 +1616,7 @@ rir_email_label.pack(side="left")
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
 
-rir_srh_lbl = Button(rirmidFrame,compound="top", text="Search in\nInvoices",relief=RAISED, image=photo7,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=search_invoice_recurring)
+rir_srh_lbl = Button(rirmidFrame,compound="top", text="Search in\nInvoices",relief=RAISED, image=photo7,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=srh_rir)
 rir_srh_lbl.pack(side="left")
 
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
@@ -1408,7 +1643,7 @@ invoilabel.pack(side="left", padx=(20,0))
 
 #-----------------------------------------------------------------------------Recurring invoice table and scrollbars
 
-class MyApp1:
+class RirMyApp1:
   def __init__(self, parent):
     
     self.myParent = parent 
@@ -1432,29 +1667,36 @@ class MyApp1:
       expand=YES,
       )
 
-    
-    tree = ttk.Treeview(self.left_frame, columns = (1,2,3,4,5,6,7), height = 15, show = "headings")
-    tree.pack(side = 'top')
-    tree.heading(1)
-    tree.heading(2, text="Invoice#")
-    tree.heading(3, text="Next Invoice")
-    tree.heading(4, text="Recurring Period")
-    tree.heading(5, text="Stop After")
-    tree.heading(6, text="Customer Name")
-    tree.heading(7, text="Invoice Total")  
-    tree.column(1, width = 40)
-    tree.column(2, width = 200)
-    tree.column(3, width = 200)
-    tree.column(4, width = 200)
-    tree.column(5, width = 200)
-    tree.column(6, width = 340)
-    tree.column(7, width = 190)
-  
+    global rir_tree
+    rir_tree = ttk.Treeview(self.left_frame, columns = (1,2,3,4,5,6,7), height = 15, show = "headings")
+    rir_tree.pack(side = 'top')
+    rir_tree.heading(1)
+    rir_tree.heading(2, text="Invoice#")
+    rir_tree.heading(3, text="Next Invoice")
+    rir_tree.heading(4, text="Recurring Period")
+    rir_tree.heading(5, text="Stop After")
+    rir_tree.heading(6, text="Customer Name")
+    rir_tree.heading(7, text="Invoice Total")  
+    rir_tree.column(1, width = 40)
+    rir_tree.column(2, width = 200)
+    rir_tree.column(3, width = 200,anchor='c')
+    rir_tree.column(4, width = 200,anchor='c')
+    rir_tree.column(5, width = 200,anchor='c')
+    rir_tree.column(6, width = 340)
+    rir_tree.column(7, width = 190,anchor='n')
 
     scrollbar = Scrollbar(self.left_frame)
     scrollbar.place(x=1008+300+25, y=0, height=300+20)
-    scrollbar.config( command=tree.yview )
+    scrollbar.config( command=rir_tree.yview )
 
+    rir_main_table_sql="select * from invoice"
+    fbcursor.execute(rir_main_table_sql)
+    main_rir_val=fbcursor.fetchall()
+    count_rir=0
+
+    for i in main_rir_val:
+        rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+        count_rir +=1
 
 
     tabControl = ttk.Notebook(self.left_frame,width=1)
@@ -1468,41 +1710,44 @@ class MyApp1:
     tabControl.add(tab4,image=photo11,compound = LEFT, text ='Documents')
     tabControl.pack(expand = 1, fill ="both")
     
-    tree = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,8,), height = 15, show = "headings")
-    tree.pack(side = 'top')
-    tree.heading(1)
-    tree.heading(2, text="Product/Service ID",)
-    tree.heading(3, text="Name")
-    tree.heading(4, text="Description")
-    tree.heading(5, text="Price")
-    tree.heading(6, text="QTY")
-    tree.heading(7, text="Tax1")
-    tree.heading(8, text="Line Total")   
-    tree.column(1, width = 40)
-    tree.column(2, width = 250)
-    tree.column(3, width = 270)
-    tree.column(4, width = 300)
-    tree.column(5, width = 130)
-    tree.column(6, width = 100)
-    tree.column(7, width = 100)
-    tree.column(8, width = 190)
+    rir_tble = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,8,), height = 15, show = "headings")
+    rir_tble.pack(side = 'top')
+    rir_tble.heading(1)
+    rir_tble.heading(2, text="Product/Service ID",)
+    rir_tble.heading(3, text="Name")
+    rir_tble.heading(4, text="Description")
+    rir_tble.heading(5, text="Price")
+    rir_tble.heading(6, text="QTY")
+    rir_tble.heading(7, text="Tax1")
+    rir_tble.heading(8, text="Line Total")   
+    rir_tble.column(1, width = 40)
+    rir_tble.column(2, width = 250)
+    rir_tble.column(3, width = 270)
+    rir_tble.column(4, width = 300)
+    rir_tble.column(5, width = 130)
+    rir_tble.column(6, width = 100)
+    rir_tble.column(7, width = 100)
+    rir_tble.column(8, width = 190)
 
     note1=Text(tab2, width=170,height=10).place(x=10, y=10)
 
     note1=Text(tab3, width=170,height=10).place(x=10, y=10)
 
-    tree = ttk.Treeview(tab4, columns = (1,2,3), height = 15, show = "headings")
-    tree.pack(side = 'top')
-    tree.heading(1)
-    tree.heading(2, text="Attach to Email",)
-    tree.heading(3, text="Filename")
-    tree.column(1, width = 30)
-    tree.column(2, width = 310)
-    tree.column(3, width = 1000)
+    rirs_tree = ttk.Treeview(tab4, columns = (1,2,3), height = 15, show = "headings")
+    rirs_tree.pack(side = 'top')
+    rirs_tree.heading(1)
+    rirs_tree.heading(2, text="Attach to Email",)
+    rirs_tree.heading(3, text="Filename")
+    rirs_tree.column(1, width = 30)
+    rirs_tree.column(2, width = 310)
+    rirs_tree.column(3, width = 1000)
 
     scrollbar = Scrollbar(self.left_frame)
     scrollbar.place(x=1004+300+25, y=360, height=195)
-    scrollbar.config( command=tree.yview )
+    scrollbar.config( command=rirs_tree.yview )
        
-myapp = MyApp1(tab4)
+myapp = RirMyApp1(tab4)
+
+
+
 root.mainloop()
