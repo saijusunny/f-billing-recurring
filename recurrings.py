@@ -1804,215 +1804,1268 @@ def view_invs_rir():
     btn1=Button(cuselection,compound = LEFT,image=cancel ,text="Cancel", command=cncl_cuselection, width=60).place(x=740, y=610)   
  
   #add new line item
-  def newline_recurring():
-    newselection=Toplevel()
-    newselection.title("Product/Services")
-    newselection.geometry("930x650+240+10")
-    newselection.resizable(False, False)
-
-
-    #add new product
-    def product():  
-      top = Toplevel()  
-      top.title("Add a new Product/Service")
-      p2 = PhotoImage(file = 'images/fbicon.png')
-      top.iconphoto(False, p2)
-    
-      top.geometry("700x550+390+15")
-      tabControl = ttk.Notebook(top)
-      s = ttk.Style()
-      s.theme_use('default')
-      s.configure('TNotebook.Tab', background="#999999",padding=10,bd=0)
-
-
-      tab1 = ttk.Frame(tabControl)
-      tab2 = ttk.Frame(tabControl)
-     
-      tabControl.add(tab1,compound = LEFT, text ='Product/Service')
-      tabControl.add(tab2,compound = LEFT, text ='Product Image')
-     
-      tabControl.pack(expand = 1, fill ="both")
-     
-      innerFrame = Frame(tab1,bg="#f5f3f2", relief=GROOVE)
-      innerFrame.pack(side="top",fill=BOTH)
-
-      Customerlabelframe = LabelFrame(innerFrame,text="Product/Service",width=580,height=485)
-      Customerlabelframe.pack(side="top",fill=BOTH,padx=10)
-
-      code1=Label(Customerlabelframe,text="Code or SKU:",fg="blue",pady=10,padx=10)
-      code1.place(x=20,y=0)
-      codeentry = Entry(Customerlabelframe,width=35)
-      codeentry.place(x=120,y=8)
-
-      checkvarStatus=IntVar()
-      status1=Label(Customerlabelframe,text="Status:")
-      status1.place(x=500,y=8)
-      Button1 = Checkbutton(Customerlabelframe,
-                        variable = checkvarStatus,text="Active",compound="right",
-                        onvalue =0 ,
-                        offvalue = 1,
-                       
-                        width = 10)
-
-      Button1.place(x=550,y=5)
-
-      category1=Label(Customerlabelframe,text="Category:",pady=5,padx=10)
-      category1.place(x=20,y=40)
-      n = StringVar()
-      country = ttk.Combobox(Customerlabelframe, width = 40, textvariable = n )
-       
-      country['values'] = ('Default',' India',' China',' Australia',' Nigeria',' Malaysia',' Italy',' Turkey',)
+  #add new line item
+  def recurring_New_newline():
+      # businessname = recur_combo_name1.get()
+      # sql='SELECT * FROM estimate WHERE businessname=%s'
+      # val=(businessname,)
+      # fbcursor.execute(sql,val)
       
-      country.place(x=120,y=45)
-      country.current(0)
+      recur_newselection=Toplevel()
+      recur_newselection.title("Select Product")
+      recur_newselection.geometry("930x650+240+10")
+      recur_newselection.resizable(False, False)
 
 
-      name1=Label(Customerlabelframe,text="Name :",fg="blue",pady=5,padx=10)
-      name1.place(x=20,y=70)
-      nameentry = Entry(Customerlabelframe,width=60)
-      nameentry.place(x=120,y=75)
-
-      des1=Label(Customerlabelframe,text="Description :",pady=5,padx=10)
-      des1.place(x=20,y=100)
-      desentry = Entry(Customerlabelframe,width=60)
-      desentry.place(x=120,y=105)
-
-      uval = IntVar(Customerlabelframe, value='$0.00')
-      unit1=Label(Customerlabelframe,text="Unit Price:",fg="blue",pady=5,padx=10)
-      unit1.place(x=20,y=130)
-      unitentry = Entry(Customerlabelframe,width=20,textvariable=uval)
-      unitentry.place(x=120,y=135)
-
-      pcsval = IntVar(Customerlabelframe, value='$0.00')
-      pcs1=Label(Customerlabelframe,text="Pcs/Weight:",fg="blue",pady=5,padx=10)
-      pcs1.place(x=320,y=140)
-      pcsentry = Entry(Customerlabelframe,width=20,textvariable=pcsval)
-      pcsentry.place(x=410,y=140)
-
-      costval = IntVar(Customerlabelframe, value='$0.00')
-      cost1=Label(Customerlabelframe,text="Cost:",pady=5,padx=10)
-      cost1.place(x=20,y=160)
-      costentry = Entry(Customerlabelframe,width=20,textvariable=costval)
-      costentry.place(x=120,y=165)
-
-      priceval = IntVar(Customerlabelframe, value='$0.00')
-      price1=Label(Customerlabelframe,text="(Price Cost):",pady=5,padx=10)
-      price1.place(x=20,y=190)
-      priceentry = Entry(Customerlabelframe,width=20,textvariable=priceval)
-      priceentry.place(x=120,y=195)
-
-      checkvarStatus2=IntVar()
-     
-      Button2 = Checkbutton(Customerlabelframe,variable = checkvarStatus2,
-                        text="Taxable Tax1rate",compound="right",
-                        onvalue =0 ,
-                        offvalue = 1,
-                        height=2,
-                        width = 12)
-
-      Button2.place(x=415,y=170)
+      #add new product
+      def recur_product():  
+        recur_top = Toplevel()  
+        recur_top.title("Add a new Product/Service")
+        recur_p2 = PhotoImage(file = 'images/fbicon.png')
+        recur_top.iconphoto(False, recur_p2)
+      
+        recur_top.geometry("600x550+390+15")
+        recur_tabControl = ttk.Notebook(recur_top)
+        recur_s = ttk.Style()
+        recur_s.theme_use('default')
+        recur_s.configure('TNotebook.Tab', background="#999999",padding=10,bd=0)
 
 
-      checkvarStatus3=IntVar()
-     
-      Button3 = Checkbutton(Customerlabelframe,variable = checkvarStatus3,
-                        text="No stock Control",
+        recur_tab1 = ttk.Frame(recur_tabControl)
+        recur_tab2 = ttk.Frame(recur_tabControl)
+      
+        recur_tabControl.add(recur_tab1,compound = LEFT, text ='Product/Service')
+        recur_tabControl.add(recur_tab2,compound = LEFT, text ='Product Image')
+      
+        recur_tabControl.pack(expand = 1, fill ="both")
+
+        global filename
+        filename = ""
+
+        def este_upload_file():
+          global filename,img, b2
+          f_types =[('Png files','.png'),('Jpg Files', '.jpg'),('PDF', '*.pdf',)]
+          filename = filedialog.askopenfilename(filetypes=f_types)
+          shutil.copyfile(filename, os.getcwd()+'/images/'+filename.split('/')[-1])
+          image = Image.open(filename)
+          resize_image = image.resize((350, 350))
+          img = ImageTk.PhotoImage(resize_image)
+          b2 = Button(recur_imageFrame,image=img)
+          b2.place(x=130, y=80)
+
+        
+        def est_addproducts():
+          global img , filename 
+          sku = recur_codeentry.get()
+          status = recur_checkvarStatus.get()
+          catgory = recur_n.get()
+          name = recur_nameentry.get()
+          description = recur_desentry.get()
+          unitprice = recur_uval.get()
+          peices = recur_pcsentry.get()
+          cost = recur_costval.get()
+          price_cost = recur_priceval.get()
+          taxable = recur_checkvarStatus2.get()
+          tax2 = recur_checkvarStatus_2.get()
+          nostockcontrol = recur_checkvarStatus3.get()
+          stock = recur_stockentry.get()
+          lowstock = recur_lowentry.get()
+          warehouse = recur_wareentry.get()
+          pnotes = recur_txt.get("1.0",'end-1c')
+          entries = [sku,name, unitprice, cost]
+          entri = []
+          for i in entries:
+            if i == '':
+              entri.append(i)
+          if len(entri) == 0:
+            sql = 'select * from Productservice where sku = %s or name = %s'
+            val  = (sku, name)
+            fbcursor.execute(sql, val)
+            fbcursor.fetchall()
+            row_count = fbcursor.rowcount
+            if row_count == 0:
+              if filename == "":
+                sql = 'insert into Productservice(sku, category, name, description, status, unitprice, peices, cost, taxable, priceminuscost, serviceornot, stock, stocklimit, warehouse, privatenote,tax2) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)'
+                val = (sku, catgory, name, description, status, unitprice, peices, cost, taxable, price_cost, nostockcontrol, stock, lowstock, warehouse, pnotes,tax2)
+                fbcursor.execute(sql, val)
+                fbilldb.commit()
+              else:
+                file = shutil.copyfile(filename, os.getcwd()+'/images/'+filename.split('/')[-1])
+                sql = 'insert into Productservice(sku, category, name, description, status, unitprice, peices, cost, taxable, priceminuscost, serviceornot, stock, stocklimit, warehouse, image, privatenote,tax2) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)'
+                val = (sku, catgory, name, description, status, unitprice, peices, cost, taxable, price_cost, nostockcontrol, stock, lowstock, warehouse, filename.split('/')[-1], pnotes,tax2)
+                fbcursor.execute(sql, val)
+                fbilldb.commit()
+            else:
+              messagebox.showinfo("Alert", "Entry with same name or SKU already exists.\nTry again.")
+              recur_top.destroy()
+
+            for record in recur_cusventtree1.get_children():
+              recur_cusventtree1.delete(record)
+            fbcursor.execute("select *  from Productservice")
+            est_pandsdata = fbcursor.fetchall()
+            countp = 0
+            for i in est_pandsdata:
+              if i[12] == '1':
+                servi = '🗹'
+              else:
+                servi = ''
+              sql = "select currencysign,currsignplace from company"
+              fbcursor.execute(sql)
+              estcurrsymb = fbcursor.fetchone()
+              if not estcurrsymb: 
+                if i[13] > i[14]:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+                  countp += 1              
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+                        
+              elif estcurrsymb[1] == "before amount":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "before amount with space":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "after amount":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "after amount with space":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+                  countp += 1
+
+            recur_top.destroy()
+  
+    
+        recur_innerFrame = Frame(recur_tab1,bg="#f5f3f2", relief=GROOVE)
+        recur_innerFrame.pack(side="top",fill=BOTH)
+
+        recur_Customerlabelframe = LabelFrame(recur_innerFrame,text="Product/Service",width=580,height=455)
+        recur_Customerlabelframe.pack(side="top",fill=BOTH,padx=10,pady=(10,45))
+
+        fbcursor.execute("SELECT * FROM Productservice ORDER BY sku DESC LIMIT 1")
+        skuin = fbcursor.fetchone()
+
+        recur_code1=Label(recur_Customerlabelframe,text="Code or SKU:",fg="blue",pady=10,padx=10)
+        recur_code1.place(x=20,y=0)
+        recur_codeentry = Entry(recur_Customerlabelframe,width=35)
+        recur_codeentry.place(x=120,y=8)
+
+        recur_checkvarStatus=IntVar()
+        recur_status1=Label(recur_Customerlabelframe,text="Status:")
+        recur_status1.place(x=400,y=8)
+        recur_Button1 = Checkbutton(recur_Customerlabelframe,
+                          variable = recur_checkvarStatus,text="Active",compound="right",
+                          onvalue =1,
+                          offvalue = 0,
+                        
+                          width = 10)
+
+        recur_Button1.place(x=450,y=5)
+
+        recur_category1=Label(recur_Customerlabelframe,text="Category:",pady=5,padx=10)
+        recur_category1.place(x=20,y=40)
+        recur_n = StringVar()
+        recur_country0 = ttk.Combobox(recur_Customerlabelframe, width = 40, textvariable = recur_n )
+        recur_country0['values'] = ('Default')
+        recur_country0.place(x=120,y=45)
+        recur_country0.insert(0, 'Default')
+
+
+        recur_name81=Label(recur_Customerlabelframe,text="Name :",fg="blue",pady=5,padx=10)
+        recur_name81.place(x=20,y=70)
+        recur_nameentry = Entry(recur_Customerlabelframe,width=60)
+        recur_nameentry.place(x=120,y=75)
+
+        recur_des1=Label(recur_Customerlabelframe,text="Description :",pady=5,padx=10)
+        recur_des1.place(x=20,y=100)
+        recur_desentry = Entry(recur_Customerlabelframe,width=60)
+        recur_desentry.place(x=120,y=105)
+        def est_prdoucts_cal(S,d):
+          if d == '1': #insert
+            if not S in ['.','0','1','2','3','4','5','6','7','8','9']:
+              return False
+            return True
+          if d.isdigit():
+            return True
+
+
+        recur_uval = StringVar(value="0")
+        recur_unit1=Label(recur_Customerlabelframe,text="Unit Price:",fg="blue",pady=5,padx=10)
+        recur_unit1.place(x=20,y=130)
+        recur_unitentry = Entry(recur_Customerlabelframe,width=20,textvariable=recur_uval)
+        recur_unitentry.place(x=120,y=135)
+        est_cal_unit = (recur_Customerlabelframe.register(est_prdoucts_cal),'%S','%d')
+        recur_unitentry.config(validate='key',validatecommand=(est_cal_unit),justify='right')
+
+        # recur_pcsval = IntVar(recur_Customerlabelframe, value='$0.00')
+        recur_pcs1=Label(recur_Customerlabelframe,text="Pcs/Weight:",fg="blue",pady=5,padx=10)
+        recur_pcs1.place(x=330,y=135)
+        recur_pcsentry = Entry(recur_Customerlabelframe,width=20)
+        recur_pcsentry.place(x=420,y=140)
+
+        recur_costval = StringVar(value="0")
+        recur_cost1=Label(recur_Customerlabelframe,text="Cost:",pady=5,padx=10)
+        recur_cost1.place(x=20,y=160)
+        recur_costentry = Entry(recur_Customerlabelframe,width=20,textvariable=recur_costval)
+        recur_costentry.place(x=120,y=165)
+        est_cal_cost = (recur_Customerlabelframe.register(est_prdoucts_cal),'%S','%d')
+        recur_costentry.config(validate='key',validatecommand=(est_cal_cost),justify='right')
+
+
+        def est_set_label(name, index, mode):
+          est_copr = float(recur_uval.get()) - float(recur_costval.get())
+          recur_priceval.set(str(est_copr))
+
+
+        recur_priceval = StringVar()
+        recur_price1=Label(recur_Customerlabelframe,text="(Price Cost):",pady=5,padx=10)
+        recur_price1.place(x=20,y=190)
+        recur_priceentry = Entry(recur_Customerlabelframe,width=20,textvariable=recur_priceval,state=DISABLED,disabledbackground="white",disabledforeground="black")
+        recur_priceentry.config(justify="right")
+        recur_priceentry.place(x=120,y=195)
+
+
+        recur_uval.trace('w', est_set_label)
+        recur_costval.trace('w', est_set_label)
+
+        sql = "select taxtype from company"
+        fbcursor.execute(sql)
+        est_taxchoose = fbcursor.fetchone()
+
+        recur_checkvarStatus2=IntVar()
+      
+        recur_Button92 = Checkbutton(recur_Customerlabelframe,variable = recur_checkvarStatus2,
+                          text="Taxable Tax1rate",compound="right",
+                          onvalue =1 ,
+                          offvalue = 0,
+                          height=2,
+                          width = 12)
+
+        #recur_Button92.place(x=415,y=170)
+
+        recur_checkvarStatus_2=IntVar()
+      
+        recur_Button_92 = Checkbutton(recur_Customerlabelframe,variable = recur_checkvarStatus_2,
+                          text="Taxable Tax2rate",compound="right",
+                          onvalue =1,
+                          offvalue =0,
+                          height=2,
+                          width = 12)
+
+        #recurrecur_Button_92.place(x=415,y=210)
+        if not est_taxchoose:
+          pass
+        elif est_taxchoose[0] == '1':
+          recur_Button92.place_forget()
+          recur_Button_92.place_forget()
+        elif est_taxchoose[0] == '2':
+          recur_Button92.place(x=415,y=170)
+          recur_Button_92.place_forget()
+        elif est_taxchoose[0] == '3':
+          recur_Button92.place(x=415,y=170)
+          recur_Button_92.place(x=415,y=210)
+
+        def est_switch():
+          if recur_checkvarStatus3.get():
+            recur_stockentry["state"] = DISABLED
+            recur_lowentry["state"] = DISABLED
+            recur_wareentry["state"] = DISABLED
+          else:
+            recur_stockentry["state"] = NORMAL
+            recur_lowentry["state"] = NORMAL
+            recur_wareentry["state"] = NORMAL
+        
+        recur_checkvarStatus3=BooleanVar()
+        recur_Button93 = Checkbutton(recur_Customerlabelframe,variable = recur_checkvarStatus3,command=est_switch, 
+                          text="This is a service(no stock control)",
+                          onvalue =1 ,
+                          offvalue =0,
+                          height=3)
+        recur_Button93.place(x=40,y=220)
+
+        def est_stocknum(input):
+          if input.isdigit():
+            return True
+          elif input is "":
+            return True
+          else:
+            return False
+
+
+        
+        recur_stock1=Label(recur_Customerlabelframe,text="Stock:",pady=5,padx=10)
+        recur_stock1.place(x=90,y=260)
+        recur_stockentry = Entry(recur_Customerlabelframe,width=15)
+        recur_stockentry.place(x=150,y=265)
+        est_sto = recur_Customerlabelframe.register(est_stocknum)
+        recur_stockentry.config(validate="key",validatecommand=(est_sto, '%S'))
+
+        
+        recur_low1=Label(recur_Customerlabelframe,text="Low Stock Warning Limit:",pady=5,padx=10)
+        recur_low1.place(x=270,y=260)
+        recur_lowentry = Entry(recur_Customerlabelframe,width=10)
+        recur_lowentry.place(x=432,y=265)
+        est_lowsto = recur_Customerlabelframe.register(est_stocknum)
+        recur_lowentry.config(validate="key",validatecommand=(est_lowsto, '%S'))
+
+      
+        recur_ware1=Label(recur_Customerlabelframe,text="Warehouse:",pady=5,padx=10)
+        recur_ware1.place(x=60,y=290)
+        recur_wareentry = Entry(recur_Customerlabelframe,width=50)
+        recur_wareentry.place(x=150,y=295)
+
+        recur_text10=Label(recur_Customerlabelframe,text="Private notes(not appears on invoice):",pady=5,padx=10)
+        recur_text10.place(x=20,y=330)
+
+        recur_txt = scrolledtext.ScrolledText(recur_Customerlabelframe, undo=True,width=62,height=4)
+        recur_txt.place(x=32,y=358)
+
+
+
+
+        recur_okButton = Button(recur_innerFrame,compound = LEFT,image=tick , text ="Ok",width=60,command=est_addproducts)
+        recur_okButton.place(x=10,y=475)
+
+        def est_closetab():
+          recur_top.destroy()
+
+
+        recur_cancelButton = Button(recur_innerFrame,compound = LEFT,image=cancel ,text="Cancel",width=60,command=est_closetab)
+        recur_cancelButton.place(x=519,y=475)
+
+        recur_imageFrame = Frame(recur_tab2, relief=GROOVE,height=580)
+        recur_imageFrame.pack(side="top",fill=BOTH)
+        
+
+        recur_browseimg=Label(recur_imageFrame,text=" Browse for product image file(recommended image type:JPG,size 480x320 pixels) ",bg='#f5f3f2')
+        recur_browseimg.place(x=15,y=35)
+
+        recur_browsebutton=Button(recur_imageFrame,text = 'Browse',command=este_upload_file)
+        recur_browsebutton.place(x=520,y=30,height=30,width=50)
+        
+        recur_removeButton = Button(recur_imageFrame,compound = LEFT,image=cancel, text ="Remove Product Image",width=150, command=lambda: b2.destroy())
+        recur_removeButton.place(x=400,y=450)
+      
+      # ###---------------Edit product-----------------###    
+      def est_edit_product(): 
+        edit_est_itemid = recur_cusventtree1.item(recur_cusventtree1.focus())["values"][0]  
+        global filename
+        filename = ""
+      
+        def edit_estupload_file():
+          global filename,img, b2
+          f_types =[('Png files','.png'),('Jpg Files', '.jpg')]
+          filename = filedialog.askopenfilename(filetypes=f_types)
+          shutil.copyfile(filename, os.getcwd()+'/images/'+filename.split('/')[-1])
+          image = Image.open(filename)
+          resize_image = image.resize((350, 350))
+          img = ImageTk.PhotoImage(resize_image)
+          edit_est_b2 = Button(edit_est_imageFrame,image=img)
+          edit_est_b2.place(x=130, y=80)
+        
+        def edit_est_updateproducts():
+          global img , filename 
+          sku = edit_est_codeentry.get()
+          status = edit_est_checkvarStatus.get()
+          catgory = edit_est_n.get()
+          name = edit_est_nameentry.get()
+          description = edit_est_desentry.get()
+          unitprice = edit_est_uval.get()
+          peices = edit_est_pcsentry.get()
+          cost = edit_est_costval.get()
+          price_cost = edit_est_priceval.get()
+          taxable = edit_est_checkvarStatus2.get()
+          tax2 = edit_est_checkvarStatustax2.get()
+          nostockcontrol = edit_est_checkvarStatus3.get()
+          stock = edit_est_stockval.get()
+          lowstock = edit_est_lowval.get()
+          warehouse = edit_est_wareentry.get()
+          pnotes = edit_est_sctxt.get("1.0", 'end-1c')
+          entries = [sku, name, unitprice, cost]
+          entri = []
+          for i in entries:
+            if i == '':
+              entri.append(i)
+          if len(entri) == 0:
+            if filename == "":
+              print("hello")
+              sql = "update Productservice set sku=%s, category=%s, name=%s, description=%s, status=%s, unitprice=%s, peices=%s, cost=%s, taxable=%s, priceminuscost=%s, serviceornot=%s, stock=%s, stocklimit=%s, warehouse=%s, privatenote=%s,tax2=%s where sku = %s"
+              val = (sku, catgory, name, description, status, unitprice, peices, cost, taxable, price_cost, nostockcontrol, stock, lowstock, warehouse, pnotes,tax2, edit_est_itemid)
+              fbcursor.execute(sql, val)
+              fbilldb.commit()
+            else:
+              print("hai")
+              file = shutil.copyfile(filename, os.getcwd()+'/images/'+filename.split('/')[-1])
+              sql = "update Productservice set category=%s, name=%s, description=%s, status=%s, unitprice=%s, peices=%s, cost=%s, taxable=%s, priceminuscost=%s, serviceornot=%s, stock=%s, stocklimit=%s, warehouse=%s, image=%s, privatenote=%s,tax2=%s where sku = %s"
+              val = (catgory, name, description, status, unitprice, peices, cost, taxable, price_cost, nostockcontrol, stock, lowstock, warehouse,filename.split('/')[-1], pnotes,tax2, edit_est_itemid)
+              fbcursor.execute(sql, val)
+              fbilldb.commit()
+            for record in recur_cusventtree1.get_children():
+              recur_cusventtree1.delete(record)
+            fbcursor.execute("select *  from Productservice")
+            edit_est_pandsdata = fbcursor.fetchall()
+            countp = 0
+            for i in edit_est_pandsdata:
+              if i[12] == '1':
+                servi = '🗹'
+              else:
+                servi = ''
+              sql = "select currencysign,currsignplace from company"
+              fbcursor.execute(sql)
+              estcurrsymb = fbcursor.fetchone()
+              if not estcurrsymb: 
+                if i[13] > i[14]:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+                  countp += 1              
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+                        
+              elif estcurrsymb[1] == "before amount":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "before amount with space":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "after amount":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+                  countp += 1
+
+              elif estcurrsymb[1] == "after amount with space":
+                if (i[13]) > (i[14]):
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+                  countp += 1
+                elif i[12] == '1':
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                  countp += 1
+                else:
+                  recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+                  countp += 1
+            edit_est_top.destroy()
+          else:
+            messagebox.showinfo("F-Billing Revolution", "Fields name or SKU entered is already in database.")
+            edit_est_top.destroy()
+            
+
+        sql = "select * from Productservice where sku = %s"
+        val = (edit_est_itemid, )
+        fbcursor.execute(sql, val)
+        edit_est_psdata = fbcursor.fetchone()
+        
+        edit_est_top = Toplevel()  
+        edit_est_top.title("Edit Product/Service details")
+        p3 = PhotoImage(file = 'images/fbicon.png')
+        edit_est_top.iconphoto(False, p3)
+        edit_est_top.geometry("600x550+350+15")
+        tabControl = ttk.Notebook(edit_est_top)
+        s = ttk.Style()
+        s.theme_use('default')
+        s.configure('TNotebook.Tab', background="#999999", width=50, padding=10,bd=0)
+
+        edit_est_taba = ttk.Frame(tabControl)
+        edit_est_tabb = ttk.Frame(tabControl)
+        
+        tabControl.add(edit_est_taba,compound = LEFT, text ='Product/Service')
+        tabControl.add(edit_est_tabb,compound = LEFT, text ='Product Image')
+        
+        tabControl.pack(expand = 1, fill ="both")
+        
+        edit_est_innerFrame = Frame(edit_est_taba,bg="#f5f3f2", relief=GROOVE)
+        edit_est_innerFrame.pack(side="top",fill=BOTH)
+
+        edit_est_updateframe = LabelFrame(edit_est_innerFrame,text="Product/Service",width=580,height=455)
+        edit_est_updateframe.pack(side="top",fill=BOTH,padx=10,pady=(10,45))
+
+        edit_est_code1=Label(edit_est_updateframe,text="Code or SKU:",fg="blue",pady=10,padx=10)
+        edit_est_code1.place(x=20,y=0)
+        edit_est_codeentry = Entry(edit_est_updateframe,width=35)
+        edit_est_codeentry.place(x=120,y=8)
+        edit_est_codeentry.insert(0, edit_est_psdata[2])
+
+        edit_est_checkvarStatus=IntVar()
+        edit_est_status1=Label(edit_est_updateframe,text="Status:")
+        edit_est_status1.place(x=400,y=8)
+        edit_est_Button1 = Checkbutton(edit_est_updateframe, 
+                          variable = edit_est_checkvarStatus,text="Active",compound="right",
+                          onvalue =1,
+                          offvalue =0,
+                          width = 10)
+        edit_est_Button1.place(x=450,y=5)
+        edit_est_sta = edit_est_psdata[6]
+        if edit_est_sta == '1':
+          edit_est_Button1.select()
+        else:
+          edit_est_Button1.deselect()
+
+
+
+        edit_est_category1=Label(edit_est_updateframe,text="Category:",pady=5,padx=10)
+        edit_est_category1.place(x=20,y=40)
+        edit_est_n = StringVar() 
+        edit_est_category = Entry(edit_est_updateframe,width=40,textvariable=edit_est_n) 
+        edit_est_category.insert(0, edit_est_psdata[3])
+        edit_est_category = ttk.Combobox(edit_est_updateframe, width = 40, textvariable = edit_est_n )
+        edit_est_category['values'] = ('Default')
+        edit_est_category.place(x=120,y=45)
+        #edit_est_category.insert(0, 'Default')
+
+
+
+        edit_est_name1=Label(edit_est_updateframe,text="Name :",fg="blue",pady=5,padx=10)
+        edit_est_name1.place(x=20,y=70)
+        edit_est_nameentry = Entry(edit_est_updateframe,width=70)
+        edit_est_nameentry.place(x=120,y=75)
+        edit_est_nameentry.insert(0, edit_est_psdata[4])
+
+        edit_est_des1=Label(edit_est_updateframe,text="Description :",pady=5,padx=10)
+        edit_est_des1.place(x=20,y=100)
+        edit_est_desentry = Entry(edit_est_updateframe,width=70)
+        edit_est_desentry.place(x=120,y=105)
+        edit_est_desentry.insert(0, edit_est_psdata[5])
+
+        def edit_est_set_label(name, index, mode):
+          edit_est_priceval.set(float(edit_est_uval.get()) - float(edit_est_costval.get()))
+
+        def edit_est_prdoucts_cal(S,d):
+          if d == '1': #insert
+            if not S in ['.','0','1','2','3','4','5','6','7','8','9']:
+              return False
+            return True
+          if d.isdigit():
+            return True
+        
+        edit_est_unit1=Label(edit_est_updateframe,text="Unit Price:",fg="blue",pady=5,padx=10)
+        edit_est_unit1.place(x=20,y=130)
+        
+        edit_est_uval = StringVar()
+        edit_est_unitentry = Entry(edit_est_updateframe,width=20,textvariable=edit_est_uval)
+        edit_est_unitentry.place(x=120,y=135)
+        edit_est_unitentry.delete(0,'end')
+        edit_est_unitentry.insert(0, edit_est_psdata[7])
+        edit_est_cal_unit = (edit_est_updateframe.register(edit_est_prdoucts_cal),'%S','%d')
+        edit_est_unitentry.config(validate='key',validatecommand=(edit_est_cal_unit),justify='right')
+        
+
+        edit_est_pcsval = IntVar()
+        edit_est_pcs1=Label(edit_est_updateframe,text="Pcs/Weight:",fg="blue",pady=5,padx=10)
+        edit_est_pcs1.place(x=330,y=135)
+        edit_est_pcsentry = Entry(edit_est_updateframe,width=20,textvariable=edit_est_pcsval)
+        edit_est_pcsentry.place(x=420,y=140)
+        edit_est_pcsentry.delete(0,'end')
+        edit_est_pcsentry.insert(0, edit_est_psdata[8])
+        
+
+        edit_est_costval = StringVar()
+        edit_est_cost1=Label(edit_est_updateframe,text="Cost:",pady=5,padx=10)
+        edit_est_cost1.place(x=20,y=160)
+        edit_est_costentry = Entry(edit_est_updateframe,width=20,textvariable=edit_est_costval)
+        edit_est_costentry.place(x=120,y=165)
+        edit_est_costentry.delete(0, END)
+        edit_est_costentry.insert(0, edit_est_psdata[9])
+        edit_est_cal_cost = (edit_est_updateframe.register(edit_est_prdoucts_cal),'%S','%d')
+        edit_est_costentry.config(validate='key',validatecommand=(edit_est_cal_cost),justify='right')
+        
+
+        edit_est_priceval = StringVar()
+        edit_est_price1=Label(edit_est_updateframe,text="(Price-Cost):",pady=5,padx=10)
+        edit_est_price1.place(x=20,y=190)
+        edit_est_priceentry = Entry(edit_est_updateframe,width=20,textvariable=edit_est_priceval,state=DISABLED,disabledbackground="white",disabledforeground="black")
+        edit_est_priceentry.config(justify="right")
+        edit_est_priceentry.place(x=120,y=195)
+        edit_est_priceentry.delete(0,'end')
+        edit_est_priceentry.insert(0, edit_est_psdata[11])
+
+        edit_est_uval.trace('w', edit_est_set_label)
+        edit_est_costval.trace('w', edit_est_set_label)
+        
+
+        edit_est_checkvarStatus2=IntVar()
+      
+        edit_est_Button2 = Checkbutton(edit_est_updateframe,variable = edit_est_checkvarStatus2, 
+                          text="Taxable Tax1rate",compound="right",
+                          onvalue =1 ,
+                          offvalue =0,
+                          height=2,
+                          width = 12)
+        
+        edit_est_checkvarStatustax2=IntVar()
+        edit_est_Buttontax2 = Checkbutton(edit_est_updateframe,variable = edit_est_checkvarStatustax2, 
+                        text="Taxable Tax2rate",compound="right",
                         onvalue =1 ,
                         offvalue = 0,
-                        height=3,
-                        width = 15)
-
-      Button3.place(x=40,y=220)
-
-
-      stockval = IntVar(Customerlabelframe, value='0')
-      stock1=Label(Customerlabelframe,text="Stock:",pady=5,padx=10)
-      stock1.place(x=90,y=260)
-      stockentry = Entry(Customerlabelframe,width=15,textvariable=stockval)
-      stockentry.place(x=150,y=265)
-
-      lowval = IntVar(Customerlabelframe, value='0')
-      low1=Label(Customerlabelframe,text="Low Stock Warning Limit:",pady=5,padx=10)
-      low1.place(x=300,y=260)
-      lowentry = Entry(Customerlabelframe,width=10,textvariable=lowval)
-      lowentry.place(x=495,y=265)
-
-     
-      ware1=Label(Customerlabelframe,text="Warehouse:",pady=5,padx=10)
-      ware1.place(x=60,y=290)
-      wareentry = Entry(Customerlabelframe,width=50)
-      wareentry.place(x=150,y=295)
-
-      text1=Label(Customerlabelframe,text="Private notes(not appears on invoice):",pady=5,padx=10)
-      text1.place(x=20,y=330)
-
-      txt = scrolledtext.ScrolledText(Customerlabelframe, undo=True,width=62,height=4)
-      txt.place(x=32,y=358)
-
-
-
-
-      okButton = Button(innerFrame,compound = LEFT,image=tick , text ="Ok",width=60)
-      okButton.pack(side=LEFT)
-
-      cancelButton = Button(innerFrame,compound = LEFT,image=cancel ,text="Cancel",width=60)
-      cancelButton.pack(side=RIGHT)
-
-      imageFrame = Frame(tab2, relief=GROOVE,height=580)
-      imageFrame.pack(side="top",fill=BOTH)
-
-      browseimg=Label(imageFrame,text=" Browse for product image file(recommended image type:JPG,size 480x320 pixels) ",bg='#f5f3f2')
-      browseimg.place(x=15,y=35)
-
-      browsebutton=Button(imageFrame,text = 'Browse')
-      browsebutton.place(x=580,y=30,height=30,width=50)
-      
-      removeButton = Button(imageFrame,compound = LEFT,image=cancel, text ="Remove Product Image",width=150)
-      removeButton.place(x=400,y=450)
-
-
+                        height=2,
+                        width = 12)
+        
+        sql = "select taxtype from company"
+        fbcursor.execute(sql)
+        edit_est_taxchoose = fbcursor.fetchone()
+        if not edit_est_taxchoose:
+          pass
+        elif edit_est_taxchoose[0] == '1':
+          edit_est_Button2.place_forget()
+          edit_est_Buttontax2.place_forget()
+        elif edit_est_taxchoose[0] == '2':
+          edit_est_Button2.place(x=415,y=170)
+          edit_est_Buttontax2.place_forget()
+        elif edit_est_taxchoose[0] == '3':
+          edit_est_Button2.place(x=415,y=170)
+          edit_est_Buttontax2.place(x=415,y=210)
 
     
-                    
-    enter=Label(newselection, text="Enter filter text").place(x=5, y=10)
-    e1=Entry(newselection, width=20).place(x=110, y=10)
-    text=Label(newselection, text="Filtered column").place(x=340, y=10)
-    e2=Entry(newselection, width=20).place(x=450, y=10)
+        edit_est_tax = edit_est_psdata[10]
+        if edit_est_tax == '1':
+          edit_est_Button2.select()
+        else:
+          edit_est_Button2.deselect()
 
-    cusventtree=ttk.Treeview(newselection, height=27)
-    cusventtree["columns"]=["1","2","3", "4","5"]
-    cusventtree.column("#0", width=35)
-    cusventtree.column("1", width=160)
-    cusventtree.column("2", width=160)
-    cusventtree.column("3", width=140)
-    cusventtree.column("4", width=70)
-    cusventtree.column("5", width=70)
-    cusventtree.heading("#0",text="")
-    cusventtree.heading("1",text="ID/SKU")
-    cusventtree.heading("2",text="Product/Service Name")
-    cusventtree.heading("3",text="Unit price")
-    cusventtree.heading("4",text="Service")
-    cusventtree.heading("5",text="Stock")
-    cusventtree.place(x=5, y=45)
+        if edit_est_psdata[19] == '1':
+          edit_est_Buttontax2.select()
+        else:
+          edit_est_Buttontax2.deselect()
+
+        def edit_est_switch():
+          if edit_est_checkvarStatus3.get():
+            edit_est_stockentry["state"] = DISABLED
+            edit_est_lowentry["state"] = DISABLED
+            edit_est_wareentry["state"] = DISABLED
+          else:
+            edit_est_stockentry["state"] = NORMAL
+            edit_est_lowentry["state"] = NORMAL
+            edit_est_wareentry["state"] = NORMAL
+        edit_est_checkvarStatus3=BooleanVar()
+      
+        edit_est_Button3 = Checkbutton(edit_est_updateframe,variable = edit_est_checkvarStatus3,command=edit_est_switch, 
+                          text="This is a service(no stock control)", 
+                          onvalue =1 ,
+                          offvalue = 0,
+                          height=3)
+
+        edit_est_Button3.place(x=40,y=220)
+
+        
+
+        def edit_est_stocknum(input):
+          if input.isdigit():
+            return True
+          elif input is "":
+            return True
+          else:
+            return False
+        edit_est_stockval = IntVar(edit_est_updateframe)
+        edit_est_stock1=Label(edit_est_updateframe,text="Stock:",pady=5,padx=10)
+        edit_est_stock1.place(x=90,y=260)
+        edit_est_stockentry = Entry(edit_est_updateframe,width=15,textvariable=edit_est_stockval)
+        edit_est_stockentry.place(x=150,y=265)
+        edit_est_stockentry.delete(0,'end')
+        edit_est_stockentry.insert(0, edit_est_psdata[13])
+        edit_est_sto = edit_est_updateframe.register(edit_est_stocknum)
+        edit_est_stockentry.config(validate="key",validatecommand=(edit_est_sto, '%S'))
+        
+
+        edit_est_lowval = IntVar(edit_est_updateframe)
+        edit_est_low1=Label(edit_est_updateframe,text="Low Stock Warning Limit:",pady=5,padx=10)
+        edit_est_low1.place(x=270,y=260)
+        edit_est_lowentry = Entry(edit_est_updateframe,width=15,textvariable=edit_est_lowval)
+        edit_est_lowentry.place(x=432,y=265)
+        edit_est_lowentry.delete(0,'end')
+        edit_est_lowentry.insert(0, edit_est_psdata[14])
+        edit_est_lowsto = edit_est_updateframe.register(edit_est_stocknum)
+        edit_est_lowentry.config(validate="key",validatecommand=(edit_est_lowsto, '%S'))
+        
+
+      
+        edit_est_ware1=Label(edit_est_updateframe,text="Warehouse:",pady=5,padx=10)
+        edit_est_ware1.place(x=60,y=290)
+        edit_est_wareentry = Entry(edit_est_updateframe,width=64)
+        edit_est_wareentry.place(x=150,y=295)
+        edit_est_wareentry.insert(0, edit_est_psdata[15])
+
+        edit_est_scr = edit_est_psdata[12]
+        if edit_est_scr == '1':
+          edit_est_Button3.select()
+          edit_est_stockentry["state"] = DISABLED
+          edit_est_lowentry["state"] = DISABLED
+          edit_est_wareentry["state"] = DISABLED
+        else:
+          edit_est_Button3.deselect()
+          edit_est_stockentry["state"] = NORMAL
+          edit_est_lowentry["state"] = NORMAL
+          edit_est_wareentry["state"] = NORMAL
+        
+        
+
+        
+
+        edit_est_text1=Label(edit_est_updateframe,text="Private notes(not appears on invoice):",pady=5,padx=10)
+        edit_est_text1.place(x=20,y=330)
+        edit_est_sctxt = scrolledtext.ScrolledText(edit_est_updateframe, undo=True,width=62,height=4)
+        edit_est_sctxt.place(x=32,y=358)
+        try:
+          edit_est_sctxt.insert("1.0", edit_est_psdata[16])
+        except:
+          pass
+
+        edit_est_okButton = Button(edit_est_innerFrame, text ="Ok",image=tick,width=70,compound = LEFT,command=edit_est_updateproducts)
+        edit_est_okButton.place(x=10, y=475)
+
+        edit_est_cancelButton = Button(edit_est_innerFrame,image=cancel,text="Cancel",width=70,compound = LEFT, command=lambda : edit_est_top.destroy())
+        edit_est_cancelButton.place(x=519, y=475)
+        
+        
+        edit_est_imageFrame = Frame(edit_est_tabb, relief=GROOVE,height=580)
+        edit_est_imageFrame.pack(side="top",fill=BOTH)
+        # for record in recur_cusventtree1.get_children():
+        #   recur_cusventtree1.delete(record)
+        # doc_sql1 = "SELECT * FROM productservice WHERE sku=%s"
+        # doc_val1 = (edit_est_itemid,)
+        # fbcursor.execute(doc_sql1,doc_val1)
+        # doc_details1 = fbcursor.fetchall()
+        # print(doc_details1)
+        # countdocc = 0
+        # for doc1 in doc_details1:
+        #   file_size_31 = est_check_convertion(os.path.getsize("images/"+doc1[17]))
+        #   recurrecur_cusventtree1.insert(parent='',index='end',iid=doc1,text='',values=('',doc1[17],file_size_31))
+        # countdocc += 1
+
+        edit_est_browseimg=Label(edit_est_imageFrame,text=" Browse for product image file(recommended image type:JPG,size 480x320 pixels) ",bg='#f5f3f2')
+        edit_est_browseimg.place(x=15,y=35)
+
+        edit_est_browsebutton=Button(edit_est_imageFrame,text = 'Browse',command=edit_estupload_file)
+        edit_est_browsebutton.place(x=530,y=30,height=30,width=50)
+
+        try:
+          image = Image.open("images/"+edit_est_psdata[17])
+          resize_image = image.resize((350, 350))
+          image = ImageTk.PhotoImage(resize_image)
+          edit_est_b2 = Label(edit_est_imageFrame,image=image,width=350,height=350)
+          edit_est_b2.photo = image
+          edit_est_b2.place(x=130, y=80)
+          print(image)
+        except:
+          pass
+
+        edit_est_removeButton = Button(edit_est_imageFrame,image=cancel,text="Remove Product Image",width=150,compound = LEFT,command=lambda: edit_est_b2 .destroy())
+        edit_est_removeButton.place(x=410,y=460)
+      
+      def cncl_prd():
+        recur_newselection.destroy()
+      recur_enter10=Label(recur_newselection, text="Enter filter text").place(x=5, y=10)
+      recur_e10=Entry(recur_newselection, width=20)
+      recur_e10.place(x=110, y=10)
+      # recur_text10=Label(recur_newselection, text="Filtered column").place(x=340, y=10)
+      # recur_e20=Entry(recur_newselection, width=20).place(x=450, y=10)
+      recur_pro_filter_button=Button(recur_newselection, text='Click Here')
+      recur_pro_filter_button.place(x=240, y=9,height=20,width=60)
+
+      
+      
+      global recur_cusventtree1
+      recur_cusventtree1=ttk.Treeview(recur_newselection, height=25)
+      recur_cusventtree1["columns"]=["1","2","3", "4","5"]
+      recur_cusventtree1.column("#0", width=35)
+      recur_cusventtree1.column("1", width=160)
+      recur_cusventtree1.column("2", width=160)
+      recur_cusventtree1.column("3", width=140)
+      recur_cusventtree1.column("4", width=70)
+      recur_cusventtree1.column("5", width=70)
+      recur_cusventtree1.heading("#0",text="")
+      recur_cusventtree1.heading("1",text="ID/SKU")
+      recur_cusventtree1.heading("2",text="Product/Service Name")
+      recur_cusventtree1.heading("3",text="Unit price")
+      recur_cusventtree1.heading("4",text="Service")
+      recur_cusventtree1.heading("5",text="Stock")
+      recur_cusventtree1.tag_configure('green', foreground='green')
+      recur_cusventtree1.tag_configure('red', foreground='red')
+      recur_cusventtree1.tag_configure('blue', foreground='blue')
+      
+    
+      countp = 0
+      sql = 'select * from Productservice'
+      fbcursor.execute(sql)
+      estprodata = fbcursor.fetchall()
+      for i in estprodata:
+        if i[12] == '1':
+          servi = '🗹'
+        else:
+          servi = ''
+        sql = "select currencysign,currsignplace from company"
+        fbcursor.execute(sql)
+        estcurrsymb = fbcursor.fetchone()
+        if not estcurrsymb: 
+          if i[13] > i[14]:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+            countp += 1              
+          elif i[12] == '1':
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+            countp += 1
+          else:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+            countp += 1
+                  
+        elif estcurrsymb[1] == "before amount":
+          if (i[13]) > (i[14]):
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+            countp += 1
+          elif i[12] == '1':
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+            countp += 1
+          else:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+            countp += 1
+
+        elif estcurrsymb[1] == "before amount with space":
+          if (i[13]) > (i[14]):
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+            countp += 1
+          elif i[12] == '1':
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+            countp += 1
+          else:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+            countp += 1
+
+        elif estcurrsymb[1] == "after amount":
+          if (i[13]) > (i[14]):
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+            countp += 1
+          elif i[12] == '1':
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+            countp += 1
+          else:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+            countp += 1
+
+        elif estcurrsymb[1] == "after amount with space":
+          if (i[13]) > (i[14]):
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+            countp += 1
+          elif i[12] == '1':
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+            countp += 1
+          else:
+            recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+            countp += 1
+      recur_cusventtree1.place(x=5, y=45)
+      
+
+      recur_ctegorytree1=ttk.Treeview(recur_newselection, height=25)
+      recur_ctegorytree1["columns"]=["1"]
+      recur_ctegorytree1.column("#0", width=35, minwidth=20)
+      recur_ctegorytree1.column("1", width=205, minwidth=25, anchor=CENTER)    
+      recur_ctegorytree1.heading("#0",text="", anchor=W)
+      recur_ctegorytree1.heading("1",text="View filter by category", anchor=CENTER)
+      recur_ctegorytree1.place(x=660, y=45)
+      def est_items_selected(event):
+        selected_indices = est_fil_cat_list.curselection()
+        selected_filter = ",".join([est_fil_cat_list.get(i) for i in selected_indices])
+
+        sql = 'select * from Productservice'
+        fbcursor.execute(sql)
+        pandsdata = fbcursor.fetchall()
+        psql = "select * from Productservice where serviceornot=%s"
+        val = ('0', )
+        fbcursor.execute(psql, val)
+        pdata = fbcursor.fetchall()
+
+        ssql = "select * from Productservice where serviceornot=%s"
+        val = ('1', )
+        fbcursor.execute(ssql, val)
+        sdata = fbcursor.fetchall()
+
+        if selected_filter == "View all records":
+          for record in recur_cusventtree1.get_children():
+            recur_cusventtree1.delete(record)
+          countp = 0
+          for i in pandsdata:
+            if i[12] == '1':
+              servi = '🗹'                     #'Active'
+            else:
+              servi = ' '                         #'Inactive'
+            sql = "select currencysign,currsignplace from company"
+            fbcursor.execute(sql)
+            estcurrsymb = fbcursor.fetchone()
+            if not estcurrsymb: 
+              if i[13] > i[14]:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+                countp += 1              
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+                countp += 1
+                      
+            elif estcurrsymb[1] == "before amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "before amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+
+        elif selected_filter == "View all products":
+          for record in recur_cusventtree1.get_children():
+            recur_cusventtree1.delete(record)
+          countp = 0
+          for i in pdata:
+            if i[12] == '1':
+              servi = '🗹'                   #'Active'
+            else:
+              servi = ' '                    #'Inactive'
+            sql = "select currencysign,currsignplace from company"
+            fbcursor.execute(sql)
+            estcurrsymb = fbcursor.fetchone()
+            if not estcurrsymb: 
+              if i[13] > i[14]:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+                countp += 1              
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+                countp += 1
+                      
+            elif estcurrsymb[1] == "before amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "before amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+        elif selected_filter == "View all services":
+          for record in recur_cusventtree1.get_children():
+            recur_cusventtree1.delete(record)
+          countp = 0
+          for i in sdata:
+            if i[12] == '1':
+              servi = '🗹'             #'Active'
+            else:
+              servi = ' '              #'Inactive'
+            sql = "select currencysign,currsignplace from company"
+            fbcursor.execute(sql)
+            estcurrsymb = fbcursor.fetchone()
+            if not estcurrsymb: 
+              if i[13] > i[14]:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('green',))
+                countp += 1              
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7],servi,i[13]),tags=('red',))
+                countp += 1
+                      
+            elif estcurrsymb[1] == "before amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0]+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "before amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],estcurrsymb[0] +" "+i[7],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+
+            elif estcurrsymb[1] == "after amount with space":
+              if (i[13]) > (i[14]):
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('green',))
+                countp += 1
+              elif i[12] == '1':
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('blue',))
+                countp += 1
+              else:
+                recur_cusventtree1.insert(parent='', index='end', iid=countp, text='', values=(i[2],i[4],i[7]+" "+estcurrsymb[0],servi,i[13]),tags=('red',))
+                countp += 1
+
+      est_fil_cat_list = Listbox(recur_newselection,height=34,width=40,bg="white",activestyle="dotbox",fg="black",highlightbackground="white")
+      est_fil_cat_list.insert(0,"View all records")
+      est_fil_cat_list.insert(1,"View all products")
+      est_fil_cat_list.insert(2,"View all services")
+      est_fil_cat_list.place(x=660,y=63)
+      est_fil_cat_list.bind('<<ListboxSelect>>',est_items_selected)
+      est_stockok = Label(recur_newselection,text="Green: Stock is Ok",foreground="green").place(x =15,y =580)
+      est_stocko = Label(recur_newselection,text="Red: Limit <= Low Stock Limit",foreground="red").place(x =136,y=580)
+      est_stock = Label(recur_newselection,text="Blue: Service,no Stock Control",foreground="blue").place(x =335,y =580)
 
 
-    ctegorytree=ttk.Treeview(newselection, height=27)
-    ctegorytree["columns"]=["1"]
-    ctegorytree.column("#0", width=35, minwidth=20)
-    ctegorytree.column("1", width=205, minwidth=25, anchor=CENTER)    
-    ctegorytree.heading("#0",text="", anchor=W)
-    ctegorytree.heading("1",text="View filter by category", anchor=CENTER)
-    ctegorytree.place(x=660, y=45)
+      recur_scrollbar10 = Scrollbar(recur_newselection)
+      recur_scrollbar10.place(x=640, y=45, height=520)
+      recur_scrollbar10.config( command=recur_cusventtree1.yview )
 
-    scrollbar = Scrollbar(newselection)
-    scrollbar.place(x=640, y=45, height=560)
-    scrollbar.config( command=ctegorytree.yview )
-   
+      def estselepro():
+        global estpriceview
+        estpriceview = Label(prd_tree,bg="#f5f3f2")
+        estpriceview.place(x=850,y=200,width=78,height=18)
+        proskuid = recur_cusventtree1.item(recur_cusventtree1.focus())["values"][0]
+        sql = "select * from Productservice where sku = %s"
+        val = (proskuid,)
+        fbcursor.execute(sql,val)
+        prosele = fbcursor.fetchone()
+        sql = "select * from company"
+        fbcursor.execute(sql)
+        create_maintree_insert = fbcursor.fetchone()
+        if prosele[10] == '1':
+          tax1 = 'yes'
+        else:
+          tax1 = ''
+        if prosele[19] == '1':
+          tax2 = 'yes'
+        else:
+          tax2 = ''
+        
+        if not create_maintree_insert:
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,prosele[7]*1))
 
-    btn1=Button(newselection,compound = LEFT,image=tick ,text="ok", width=60).place(x=15, y=610)
-    btn1=Button(newselection,compound = LEFT,image=tick , text="Edit product/Service", width=150,command=product).place(x=250, y=610)
-    btn1=Button(newselection,compound = LEFT,image=tick , text="Add product/Service", width=150,command=product).place(x=435, y=610)
-    btn1=Button(newselection,compound = LEFT,image=cancel ,text="Cancel", width=60).place(x=740, y=610)
+        elif create_maintree_insert[12] == "1":
+          
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],prosele[7]*1))
+        
+          extracs = 0.0
+          discou = 0.0
+          total = 0.0
+          for child in prd_tree.get_children():
+            total += float(prd_tree.item(child, 'values')[6])
+          discou = (total*float(recurs_discount2.get())/100)
+          extracs = (extracs+float(rir_cost3.get()))
+          recur_costtt.config(text=rir_cost3.get())
+          recur_discounttt1.config(text=discou)
+          estpriceview.config(text=total)
+          recur_total1.config(text=total-discou+extracs)
+          recur_balancee1.config(text=total-discou+extracs)
+          recur_subbb1.config(text=total-discou)
+          
+        elif create_maintree_insert[12] == "2":
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,prosele[7]*1))
+          extracs = 0.0
+          discou = 0.0
+          total = 0.0
+          for child in prd_tree.get_children():
+            total += float(prd_tree.item(child, 'values')[7])
+          discou = (total*float(recurs_discount2.get())/100)
+          extracs = (extracs+float(rir_cost3.get()))
+          recur_costtt.config(text=rir_cost3.get())
+          recur_discounttt1.config(text=discou)
+          estpriceview.config(text=total)
+          recur_subbb1.config(text=total-discou)
+
+          tot = 0.0
+          totaltax1 = 0.0
+          for child in prd_tree.get_children():
+            checktax1 = list(prd_tree.item(child, 'values'))
+            if checktax1[6] == "yes":
+              totaltax1 =(totaltax1 + float(checktax1[7]))
+              recur_ttax1.config(text=float(totaltax1)*float(recurs_tax4.get())/100)
+              tot = (float(totaltax1)*float(recurs_tax4.get())/100)
+            else:
+              pass
+          recur_total1.config(text=total+tot-discou+extracs)
+          recur_balancee1.config(text=total+tot-discou+extracs)
+            
+        elif create_maintree_insert[12] == "3":
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,tax2,prosele[7]*1))
+          extracs = 0.0
+          discou = 0.0
+          total = 0.0
+          for child in prd_tree.get_children():
+            total += float(prd_tree.item(child, 'values')[8])
+          extracs = (extracs+float(rir_cost3.get()))
+          recur_costtt.config(text=rir_cost3.get())
+          discou = (total*float(recurs_discount2.get())/100)
+          recur_discounttt1.config(text=discou)
+          estpriceview.config(text=total)
+          recur_subbb1.config(text=total-discou)
+            
+          tot = 0.0
+          totaltax1 = 0.0
+          for child in prd_tree.get_children():
+            checktax1 = list(prd_tree.item(child, 'values'))
+            if checktax1[6] == "yes":
+              totaltax1 =(totaltax1 + float(checktax1[8]))
+              recur_ttax1.config(text=(float(totaltax1)*float(recurs_tax4.get())/100))
+              tot = (float(totaltax1)*float(recurs_tax4.get())/100)
+            else:
+              pass
+          
+          tot2 = 0.0
+          totaltax2 = 0.0
+          for child in prd_tree.get_children():
+            checktax1 = list(prd_tree.item(child, 'values'))
+            if checktax1[7] == "yes":
+              totaltax2 =(totaltax2 + float(checktax1[8]))
+              recur_ttax2.config(text=(float(totaltax2)*float(recurs_tax5.get())/100))
+              
+              tot2 = (float(totaltax2)*float(recurs_tax5.get())/100)
+            else:
+              pass
+
+          recur_total1.config(text=total+tot+tot2-discou+extracs)
+          recur_balancee1.config(text=total+tot+tot2-discou+extracs)
+        
+        recur_newselection.destroy()
+      
+      
+        
+
+      recur_btn11=Button(recur_newselection,compound = LEFT,image=tick ,text="ok", width=60, command=estselepro).place(x=15, y=610)
+      recur_btn11=Button(recur_newselection,compound = LEFT,image=tick , text="Edit product/Service", width=150,command=est_edit_product).place(x=250, y=610)
+      recur_btnadd=Button(recur_newselection,compound = LEFT,image=tick , text="Add product/Service", width=150,command=recur_product)
+      recur_btnadd.place(x=435, y=610)
+      recur_btn11=Button(recur_newselection,compound = LEFT,image=cancel ,text="Cancel",command=cncl_prd, width=60).place(x=740, y=610)
   
   #sms notification
   def sms_recurring():
@@ -2156,7 +3209,7 @@ def view_invs_rir():
   w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=5)
 
-  add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=newline_recurring)
+  add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=recurring_New_newline)
   add.pack(side="left", pady=3, ipadx=4)
 
   dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
@@ -2198,7 +3251,7 @@ def view_invs_rir():
 
   fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
   fir1Frame.pack(side="top", fill=X)
-
+  #---------------------------------------------------------------------------------------------Customer Selection Functiopn
   def name_sltd(event):
     
    
@@ -2212,8 +3265,8 @@ def view_invs_rir():
     fbcursor.execute(sdou_qsy,sdou_qsy_qry)
     dtl_inv=fbcursor.fetchone()
   
-    address_rir.delete(0,END)
-    address_rir.insert(0,dtl_rir_cus[5])
+    address_rir.delete(1.0,END)
+    address_rir.insert(1.0,dtl_rir_cus[5])
     shp_to_rir.delete(0,END)
     shp_to_rir.insert(0,dtl_rir_cus[6])
     shp_to_adr_rir.delete(1.0,END)
@@ -2230,6 +3283,187 @@ def view_invs_rir():
     due_dt_rir.insert(0,dtl_inv[2])
     trms_cmb.delete(0,END)
     trms_cmb.insert(0,dtl_inv[35])
+
+    cmb_ext_nm.delete(0,END)
+    cmb_ext_nm.insert(0,dtl_inv[11])
+    dsc_rt.delete(0,END)
+    dsc_rt.insert(0,dtl_inv[15])
+    rir_cost3.delete(0,END)
+    rir_cost3.insert(0,dtl_inv[12])
+    sql_yty='select taxtype from company'
+    fbcursor.execute(sql_yty)
+    taxtype=fbcursor.fetchone()
+    if int(taxtype[0])==3:
+      tax1_rir.delete(0,END)
+      tax1_rir.insert(0,dtl_inv[16])
+      tax2_rir.delete(0,END)
+      tax2_rir.insert(0,dtl_inv[36])
+    elif int(taxtype[0])==2:
+      tax1_rir.delete(0,END)
+      tax1_rir.insert(0,dtl_inv[16])
+    else:
+      pass
+    tmp_rir.delete(0,END)
+    tmp_rir.insert(0,dtl_inv[13])
+    sl_prsn.delete(0,END)
+    sl_prsn.insert(0,"Administrator")
+    ct_rir.delete(0,END)
+    ct_rir.insert(0,dtl_inv[17])
+
+    #-------------------------------------------------------------------------------Insert Summary
+    
+
+    sqlr= 'select currencysign from company'
+    fbcursor.execute(sqlr)
+    crncy=fbcursor.fetchone()
+    crcy_tp=crncy[0]
+    sqlrt= 'select currsignplace from company'
+    fbcursor.execute(sqlrt)
+    post_rp=fbcursor.fetchone()
+    crcy_tp_ps=post_rp[0]
+    
+    if int(taxtype[0])==2:
+      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+      fir4Frame.place(x=740,y=520)
+      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+      summaryfrme.place(x=0,y=0,width=200,height=170)
+      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+      if crcy_tp_ps=="before amount": 
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[16])).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=126)
+      elif cency_pos=="after amount":
+        discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(dtl_inv[16])+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=126)
+      elif cency_pos=="before amount with space":
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[16])).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[10])).place(x=130 ,y=126)
+      elif cency_pos=="after amount with space":
+        discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(dtl_inv[16])+" "+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=126)
+      else:
+        pass
+    elif int(taxtype[0])==3:
+      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+      fir4Frame.place(x=740,y=520)
+      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+      summaryfrme.place(x=0,y=0,width=200,height=170)
+      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+      tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+      if crcy_tp_ps=="before amount": 
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[16])).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[36])).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=126)
+      elif cency_pos=="after amount":
+        discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(dtl_inv[16])+str(crcy_tp)).place(x=130 ,y=30)
+        ta2=Label(summaryfrme, text=str(dtl_inv[36])+str(crcy_tp)).place(x=130 ,y=45)   
+        cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=126)
+      elif cency_pos=="before amount with space":
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[16])).place(x=130 ,y=30) 
+        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(dtl_inv[36])).place(x=130 ,y=45)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+      elif cency_pos=="after amount with space":
+        discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(dtl_inv[16])+" "+str(crcy_tp)).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(dtl_inv[36])+" "+str(crcy_tp)).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=126)
+      else:
+        pass
+    else:
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+        if crcy_tp_ps=="before amount": 
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=21) 
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=105)
+        elif cency_pos=="after amount":
+          discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=21)
+      
+          cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=105)
+        elif cency_pos=="before amount with space":
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=21)
+    
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[10])).place(x=130 ,y=105)
+        elif cency_pos=="after amount with space":
+          discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=21)
+    
+          cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        else:
+          pass
+
 
     #=---------------------------------------------------------------------------------------Table
     sql_yty='select taxtype from company'
@@ -2271,18 +3505,39 @@ def view_invs_rir():
       for i in main_prd_val:
             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[13]))
             count_prd +=1
-  def rir_btm(event):
-    
-    prd_sq_ry='select * from invoice where invoice_number=%s'
-    prd_sq_ry_dqr=(inv_nmb_rir.get(),)
-    fbcursor.execute(prd_sq_ry,prd_sq_ry_dqr)
-    prd_slt_sub=fbcursor.fetchall()
+    #--------------------------------------------------------------------------------------recurring
+    if dtl_inv[24] is not None:
+      stp_rir.select()
+    else:
+      stp_rir.deselect()
+    if dtl_inv[27] is not None:
+      stp_rir2.select()
+    else:
+      stp_rir2.deselect()
 
-    
+    dt_nxt_inv.delete(0,END)
+    dt_nxt_inv.insert(0,dtl_inv[26])
+    dt_stp_inv.delete(0,END)
+    dt_stp_inv.insert(0,dtl_inv[27])
+
+    #-------------------------------------------------------------------------------------Header Fotter
+    cmp_ttl.delete(0,END)
+    cmp_ttl.insert(0,dtl_inv[39])
+    cmp_ht.delete(0,END)
+    cmp_ht.insert(0,dtl_inv[40])
+    cmp_ft.delete(0,END)
+    cmp_ft.insert(0,dtl_inv[41])
+    #=======================================================================private note
+    prv_nt.delete(1.0,END)
+    prv_nt.insert(1.0,dtl_inv[45])
+    #=======================================================================terms
+    trms.delete(1.0,END)
+    trms.insert(1.0,dtl_inv[35])
+    #=======================================================================comments
+    cmm.delete(1.0,END)
+    cmm.insert(1.0,dtl_inv[44])
 
 
-
-    
   cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
     
   sdrt_qsy='select businessname from customer'
@@ -2293,7 +3548,14 @@ def view_invs_rir():
   sdrt_qry_qtr=(cusr_selct,)
   fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
   dtl_rissr_cus=fbcursor.fetchone()
-
+  #-----------------------------------------------------------------------------------button >>
+  def cpy_dts():
+    
+    shp_to_rir.delete(0,END)
+    shp_to_rir.insert(0,cust_selction_nm.get())
+    shp_to_adr_rir.delete(1.0,END)
+    shp_to_adr_rir.insert(1.0,address_rir.get(1.0,END))
+    pass
   labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
   labelframe1.place(x=10,y=5,width=640,height=160)
   order = Label(labelframe1, text="Order to").place(x=10,y=5)
@@ -2319,25 +3581,26 @@ def view_invs_rir():
   fbcursor.execute(sdou_qsy,sdou_qsy_qry)
   dtl_inv=fbcursor.fetchone()
 
+  
+
   sdous_qsy='select terms from invoice'
   fbcursor.execute(sdous_qsy)
   dtl_inv_all=fbcursor.fetchall()
 
+  
 
   address=Label(labelframe1,text="Address").place(x=10,y=30)
-  address_rir=Entry(labelframe1,width=23,)
- 
+  address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
   address_rir.place(x=80,y=30,height=70)
+
   ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
   shp_to_rir=Entry(labelframe1,width=30)
-
   shp_to_rir.place(x=402,y=3)
   address1=Label(labelframe1,text="Address").place(x=340,y=30)
-  shp_to_adr_rir=Text(labelframe1,width=23)
-  
+  shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
   shp_to_adr_rir.place(x=402,y=30,height=70)
 
-  btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>").place(x=280, y=50)
+  btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
     
   labelframe2 = LabelFrame(fir1Frame,text="")
   labelframe2.place(x=10,y=130,width=640,height=42)
@@ -2367,7 +3630,7 @@ def view_invs_rir():
   due_dt_rir.place(x=150,y=62)
   terms=Label(labelframe,text="Terms").place(x=5,y=92)
   trms_cmb=ttk.Combobox(labelframe,width=25)
-  trms_cmb['values']=dtl_inv_all
+  trms_cmb['values']=dtl_inv_all[0]
   trms_cmb.place(x=100,y=92)
 
   ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
@@ -2407,20 +3670,8 @@ def view_invs_rir():
       prd_tree.heading("6",text="Pcs/Weight")
       prd_tree.heading("7",text="Tax1")
       prd_tree.heading("8",text="Price")
-
-
-      # rir_prd_table_sql="select * from storingproduct where invoiceid=%s"
-      # rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      # fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      # main_prd_val=fbcursor.fetchall()
-      # count_prd=0
-
-      # for i in main_prd_val:
-      #       prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[4],i[6],i[7],i[9],i[22],i[10],i[11],i[11]))
-      #       count_prd +=1
-      
       prd_tree.pack(fill="both", expand=1)
-      prd_tree.bind('<<TreeviewSelect>>',rir_btm)
+
 
   elif int(taxtype[0])==3:
       
@@ -2451,8 +3702,9 @@ def view_invs_rir():
       prd_tree.heading("7",text="Tax1")
       prd_tree.heading("8",text="Tax2")
       prd_tree.heading("9",text="Price")
-      prd_tree.pack(fill="both", expand=1)
-      prd_tree.bind('<<TreeviewSelect>>',rir_btm)
+      prd_tree.pack(fill="both", expand=1)\
+      
+
   else:
       fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
       fir2Frame.pack(side="top", fill=X)
@@ -2490,7 +3742,7 @@ def view_invs_rir():
       #       count_prd +=1
       
       prd_tree.pack(fill="both", expand=1)
-      prd_tree.bind('<<TreeviewSelect>>',rir_btm)
+    
 
   listFrame.pack(side="top", fill="both", padx=5, pady=3, expand=1)
 
@@ -2523,45 +3775,92 @@ def view_invs_rir():
   labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
   labelframe1.place(x=1,y=1,width=800,height=170)
   cost1=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
-  e1=ttk.Combobox(labelframe1, value="",width=20).place(x=115,y=5)
-  rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
-  e2=Entry(labelframe1,width=6).place(x=460,y=5)
-  cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
-  e3=Entry(labelframe1,width=10).place(x=115,y=35)
-  tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
-  e4=Entry(labelframe1,width=7).place(x=460,y=35)
+  cmb_ext_nm=ttk.Combobox(labelframe1, value="",width=20)
+  cmb_ext_nm.place(x=115,y=5)
 
-  tax=Label(labelframe1,text="Tax2").place(x=420,y=60)
-  e4=Entry(labelframe1,width=7).place(x=460,y=60)
+  rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
+  dsc_rt=Entry(labelframe1,width=6)
+  dsc_rt.place(x=460,y=5)
+
+  cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
+  rir_cost3=Entry(labelframe1,width=10)
+  rir_cost3.place(x=115,y=35)
+  if int(taxtype[0])==3:
+    tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
+    tax1_rir=Entry(labelframe1,width=7)
+    tax1_rir.place(x=460,y=35)
+
+    tax=Label(labelframe1,text="Tax2").place(x=420,y=60)
+    tax2_rir=Entry(labelframe1,width=7)
+    tax2_rir.place(x=460,y=60)
+  elif int(taxtype[0])==2:
+    tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
+    tax1_rir=Entry(labelframe1,width=7)
+    tax1_rir.place(x=460,y=35)
+  else:
+    pass
 
   template=Label(labelframe1,text="Template").place(x=37,y=70)
-  e5=ttk.Combobox(labelframe1, value="",width=25).place(x=115,y=70)
+  tmp_rir=ttk.Combobox(labelframe1, value="",width=25)
+  tmp_rir.place(x=115,y=70)
+
   sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
-  e6=Entry(labelframe1,width=18).place(x=115,y=100)
+  sl_prsn=Entry(labelframe1,width=18)
+  sl_prsn.place(x=115,y=100)
   category=Label(labelframe1,text="Category").place(x=300,y=100)
-  e7=Entry(labelframe1,width=22).place(x=370,y=100)
+  ct_rir=Entry(labelframe1,width=22)
+  ct_rir.place(x=370,y=100)
+ 
     
   statusfrme = LabelFrame(labelframe1,text="Status",font=("arial",15))
   statusfrme.place(x=540,y=0,width=160,height=160)
   draft=Label(statusfrme, text="Draft",font=("arial", 15, "bold"), fg="grey").place(x=50, y=3)
+  emon=StringVar()
+  pron=StringVar()
   on1=Label(statusfrme, text="Emailed on:").place( y=50)
-  nev1=Label(statusfrme, text="Never").place(x=100,y=50)
+  nev1=Label(statusfrme, text="Never")
+  nev1.place(x=100,y=50)
   on2=Label(statusfrme, text="Printed on:").place( y=90)
-  nev2=Label(statusfrme, text="Never").place(x=100,y=90)
+  nev2=Label(statusfrme, text="Never")
+  nev2.place(x=100,y=90)
 
   text1=Label(headerFrame,text="Title text").place(x=50,y=5)
-  e1=ttk.Combobox(headerFrame, value="",width=60).place(x=125,y=5)
+
+  sdous_qsy='select title_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inf_ttl=fbcursor.fetchall()
+
+  sdous_qsy='select header_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inv_ht=fbcursor.fetchall()
+
+  sdous_qsy='select footer_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inv_ft=fbcursor.fetchall()
+
+  cmp_ttl=ttk.Combobox(headerFrame,width=60)
+  cmp_ttl['value']=inf_ttl
+  cmp_ttl.place(x=125,y=5)
   text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
-  e1=ttk.Combobox(headerFrame, value="",width=60).place(x=125,y=45)
+  cmp_ht=ttk.Combobox(headerFrame,width=60)
+  cmp_ht['value']=inv_ht
+  cmp_ht.place(x=125,y=45)
   text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
-  e1=ttk.Combobox(headerFrame, value="",width=60).place(x=125,y=85)
+  cmp_ft=ttk.Combobox(headerFrame,width=60)
+  cmp_ft['value']=inv_ft
+  cmp_ft.place(x=125,y=85)
+
+  
 
   text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)").place(x=10,y=10)
-  e1=Text(noteFrame,width=100,height=7).place(x=10,y=32)
+  prv_nt=Text(noteFrame,width=100,height=7)
+  prv_nt.place(x=10,y=32)
 
-  e1=Text(termsFrame,width=100,height=9).place(x=10,y=10)
+  trms=Text(termsFrame,width=100,height=9)
+  trms.place(x=10,y=10)
 
-  e1=Text(commentFrame,width=100,height=9).place(x=10,y=10)
+  cmm=Text(commentFrame,width=100,height=9)
+  cmm.place(x=10,y=10)
 
   btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
   btn2=Button(documentFrame,height=2,width=3,text="-").place(x=5,y=50)
@@ -2578,34 +3877,169 @@ def view_invs_rir():
   cusventtree.heading("3",text="Filesize")  
   cusventtree.place(x=50, y=45)
     
+  
+  sqlr= 'select currencysign from company'
+  fbcursor.execute(sqlr)
+  crncy=fbcursor.fetchone()
+  crcy_tp=crncy[0]
+  sqlrt= 'select currsignplace from company'
+  fbcursor.execute(sqlrt)
+  post_rp=fbcursor.fetchone()
+  crcy_tp_ps=post_rp[0]
+  
+  if int(taxtype[0])==2:
+    fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+    fir4Frame.place(x=740,y=520)
+    summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+    summaryfrme.place(x=0,y=0,width=200,height=170)
+    discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+    sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+    tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+    cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+    order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+    total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+    balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+    if crcy_tp_ps=="before amount": 
+      discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+    elif cency_pos=="after amount":
+      discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+    elif cency_pos=="before amount with space":
+      discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+    elif cency_pos=="after amount with space":
+      discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+    else:
+      pass
+  elif int(taxtype[0])==3:
+    fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+    fir4Frame.place(x=740,y=520)
+    summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+    summaryfrme.place(x=0,y=0,width=200,height=170)
+    discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+    sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+    tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+    tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+    cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+    order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+    total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+    balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+    if crcy_tp_ps=="before amount": 
+      discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=30)  
+      ta2=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=45) 
+      cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+    elif cency_pos=="after amount":
+      discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=30)
+      ta2=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=45)   
+      cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+    elif cency_pos=="before amount with space":
+      discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=30) 
+      ta2=Label(summaryfrme, text=str(crcy_tp)+" "+"0.00").place(x=130 ,y=45)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+    elif cency_pos=="after amount with space":
+      discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=30)  
+      ta2=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=45) 
+      cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+    else:
+      pass
+  else:
+      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+      fir4Frame.place(x=740,y=520)
+      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+      summaryfrme.place(x=0,y=0,width=200,height=170)
+      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+      if crcy_tp_ps=="before amount": 
+        discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21) 
+        cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+      elif cency_pos=="after amount":
+        discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+     
+        cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+      elif cency_pos=="before amount with space":
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+      elif cency_pos=="after amount with space":
+        discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+  
+        cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+      else:
+        pass
 
-  fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-  fir4Frame.place(x=740,y=520)
-  summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-  summaryfrme.place(x=0,y=0,width=200,height=170)
-  discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
-  discount1=Label(summaryfrme, text="$0.00").place(x=130 ,y=0)
-  sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-  sub1=Label(summaryfrme, text="$0.00").place(x=130 ,y=21)
-  tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
-  tax1=Label(summaryfrme, text="$0.00").place(x=130 ,y=42)
-  cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-  cost=Label(summaryfrme, text="$0.00").place(x=130 ,y=63)
-  order=Label(summaryfrme, text="Order total").place(x=0 ,y=84)
-  order1=Label(summaryfrme, text="$0.00").place(x=130 ,y=84)
-  total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-  total1=Label(summaryfrme, text="$0.00").place(x=130 ,y=105)
-  balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-  balance1=Label(summaryfrme, text="$0.00").place(x=130 ,y=126)
   #---------------------------------------------------------------------------------------recuring frame
   labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
   labelframe2.place(x=1,y=1,width=730,height=170)
   checkvarStatus5=IntVar()
   stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Recurring",onvalue =0 ,offvalue = 1)
+ 
   stp_rir.place(x=40,y=5)
 
   text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
   rir_spn_bx = Spinbox(labelframe2,from_=1,to=1000000,width=15,justify=RIGHT)
+  
   rir_spn_bx.place(x=270,y=30)
 
   main_cus_rir=StringVar()
@@ -2616,12 +4050,15 @@ def view_invs_rir():
 
   dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
   dt_nxt_inv=DateEntry(labelframe2,width=15)
+  
   dt_nxt_inv.place(x=380,y=60)
 
   checkvarStatus5=IntVar()
-  stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Stop Recurring After",onvalue =0 ,offvalue = 1)
-  stp_rir.place(x=240,y=85)
+  stp_rir2=Checkbutton(labelframe2,variable = checkvarStatus5,text="Stop Recurring After",onvalue =0 ,offvalue = 1)
+  
+  stp_rir2.place(x=240,y=85)
   dt_stp_inv=DateEntry(labelframe2,width=15)
+
   dt_stp_inv.place(x=380,y=90)
 
 
@@ -2644,7 +4081,7 @@ def view_invs_rir():
   pym_rir_tr.heading("3",text="Paid By")  
   pym_rir_tr.heading("4",text="Description")
   pym_rir_tr.heading("5",text="Amount")
-  
+
   pym_rir_tr.place(x=0, y=0)
   
 
