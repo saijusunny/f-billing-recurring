@@ -795,8 +795,66 @@ def view_invs_rir():
     cuselection.title("Select Customer")
     cuselection.geometry("930x650+240+10")
     cuselection.resizable(False, False)
+    ##------------------------------------------------------------------------------------------customer Filter
+    def cus_filter_rir(event):
+      selected_indices = cus_listbox.curselection()
+      selected_font = ",".join([cus_listbox.get(i) for i in selected_indices])
+ 
+      if selected_font== "             View all records":
+        for record in cusventtree.get_children():
+          cusventtree.delete(record)
+        cus_main_table_sql="select * from customer"
+        fbcursor.execute(cus_main_table_sql)
+        main_tb_val=fbcursor.fetchall()
+        
+        count_cus=0
 
+        for i in main_tb_val:
+          cusventtree.insert(parent='', index='end', iid=count_cus, values=(i[24],i[4],i[10],i[8]))
+          
+          count_cus +=1
+      elif selected_font== "             View only Client/Vendor Type":
+        for record in cusventtree.get_children():
+          cusventtree.delete(record)
+        cus_main_table_sql="select * from customer where customertype='Both(Client/Vender)'"
+        fbcursor.execute(cus_main_table_sql)
+        main_tb_val=fbcursor.fetchall()
+        
+        count_cus=0
 
+        for i in main_tb_val:
+          cusventtree.insert(parent='', index='end', iid=count_cus, values=(i[24],i[4],i[10],i[8]))
+          
+          count_cus +=1
+      elif selected_font=="             View only Client Type":
+    
+        for record in cusventtree.get_children():
+          cusventtree.delete(record)
+        cus_main_table_sql="select * from customer where customertype='Client'"
+        fbcursor.execute(cus_main_table_sql)
+        main_tb_val=fbcursor.fetchall()
+        
+        count_cus=0
+
+        for i in main_tb_val:
+          cusventtree.insert(parent='', index='end', iid=count_cus, values=(i[24],i[4],i[10],i[8]))
+          
+          count_cus +=1
+      elif selected_font=="             View only Vendor Type":
+        for record in cusventtree.get_children():
+          cusventtree.delete(record)
+        cus_main_table_sql="select * from customer where customertype='Vender'"
+        fbcursor.execute(cus_main_table_sql)
+        main_tb_val=fbcursor.fetchall()
+        
+        count_cus=0
+
+        for i in main_tb_val:
+          cusventtree.insert(parent='', index='end', iid=count_cus, values=(i[24],i[4],i[10],i[8]))
+          
+          count_cus +=1
+      else:
+        pass
     #add new customer
     def create_newcustomer_recurring():
       def cancel_add():
@@ -1790,6 +1848,15 @@ def view_invs_rir():
     ctegorytree.column("1", width=205, minwidth=25, anchor=CENTER)    
     ctegorytree.heading("#0",text="", anchor=W)
     ctegorytree.heading("1",text="View filter by category", anchor=CENTER)
+    cus_listbox = Listbox(cuselection,height =34,  
+                      width = 40)  
+    cus_listbox.insert(0, "             View all records")
+    cus_listbox.insert(1, "             View only Client/Vendor Type")
+    cus_listbox.insert(2, "             View only Client Type")
+    cus_listbox.insert(3, "             View only Vendor Type")
+
+    cus_listbox.place(x=660,y=63)
+    cus_listbox.bind('<<ListboxSelect>>', cus_filter_rir)
     ctegorytree.place(x=660, y=45)
 
     scrollbar = Scrollbar(cuselection)
@@ -2198,7 +2265,7 @@ def view_invs_rir():
           edit_est_b2.place(x=130, y=80)
         
         def edit_est_updateproducts():
-          global img , filename 
+          global img , filename,sku,name,description,unitprice,peices,price_cost,taxable,tax2
           sku = edit_est_codeentry.get()
           status = edit_est_checkvarStatus.get()
           catgory = edit_est_n.get()
@@ -2600,7 +2667,6 @@ def view_invs_rir():
           edit_est_b2 = Label(edit_est_imageFrame,image=image,width=350,height=350)
           edit_est_b2.photo = image
           edit_est_b2.place(x=130, y=80)
-          print(image)
         except:
           pass
 
@@ -2969,97 +3035,231 @@ def view_invs_rir():
           tax2 = ''
         
         if not create_maintree_insert:
-          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,prosele[7]*1))
+           
+          if estcurrsymb[1]=="before amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+str(prosele[7]*1)))
+          elif estcurrsymb[1]=="after amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+str(estcurrsymb[1])))
+          elif estcurrsymb[1]=="before amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+" "+str(prosele[7]*1)))
+
+          elif estcurrsymb[1]=="after amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
 
         elif create_maintree_insert[12] == "1":
           
-          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],prosele[7]*1))
+          if estcurrsymb[1]=="before amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+str(prosele[7]*1)))
+          elif estcurrsymb[1]=="after amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+str(estcurrsymb[1])))
+          elif estcurrsymb[1]=="before amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+" "+str(prosele[7]*1)))
+
+          elif estcurrsymb[1]=="after amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
         
-          extracs = 0.0
-          discou = 0.0
-          total = 0.0
-          for child in prd_tree.get_children():
-            total += float(prd_tree.item(child, 'values')[6])
-          discou = (total*float(recurs_discount2.get())/100)
-          extracs = (extracs+float(rir_cost3.get()))
-          recur_costtt.config(text=rir_cost3.get())
-          recur_discounttt1.config(text=discou)
-          estpriceview.config(text=total)
-          recur_total1.config(text=total-discou+extracs)
-          recur_balancee1.config(text=total-discou+extracs)
-          recur_subbb1.config(text=total-discou)
           
         elif create_maintree_insert[12] == "2":
-          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,prosele[7]*1))
-          extracs = 0.0
-          discou = 0.0
-          total = 0.0
-          for child in prd_tree.get_children():
-            total += float(prd_tree.item(child, 'values')[7])
-          discou = (total*float(recurs_discount2.get())/100)
-          extracs = (extracs+float(rir_cost3.get()))
-          recur_costtt.config(text=rir_cost3.get())
-          recur_discounttt1.config(text=discou)
-          estpriceview.config(text=total)
-          recur_subbb1.config(text=total-discou)
+          if estcurrsymb[1]=="before amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],tax1,str(estcurrsymb[1])+str(prosele[7]*1)))
+          elif estcurrsymb[1]=="after amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],tax1,str(prosele[7]*1)+str(estcurrsymb[1])))
+          elif estcurrsymb[1]=="before amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],tax1,str(estcurrsymb[1])+" "+str(prosele[7]*1)))
 
-          tot = 0.0
-          totaltax1 = 0.0
-          for child in prd_tree.get_children():
-            checktax1 = list(prd_tree.item(child, 'values'))
-            if checktax1[6] == "yes":
-              totaltax1 =(totaltax1 + float(checktax1[7]))
-              recur_ttax1.config(text=float(totaltax1)*float(recurs_tax4.get())/100)
-              tot = (float(totaltax1)*float(recurs_tax4.get())/100)
-            else:
-              pass
-          recur_total1.config(text=total+tot-discou+extracs)
-          recur_balancee1.config(text=total+tot-discou+extracs)
+          elif estcurrsymb[1]=="after amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],tax1,str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
+          
             
         elif create_maintree_insert[12] == "3":
-          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,tax2,prosele[7]*1))
-          extracs = 0.0
-          discou = 0.0
-          total = 0.0
-          for child in prd_tree.get_children():
-            total += float(prd_tree.item(child, 'values')[8])
-          extracs = (extracs+float(rir_cost3.get()))
-          recur_costtt.config(text=rir_cost3.get())
-          discou = (total*float(recurs_discount2.get())/100)
-          recur_discounttt1.config(text=discou)
-          estpriceview.config(text=total)
-          recur_subbb1.config(text=total-discou)
-            
-          tot = 0.0
-          totaltax1 = 0.0
-          for child in prd_tree.get_children():
-            checktax1 = list(prd_tree.item(child, 'values'))
-            if checktax1[6] == "yes":
-              totaltax1 =(totaltax1 + float(checktax1[8]))
-              recur_ttax1.config(text=(float(totaltax1)*float(recurs_tax4.get())/100))
-              tot = (float(totaltax1)*float(recurs_tax4.get())/100)
-            else:
-              pass
+          if estcurrsymb[1]=="before amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],tax1,tax2,str(estcurrsymb[1])+str(prosele[7]*1)))
+          elif estcurrsymb[1]=="after amount": 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],tax1,tax2,str(prosele[7]*1)+str(estcurrsymb[1])))
+          elif estcurrsymb[1]=="before amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],tax1,tax2,str(estcurrsymb[1])+" "+str(prosele[7]*1)))
+
+          elif estcurrsymb[1]=="after amount with space":
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],tax1,tax2,str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
+        else:
+          pass
           
-          tot2 = 0.0
-          totaltax2 = 0.0
-          for child in prd_tree.get_children():
-            checktax1 = list(prd_tree.item(child, 'values'))
-            if checktax1[7] == "yes":
-              totaltax2 =(totaltax2 + float(checktax1[8]))
-              recur_ttax2.config(text=(float(totaltax2)*float(recurs_tax5.get())/100))
-              
-              tot2 = (float(totaltax2)*float(recurs_tax5.get())/100)
+          
+     
+        slt_prd="select * from productservice where sku=%s"
+        slt_prd_val=(proskuid,)
+        fbcursor.execute(slt_prd,slt_prd_val)
+        dtl_prd=fbcursor.fetchone()
+        
+        cus_tbl_add="INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,tax1,tax2,price)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)" #adding values into db
+        cus_tbl_add_val=(inv_nmb_rir.get(),dtl_prd[2],dtl_prd[4],dtl_prd[5],dtl_prd[7],1,dtl_prd[9],dtl_prd[10],dtl_prd[19],dtl_prd[7])
+        fbcursor.execute(cus_tbl_add,cus_tbl_add_val)
+        fbilldb.commit()
+        #--------------------------------------------------------------------------------------------------- Summary Refresh
+        sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+        sm_qry_val=(inv_nmb_rir.get(),)
+        fbcursor.execute(sm_qry,sm_qry_val)
+        smry_value=fbcursor.fetchone()
+        
+        sqlr= 'select currencysign from company'
+        fbcursor.execute(sqlr)
+        crncy=fbcursor.fetchone()
+        crcy_tp=crncy[0]
+        sqlrt= 'select currsignplace from company'
+        fbcursor.execute(sqlrt)
+        post_rp=fbcursor.fetchone()
+        crcy_tp_ps=post_rp[0]
+
+        smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+        smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+        smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+        smr_ext_cst=rir_cost3.get()
+        smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
+
+        if int(taxtype[0])==2:
+          
+          fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+          fir4Frame.place(x=740,y=520)
+          summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+          summaryfrme.place(x=0,y=0,width=200,height=170)
+          discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+          sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+          tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+          cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+          order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+          total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+          balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+          if crcy_tp_ps=="before amount": 
+            discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+smr_tax1).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+smr_ext_cst).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+          elif cency_pos=="after amount":
+            discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+          elif cency_pos=="before amount with space":
+            discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+          elif cency_pos=="after amount with space":
+            discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+          else:
+            pass
+        elif int(taxtype[0])==3:
+          fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+          fir4Frame.place(x=740,y=520)
+          summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+          summaryfrme.place(x=0,y=0,width=200,height=170)
+          discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+          sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+          tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+          tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+          cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+          order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+          total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+          balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+          if crcy_tp_ps=="before amount": 
+            discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
+            ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
+            cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+          elif cency_pos=="after amount":
+            discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=30)
+            ta2=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=45)   
+            cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+          elif cency_pos=="before amount with space":
+            discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=30) 
+            ta2=Label(summaryfrme, text=str(crcy_tp)+" "+"0.00").place(x=130 ,y=45)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+          elif cency_pos=="after amount with space":
+            discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=30)  
+            ta2=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=45) 
+            cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+          else:
+            pass
+        else:
+            fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+            fir4Frame.place(x=740,y=520)
+            summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+            summaryfrme.place(x=0,y=0,width=200,height=170)
+            discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+            sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+            cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+            order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+            total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+            balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+            if crcy_tp_ps=="before amount": 
+              discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21) 
+              cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+            elif cency_pos=="after amount":
+              discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+          
+              cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+            elif cency_pos=="before amount with space":
+              discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+        
+              cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+            elif cency_pos=="after amount with space":
+              discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+        
+              cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
             else:
               pass
 
-          recur_total1.config(text=total+tot+tot2-discou+extracs)
-          recur_balancee1.config(text=total+tot+tot2-discou+extracs)
-        
         recur_newselection.destroy()
-      
-      
-        
 
       recur_btn11=Button(recur_newselection,compound = LEFT,image=tick ,text="ok", width=60, command=estselepro).place(x=15, y=610)
       recur_btn11=Button(recur_newselection,compound = LEFT,image=tick , text="Edit product/Service", width=150,command=est_edit_product).place(x=250, y=610)
@@ -3193,6 +3393,107 @@ def view_invs_rir():
   #delete line item  
   def rir_delete():
     messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before deleting line item .")
+    proskuid = prd_tree.item(prd_tree.focus())["values"][1]
+    sql_qr="DELETE FROM storingproduct WHERE sku=%s"
+    sql_qr_val=(proskuid,)
+    fbcursor.execute(sql_qr,sql_qr_val)
+    fbilldb.commit()
+    
+
+    sqlr= 'select currencysign from company'
+    fbcursor.execute(sqlr)
+    crncy=fbcursor.fetchone()
+    crcy_tp=crncy[0]
+    sqlrt= 'select currsignplace from company'
+    fbcursor.execute(sqlrt)
+    post_rp=fbcursor.fetchone()
+    crcy_tp_ps=post_rp[0]
+    
+    if int(taxtype[0])==2:
+        rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+        rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+        fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+        main_prd_val=fbcursor.fetchall()
+        count_prd=0
+        for record in prd_tree.get_children():
+          prd_tree.delete(record)
+        for i in main_prd_val:
+              if i[11] is not None:
+                dgt="Yes"
+              else:
+                dgt="No"
+                if crcy_tp_ps=="before amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+                  count_prd +=1
+                elif crcy_tp_ps=="after amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
+                  count_prd +=1
+                elif crcy_tp_ps=="before amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+                elif crcy_tp_ps=="after amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+                  count_prd +=1
+                else:
+                  pass
+
+    elif int(taxtype[0])==3:
+            rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+            rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+            fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+            main_prd_val=fbcursor.fetchall()
+            count_prd=0
+            for record in prd_tree.get_children():
+              prd_tree.delete(record)
+
+            for i in main_prd_val:
+                  if i[11] is not None:
+                    dgt="Yes"
+                  else:
+                    dgt="No"
+                  if i[12] is not None:
+                    dlt="Yes"
+                  else:
+                    dlt="No"
+                  if crcy_tp_ps=="before amount":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+                      count_prd +=1
+                  elif crcy_tp_ps=="after amount":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+                      count_prd +=1
+                  elif crcy_tp_ps=="before amount with space":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+                  elif crcy_tp_ps=="after amount with space":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+                      count_prd +=1
+                  else:
+                      pass
+
+    else:
+            
+            rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+            rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+            fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+            main_prd_val=fbcursor.fetchall()
+            count_prd=0
+            
+            for record in prd_tree.get_children():
+              prd_tree.delete(record)
+            for i in main_prd_val:
+                    if crcy_tp_ps=="before amount":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+                      count_prd +=1
+                    elif crcy_tp_ps=="after amount":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+                      count_prd +=1
+                    elif crcy_tp_ps=="before amount with space":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+                    elif crcy_tp_ps=="after amount with space":
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+                      count_prd +=1
+                    else:
+                      pass
+        
+    
     
     
 
@@ -3322,6 +3623,18 @@ def view_invs_rir():
     post_rp=fbcursor.fetchone()
     crcy_tp_ps=post_rp[0]
     
+    #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+    sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+    sm_qry_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(sm_qry,sm_qry_val)
+    smry_value=fbcursor.fetchone()
+    
+    smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+    smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+    smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+    smr_ext_cst=rir_cost3.get()
+    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
+
     if int(taxtype[0])==2:
       fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
       fir4Frame.place(x=740,y=520)
@@ -3334,6 +3647,7 @@ def view_invs_rir():
       order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
       total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
       balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+      
       if crcy_tp_ps=="before amount": 
         discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
         sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=21)
@@ -3382,14 +3696,14 @@ def view_invs_rir():
       total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
       balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
       if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[16])).place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[36])).place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str("00.0")).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str("00.0")).place(x=130 ,y=126)
       elif cency_pos=="after amount":
         discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
         sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=15)
@@ -3466,45 +3780,91 @@ def view_invs_rir():
 
 
     #=---------------------------------------------------------------------------------------Table
-    sql_yty='select taxtype from company'
-    fbcursor.execute(sql_yty)
-    taxtype=fbcursor.fetchone()
-    if int(taxtype[0])==3:
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
+    # sql_yty='select taxtype from company'
+    # fbcursor.execute(sql_yty)
+    # taxtype=fbcursor.fetchone()
+    # if int(taxtype[0])==3:
+    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+    #   main_prd_val=fbcursor.fetchall()
+    #   count_prd=0
+    #   for record in prd_tree.get_children():
+    #     prd_tree.delete(record)
 
-      for i in main_prd_val:
-            prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[11],i[12],i[13]))
-            count_prd +=1
+    #   for i in main_prd_val:
+    #         if i[11] is not None:
+    #           dgt="Yes"
+    #         else:
+    #           dgt="No"
+    #         if i[12] is not None:
+    #           dlt="Yes"
+    #         else:
+    #           dlt="No"
+    #         if crcy_tp_ps=="before amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="after amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="before amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+    #         elif crcy_tp_ps=="after amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+    #             count_prd +=1
+    #         else:
+    #             pass
 
-    elif int(taxtype[0])==2:
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
-      for i in main_prd_val:
-            prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[11],i[13]))
-            count_prd +=1
+    # elif int(taxtype[0])==2:
       
-    else:
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
-      for i in main_prd_val:
-            prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[13]))
-            count_prd +=1
+    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+    #   main_prd_val=fbcursor.fetchall()
+    #   count_prd=0
+    #   for record in prd_tree.get_children():
+    #     prd_tree.delete(record)
+    #   for i in main_prd_val:
+    #         if i[11] is not None:
+    #           dgt="Yes"
+    #         else:
+    #           dgt="No"
+    #         if crcy_tp_ps=="before amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="after amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="before amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+    #         elif crcy_tp_ps=="after amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+    #             count_prd +=1
+    #         else:
+    #             pass
+    # else:
+    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+    #   main_prd_val=fbcursor.fetchall()
+    #   count_prd=0
+    #   for record in prd_tree.get_children():
+    #     prd_tree.delete(record)
+    #   for i in main_prd_val:
+    #         if crcy_tp_ps=="before amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="after amount":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+    #             count_prd +=1
+    #         elif crcy_tp_ps=="before amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+    #         elif crcy_tp_ps=="after amount with space":
+    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+    #             count_prd +=1
+    #         else:
+    #             pass
+    
     #--------------------------------------------------------------------------------------recurring
     if dtl_inv[24] is not None:
       stp_rir.select()
@@ -3562,6 +3922,7 @@ def view_invs_rir():
   
   cust_selction_nm=StringVar()
   cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
+  cmb_main_bx.insert(0,dtl_rissr_cus[4])
   cmb_main_bx['values']=dtl_rir
   
   cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
@@ -3570,14 +3931,14 @@ def view_invs_rir():
   # global e2,e3,e4,e5,e6,e7,e8,e9,e10
   
   sdrt_qsy='select * from customer where businessname=%s'
-  sdrt_qry_qtr=(cust_selction_nm.get(),)
+  sdrt_qry_qtr=(cusr_selct,)
   fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
   dtl_rir_cus=fbcursor.fetchone()
 
     
 
   sdou_qsy='select * from invoice where businessname=%s'
-  sdou_qsy_qry=(cust_selction_nm.get(),)
+  sdou_qsy_qry=(cusr_selct,)
   fbcursor.execute(sdou_qsy,sdou_qsy_qry)
   dtl_inv=fbcursor.fetchone()
 
@@ -3587,17 +3948,22 @@ def view_invs_rir():
   fbcursor.execute(sdous_qsy)
   dtl_inv_all=fbcursor.fetchall()
 
-  
 
   address=Label(labelframe1,text="Address").place(x=10,y=30)
   address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
+  address_rir.delete(1.0,END)
+  address_rir.insert(1.0,dtl_rir_cus[5])
   address_rir.place(x=80,y=30,height=70)
 
   ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
   shp_to_rir=Entry(labelframe1,width=30)
+  shp_to_rir.delete(0,END)
+  shp_to_rir.insert(0,dtl_rir_cus[6])
   shp_to_rir.place(x=402,y=3)
   address1=Label(labelframe1,text="Address").place(x=340,y=30)
   shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
+  shp_to_adr_rir.delete(1.0,END)
+  shp_to_adr_rir.insert(1.0,dtl_rir_cus[7])
   shp_to_adr_rir.place(x=402,y=30,height=70)
 
   btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
@@ -3606,31 +3972,39 @@ def view_invs_rir():
   labelframe2.place(x=10,y=130,width=640,height=42)
   email=Label(labelframe2,text="Email").place(x=10,y=5)
   emil_rir=Entry(labelframe2,width=30)
+  emil_rir.delete(0,END)
+  emil_rir.insert(0,dtl_rir_cus[9])
 
   emil_rir.place(x=80,y=5)
   sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
   sms_shpto_rir=Entry(labelframe2,width=30)
-  
+  sms_shpto_rir.delete(0,END)
+  sms_shpto_rir.insert(0,dtl_rir_cus[12])
   sms_shpto_rir.place(x=402,y=5)
       
   labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
   labelframe.place(x=652,y=5,width=290,height=170)
   order=Label(labelframe,text="Invoice#").place(x=5,y=5)
   inv_nmb_rir=Entry(labelframe,width=25)
-
+  inv_nmb_rir.delete(0,END)
+  inv_nmb_rir.insert(0,dtl_inv[1])
   inv_nmb_rir.place(x=100,y=5,)
   orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
   inv_dt_rir=Entry(labelframe,width=20)
-
+  inv_dt_rir.delete(1,END)
+  inv_dt_rir.insert(0,dtl_inv[2])
   inv_dt_rir.place(x=150,y=33)
   checkvarStatus5=IntVar()
   duedate=Checkbutton(labelframe,variable = checkvarStatus5,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
   due_dt_rir=Entry(labelframe,width=20)
-
+  due_dt_rir.delete(0,END)
+  due_dt_rir.insert(0,dtl_inv[2])
   due_dt_rir.place(x=150,y=62)
   terms=Label(labelframe,text="Terms").place(x=5,y=92)
   trms_cmb=ttk.Combobox(labelframe,width=25)
   trms_cmb['values']=dtl_inv_all[0]
+  trms_cmb.delete(0,END)
+  trms_cmb.insert(0,dtl_inv[35])
   trms_cmb.place(x=100,y=92)
 
   ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
@@ -3639,10 +4013,18 @@ def view_invs_rir():
   e11.place(x=100,y=118)
 
     
-    
+  #----------------------------------------------------------------------------------------------product Table
   sql_yty='select taxtype from company'
   fbcursor.execute(sql_yty)
   taxtype=fbcursor.fetchone()
+  sqlr= 'select currencysign from company'
+  fbcursor.execute(sqlr)
+  crncy=fbcursor.fetchone()
+  crcy_tp=crncy[0]
+  sqlrt= 'select currsignplace from company'
+  fbcursor.execute(sqlrt)
+  post_rp=fbcursor.fetchone()
+  crcy_tp_ps=post_rp[0]
     
   if int(taxtype[0])==2:
       fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
@@ -3670,8 +4052,37 @@ def view_invs_rir():
       prd_tree.heading("6",text="Pcs/Weight")
       prd_tree.heading("7",text="Tax1")
       prd_tree.heading("8",text="Price")
+      
+      
+    
+      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      main_prd_val=fbcursor.fetchall()
+      count_prd=0
+      for record in prd_tree.get_children():
+        prd_tree.delete(record)
+      for i in main_prd_val:
+            if i[11] is not None:
+              dgt="Yes"
+            else:
+              dgt="No"
+              if crcy_tp_ps=="before amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+                count_prd +=1
+              elif crcy_tp_ps=="after amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
+                count_prd +=1
+              elif crcy_tp_ps=="before amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+              elif crcy_tp_ps=="after amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+                count_prd +=1
+              else:
+                pass
+            
+      
       prd_tree.pack(fill="both", expand=1)
-
 
   elif int(taxtype[0])==3:
       
@@ -3702,7 +4113,38 @@ def view_invs_rir():
       prd_tree.heading("7",text="Tax1")
       prd_tree.heading("8",text="Tax2")
       prd_tree.heading("9",text="Price")
-      prd_tree.pack(fill="both", expand=1)\
+      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      main_prd_val=fbcursor.fetchall()
+      count_prd=0
+      for record in prd_tree.get_children():
+        prd_tree.delete(record)
+
+      for i in main_prd_val:
+            if i[11] is not None:
+              dgt="Yes"
+            else:
+              dgt="No"
+            if i[12] is not None:
+              dlt="Yes"
+            else:
+              dlt="No"
+            if crcy_tp_ps=="before amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+                count_prd +=1
+            elif crcy_tp_ps=="after amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+                count_prd +=1
+            elif crcy_tp_ps=="before amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+            elif crcy_tp_ps=="after amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+                count_prd +=1
+            else:
+                pass
+
+      prd_tree.pack(fill="both", expand=1)
       
 
   else:
@@ -3731,15 +4173,27 @@ def view_invs_rir():
       prd_tree.heading("7",text="Price")
 
 
-      # rir_prd_table_sql="select * from storingproduct where invoiceid=%s"
-      # rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      # fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      # main_prd_val=fbcursor.fetchall()
-      # count_prd=0
-
-      # for i in main_prd_val:
-      #       prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[4],i[6],i[7],i[9],i[22],i[10],i[11]))
-      #       count_prd +=1
+      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      main_prd_val=fbcursor.fetchall()
+      count_prd=0
+      for record in prd_tree.get_children():
+        prd_tree.delete(record)
+      for i in main_prd_val:
+              if crcy_tp_ps=="before amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+                count_prd +=1
+              elif crcy_tp_ps=="after amount":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+                count_prd +=1
+              elif crcy_tp_ps=="before amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+              elif crcy_tp_ps=="after amount with space":
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+                count_prd +=1
+              else:
+                pass
       
       prd_tree.pack(fill="both", expand=1)
     
@@ -3772,43 +4226,66 @@ def view_invs_rir():
   myNotebook.add(documentFrame,compound="left",  text="Documents")
   myNotebook.pack(expand = 1, fill ="both")  
   # --------------------------------------------------------------------------------------Invoice in edit
+
+
+
   labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
   labelframe1.place(x=1,y=1,width=800,height=170)
   cost1=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
   cmb_ext_nm=ttk.Combobox(labelframe1, value="",width=20)
+  cmb_ext_nm.delete(0,END)
+  cmb_ext_nm.insert(0,dtl_inv[11])
   cmb_ext_nm.place(x=115,y=5)
 
   rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
   dsc_rt=Entry(labelframe1,width=6)
+  dsc_rt.delete(0,END)
+  dsc_rt.insert(0,dtl_inv[15])
   dsc_rt.place(x=460,y=5)
 
   cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
+  global rir_cost3
   rir_cost3=Entry(labelframe1,width=10)
+  rir_cost3.delete(0,END)
+  rir_cost3.insert(0,dtl_inv[12])
   rir_cost3.place(x=115,y=35)
+
   if int(taxtype[0])==3:
     tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
     tax1_rir=Entry(labelframe1,width=7)
+    tax1_rir.delete(0,END)
+    tax1_rir.insert(0,dtl_inv[16])
     tax1_rir.place(x=460,y=35)
 
     tax=Label(labelframe1,text="Tax2").place(x=420,y=60)
     tax2_rir=Entry(labelframe1,width=7)
+    tax2_rir.delete(0,END)
+    tax2_rir.insert(0,dtl_inv[36])
     tax2_rir.place(x=460,y=60)
   elif int(taxtype[0])==2:
     tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
     tax1_rir=Entry(labelframe1,width=7)
+    tax1_rir.delete(0,END)
+    tax1_rir.insert(0,dtl_inv[16])
     tax1_rir.place(x=460,y=35)
   else:
     pass
 
   template=Label(labelframe1,text="Template").place(x=37,y=70)
   tmp_rir=ttk.Combobox(labelframe1, value="",width=25)
+  tmp_rir.delete(0,END)
+  tmp_rir.insert(0,dtl_inv[13])
   tmp_rir.place(x=115,y=70)
 
   sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
   sl_prsn=Entry(labelframe1,width=18)
+  sl_prsn.delete(0,END)
+  sl_prsn.insert(0,"Administrator")
   sl_prsn.place(x=115,y=100)
   category=Label(labelframe1,text="Category").place(x=300,y=100)
   ct_rir=Entry(labelframe1,width=22)
+  ct_rir.delete(0,END)
+  ct_rir.insert(0,dtl_inv[17])
   ct_rir.place(x=370,y=100)
  
     
@@ -3839,27 +4316,41 @@ def view_invs_rir():
   inv_ft=fbcursor.fetchall()
 
   cmp_ttl=ttk.Combobox(headerFrame,width=60)
+  cmp_ttl.delete(0,END)
+  cmp_ttl.insert(0,dtl_inv[39])
   cmp_ttl['value']=inf_ttl
+  
   cmp_ttl.place(x=125,y=5)
   text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
   cmp_ht=ttk.Combobox(headerFrame,width=60)
+  cmp_ht.delete(0,END)
+  cmp_ht.insert(0,dtl_inv[40])
   cmp_ht['value']=inv_ht
   cmp_ht.place(x=125,y=45)
   text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
   cmp_ft=ttk.Combobox(headerFrame,width=60)
+  cmp_ft.delete(0,END)
+  cmp_ft.insert(0,dtl_inv[41])
   cmp_ft['value']=inv_ft
   cmp_ft.place(x=125,y=85)
 
   
 
-  text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)").place(x=10,y=10)
+  text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)")
+  text.place(x=10,y=10)
   prv_nt=Text(noteFrame,width=100,height=7)
+  prv_nt.delete(1.0,END)
+  prv_nt.insert(1.0,dtl_inv[45])
   prv_nt.place(x=10,y=32)
 
   trms=Text(termsFrame,width=100,height=9)
+  trms.delete(1.0,END)
+  trms.insert(1.0,dtl_inv[35])
   trms.place(x=10,y=10)
 
   cmm=Text(commentFrame,width=100,height=9)
+  cmm.delete(1.0,END)
+  cmm.insert(1.0,dtl_inv[44])
   cmm.place(x=10,y=10)
 
   btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
@@ -3887,6 +4378,18 @@ def view_invs_rir():
   post_rp=fbcursor.fetchone()
   crcy_tp_ps=post_rp[0]
   
+
+  sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+  sm_qry_val=(inv_nmb_rir.get(),)
+  fbcursor.execute(sm_qry,sm_qry_val)
+  smry_value=fbcursor.fetchone()
+  #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+  smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+  smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+  smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+  smr_ext_cst=rir_cost3.get()
+  smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
+
   if int(taxtype[0])==2:
     fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
     fir4Frame.place(x=740,y=520)
@@ -3900,10 +4403,10 @@ def view_invs_rir():
     total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
     balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
     if crcy_tp_ps=="before amount": 
-      discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63) 
+      discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+smr_tax1).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+smr_ext_cst).place(x=130 ,y=63) 
       order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
       total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
       balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
@@ -3947,12 +4450,12 @@ def view_invs_rir():
     total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
     balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
     if crcy_tp_ps=="before amount": 
-      discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=30)  
-      ta2=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=45) 
-      cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
+      discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
+      ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
+      cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
       total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
       balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
     elif cency_pos=="after amount":
@@ -4033,8 +4536,19 @@ def view_invs_rir():
   labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
   labelframe2.place(x=1,y=1,width=730,height=170)
   checkvarStatus5=IntVar()
+
+  
+    
+    
+
+
   stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Recurring",onvalue =0 ,offvalue = 1)
- 
+  if dtl_inv[24] is not None:
+    stp_rir.select()
+  else:
+    stp_rir.deselect()
+  
+
   stp_rir.place(x=40,y=5)
 
   text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
@@ -4050,15 +4564,20 @@ def view_invs_rir():
 
   dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
   dt_nxt_inv=DateEntry(labelframe2,width=15)
-  
+  dt_nxt_inv.delete(0,END)
+  dt_nxt_inv.insert(0,dtl_inv[26])
   dt_nxt_inv.place(x=380,y=60)
 
   checkvarStatus5=IntVar()
   stp_rir2=Checkbutton(labelframe2,variable = checkvarStatus5,text="Stop Recurring After",onvalue =0 ,offvalue = 1)
-  
+  if dtl_inv[27] is not None:
+      stp_rir2.select()
+  else:
+      stp_rir2.deselect()
   stp_rir2.place(x=240,y=85)
   dt_stp_inv=DateEntry(labelframe2,width=15)
-
+  dt_stp_inv.delete(0,END)
+  dt_stp_inv.insert(0,dtl_inv[27])
   dt_stp_inv.place(x=380,y=90)
 
 
@@ -4161,6 +4680,50 @@ invoilabel = Label(rirmainframe, text="Recurring invoices", font=("arial", 18), 
 invoilabel.pack(side="left", padx=(20,0))
 
 #-----------------------------------------------------------------------------Recurring invoice table and scrollbars
+def slt_main_sub(event):
+  rir_id=rir_tree.item(rir_tree.focus())["values"][1]
+  rir_main_table_sql="select * from storingproduct where invoice_number=%s"
+  rir_main_table_sql_vals=(rir_id,)
+  fbcursor.execute(rir_main_table_sql,rir_main_table_sql_vals)
+  main_tb_rir=fbcursor.fetchall()
+  count_cus=0
+  sql_yty='select taxtype from company'
+  fbcursor.execute(sql_yty)
+  taxtype=fbcursor.fetchone()
+  if int(taxtype[0])==2:
+    for record in rir_tble.get_children():
+          rir_tble.delete(record)
+    for i in main_tb_rir:
+        if i[11] is not None:
+          dty="Yes"
+        else:
+          dty="No"
+        rir_tble.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[0],i[6],i[7],i[13],i[9],dty,i[14]))
+        count_cus +=1
+  elif int(taxtype[0])==3:
+    for record in rir_tble.get_children():
+          rir_tble.delete(record)
+    for i in main_tb_rir:
+        if i[11] is not None:
+          dty="Yes"
+        else:
+          dty="No"
+        if i[12] is not None:
+          dtst="Yes"
+        else:
+          dtst="No"
+        rir_tble.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[0],i[6],i[7],i[13],i[9],dty,dtst,i[14]))
+        count_cus +=1
+
+  else:
+    for record in rir_tble.get_children():
+          rir_tble.delete(record)
+    for i in main_tb_rir:
+        rir_tble.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[0],i[6],i[7],i[13],i[9],i[14]))
+        count_cus +=1
+
+    
+
 
 class RirMyApp1:
   def __init__(self, parent):
@@ -4204,11 +4767,13 @@ class RirMyApp1:
     rir_tree.column(6, width = 340)
     rir_tree.column(7, width = 190,anchor='n')
 
+    rir_tree.bind('<<TreeviewSelect>>',slt_main_sub)
+
     scrollbar = Scrollbar(self.left_frame)
     scrollbar.place(x=1008+300+25, y=0, height=300+20)
     scrollbar.config( command=rir_tree.yview )
 
-    rir_main_table_sql="select * from invoice"
+    rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL"
     fbcursor.execute(rir_main_table_sql)
     main_rir_val=fbcursor.fetchall()
     count_rir=0
@@ -4228,25 +4793,68 @@ class RirMyApp1:
     tabControl.add(tab3,image=smslog,compound = LEFT, text ='SMS log')
     tabControl.add(tab4,image=photo11,compound = LEFT, text ='Documents')
     tabControl.pack(expand = 1, fill ="both")
-    
-    rir_tble = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,8,), height = 15, show = "headings")
-    rir_tble.pack(side = 'top')
-    rir_tble.heading(1)
-    rir_tble.heading(2, text="Product/Service ID",)
-    rir_tble.heading(3, text="Name")
-    rir_tble.heading(4, text="Description")
-    rir_tble.heading(5, text="Price")
-    rir_tble.heading(6, text="QTY")
-    rir_tble.heading(7, text="Tax1")
-    rir_tble.heading(8, text="Line Total")   
-    rir_tble.column(1, width = 40)
-    rir_tble.column(2, width = 250)
-    rir_tble.column(3, width = 270)
-    rir_tble.column(4, width = 300)
-    rir_tble.column(5, width = 130)
-    rir_tble.column(6, width = 100)
-    rir_tble.column(7, width = 100)
-    rir_tble.column(8, width = 190)
+    global rir_tble
+    sql_yty='select taxtype from company'
+    fbcursor.execute(sql_yty)
+    taxtype=fbcursor.fetchone()
+    if int(taxtype[0])==2:
+      rir_tble = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,8,), height = 15, show = "headings")
+      rir_tble.pack(side = 'top')
+      rir_tble.heading(1)
+      rir_tble.heading(2, text="Product/Service ID",)
+      rir_tble.heading(3, text="Name")
+      rir_tble.heading(4, text="Description")
+      rir_tble.heading(5, text="Price")
+      rir_tble.heading(6, text="QTY")
+      rir_tble.heading(7, text="Tax1")
+      rir_tble.heading(8, text="Line Total")   
+      rir_tble.column(1, width = 40)
+      rir_tble.column(2, width = 250)
+      rir_tble.column(3, width = 270)
+      rir_tble.column(4, width = 300)
+      rir_tble.column(5, width = 130)
+      rir_tble.column(6, width = 100)
+      rir_tble.column(7, width = 100)
+      rir_tble.column(8, width = 190)
+    elif  int(taxtype[0])==3:
+      rir_tble = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,8,9), height = 15, show = "headings")
+      rir_tble.pack(side = 'top')
+      rir_tble.heading(1)
+      rir_tble.heading(2, text="Product/Service ID",)
+      rir_tble.heading(3, text="Name")
+      rir_tble.heading(4, text="Description")
+      rir_tble.heading(5, text="Price")
+      rir_tble.heading(6, text="QTY")
+      rir_tble.heading(7, text="Tax1")
+      rir_tble.heading(8, text="Tax1")
+      rir_tble.heading(9, text="Line Total")   
+      rir_tble.column(1, width = 20)
+      rir_tble.column(2, width = 250)
+      rir_tble.column(3, width = 200)
+      rir_tble.column(4, width = 300)
+      rir_tble.column(5, width = 120)
+      rir_tble.column(6, width = 100)
+      rir_tble.column(7, width = 100)
+      rir_tble.column(8, width = 100)
+      rir_tble.column(9, width = 190)
+    else:
+      rir_tble = ttk.Treeview(tab1, columns = (1,2,3,4,5,6,7,), height = 15, show = "headings")
+      rir_tble.pack(side = 'top')
+      rir_tble.heading(1)
+      rir_tble.heading(2, text="Product/Service ID",)
+      rir_tble.heading(3, text="Name")
+      rir_tble.heading(4, text="Description")
+      rir_tble.heading(5, text="Price")
+      rir_tble.heading(6, text="QTY")
+      rir_tble.heading(7, text="Line Total")   
+      rir_tble.column(1, width = 40)
+      rir_tble.column(2, width = 300)
+      rir_tble.column(3, width = 300)
+      rir_tble.column(4, width = 300)
+      rir_tble.column(5, width = 130)
+      rir_tble.column(6, width = 120)
+      
+      rir_tble.column(7, width = 190)
 
     note1=Text(tab2, width=170,height=10).place(x=10, y=10)
 
