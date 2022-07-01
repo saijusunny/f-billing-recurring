@@ -104,6 +104,7 @@ setting = PhotoImage(file="images/setting.png")
 tick = PhotoImage(file="images/check.png")
 warnin = PhotoImage(file="images/sign_warning.png")
 cancel = PhotoImage(file="images/close.png")
+# recalc = PhotoImage(file="images/recalculate.png")
 saves = PhotoImage(file="images/save.png")
 folder = PhotoImage(file="images/folder-black.png")
 photo11 = PhotoImage(file = "images/invoice-pvt.png")
@@ -185,7 +186,18 @@ def gn_inv_rir_in():
 
 def gn_inv_sucss():  
    messagebox.showinfo("F-Billing Revolution 2022", "1 new invoice successfully created.")
-   
+#------------------------------------------------------------------------------------------------refrsh
+def rfh_rir():
+    rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL"
+    fbcursor.execute(rir_main_table_sql)
+    main_rir_val=fbcursor.fetchall()
+    count_rir=0
+    for record in rir_tree.get_children():
+          rir_tree.delete(record)
+    for i in main_rir_val:
+        rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+        count_rir +=1
+
 #----------------------------------------------------------------------------------------------------print invoice
   
 def rir_prnt_inv_rir():
@@ -736,44 +748,158 @@ def convert():
       messagebox.destroy()
 #--------------------------------------------------------------------------------------------------search in invoice 
 def srh_rir():  
-    top = Toplevel()     
-    top.title("Find Text")   
-    top.geometry("600x250+390+250")
-    findwhat1=Label(top,text="Find What:",pady=5,padx=10).place(x=5,y=20)
-    n = StringVar()
-    findwhat = ttk.Combobox(top, width = 40, textvariable = n ).place(x=90,y=25)
-   
-    findin1=Label(top,text="Find in:",pady=5,padx=10).place(x=5,y=47)
-    n = StringVar()
-    findIN = ttk.Combobox(top, width = 30, textvariable = n )
-    findIN['values'] = ('Product/Service id', ' Category', ' Active',' name',' stock',' location', ' image',' <<All>>')                       
-    findIN.place(x=90,y=54)
+    def find_cus_row():
+  
+      if find_txt_var.get()=="Invoice#":
+        
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and invoice_number=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="Next Invoice":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and next_invoice=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="Recurring Period":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and recurring_period=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="Stop After":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and stop_recurring=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="Customer Name":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and 	businessname=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="Invoice Total":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL and invoicetot=%s"
+        rir_main_table_sql_qry=(fnd_srh_txt.get(),)
+        fbcursor.execute(rir_main_table_sql,rir_main_table_sql_qry)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+      elif find_txt_var.get()=="<<All>>":
+        for record in rir_tree.get_children():
+          rir_tree.delete(record)
+        rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL "
+  
+        fbcursor.execute(rir_main_table_sql)
+        main_rir_val=fbcursor.fetchall()
+        count_rir=0
+
+        for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+
+        top.destroy()
+    def fnd_dist():
+      top.destroy()
+
+    top = Toplevel()  
+    top.title("Find Text")
+    p2 = PhotoImage(file = "images/fbicon.png")
+    top.iconphoto(False, p2)
+    top.geometry("520x150+390+250")
+    findwhat1=Label(top,text="Find What:")
+    findwhat1.place(x=5,y=15)
+    fnd_srh_txt = StringVar() 
+    findwhat = ttk.Combobox(top, width = 50, textvariable = fnd_srh_txt )
+    findwhat.place(x=85,y=15,height=23) 
+    findButton = Button(top, text ="Find next",width=10, command=lambda:find_cus_row())
+    findButton.place(x=420,y=15)
+    findin1=Label(top,text="Find in:")
+    findin1.place(x=5,y=40)
+    find_txt_var = StringVar() 
+    findIN = ttk.Combobox(top, width = 37, textvariable =find_txt_var )
+    findIN['values'] = ('Invoice#',  
+                              'Next Invoice', 
+                              'Recurring Period', 
+                              'Stop After', 
+                              'Customer Name', 
+                              'Invoice Total',
+                              '<<All>>')    
+    findIN.place(x=85,y=40,height=23) 
     findIN.current(0)
-
-    findButton = Button(top, text ="Find next",width=10).place(x=480,y=22)
-    closeButton = Button(top,text ="Close",width=10).place(x=480,y=52)
-    
-    match1=Label(top,text="Match:",pady=5,padx=10).place(x=5,y=74)
-    n = StringVar()
-    match = ttk.Combobox(top, width = 23, textvariable = n )   
-    match['values'] = ('From Any part',' Whole Field',' From the beginning of the field')                                    
-    match.place(x=90,y=83)
-    match.current(0)
-
-    search1=Label(top,text="Search:",pady=5,padx=10).place(x=5,y=102)
-    n = StringVar()
-    search = ttk.Combobox(top, width = 23, textvariable = n )
-    search['values'] = ('All', 'up',' Down')
-    search.place(x=90,y=112)
-    search.current(0)
-    checkvarStatus4=IntVar()  
-    Button4 = Checkbutton(top,variable = checkvarStatus4,text="Match Case",onvalue =0 ,offvalue = 1,height=3,width = 15)
-    Button4.place(x=90,y=141)
-    checkvarStatus5=IntVar()   
-    Button5 = Checkbutton(top,variable = checkvarStatus5,text="Match Format",onvalue =0 ,offvalue = 1,height=3,width = 15)
-    Button5.place(x=300,y=141)
-
-#-------------------------view/edit invoice---------------------------
+    closeButton = Button(top, text ="Close",width=10, command=lambda:fnd_dist())
+    closeButton.place(x=420,y=45)
+   
+    up_var = StringVar() 
+    checkvarStatus4=IntVar()
+    Button4 = Checkbutton(top,variable = checkvarStatus4, 
+                      text="Match Case", 
+                      onvalue =0 ,
+                      offvalue = 1,
+                      height=3,
+                      width = 15)
+    Button4.select()
+    Button4.place(x=60,y=80)
+    checkvarStatus5=IntVar()  
+    Button5 = Checkbutton(top,variable = checkvarStatus5, 
+                      text="Match Format", 
+                      onvalue =0 ,
+                      offvalue = 1,
+                      height=3,
+                      width = 15)
+    Button5.select()
+    Button5.place(x=270,y=80)
+    top.mainloop()
 
 #--------------------------calculator-recurring----------------------
 
@@ -3116,8 +3242,11 @@ def view_invs_rir():
         smr_ext_cst=rir_cost3.get()
         smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
 
+        in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+        in_tt_qry_val=(inv_nmb_rir.get(),)
+        fbcursor.execute(in_tt_qry,in_tt_qry_val)
+        inv_value=fbcursor.fetchone()
         if int(taxtype[0])==2:
-          
           fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
           fir4Frame.place(x=740,y=520)
           summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
@@ -3132,35 +3261,35 @@ def view_invs_rir():
           if crcy_tp_ps=="before amount": 
             discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
             sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
-            tax1=Label(summaryfrme, text=str(crcy_tp)+smr_tax1).place(x=130 ,y=42)  
-            cost=Label(summaryfrme, text=str(crcy_tp)+smr_ext_cst).place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
-            total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
           elif cency_pos=="after amount":
-            discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
-            tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42)  
-            cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-            total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
           elif cency_pos=="before amount with space":
-            discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
-            tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42)  
-            cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-            total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+" "+str(smry_value[0])).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_ext_cst)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_iv_ttl)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+" "+str(inv_value[0])).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+" "+str(inv_value[1])).place(x=130 ,y=126)
           elif cency_pos=="after amount with space":
-            discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
-            tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42)  
-            cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-            total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+            tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
           else:
             pass
         elif int(taxtype[0])==3:
@@ -3183,35 +3312,35 @@ def view_invs_rir():
             ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
             cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
             order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
-            total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+            total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
           elif cency_pos=="after amount":
-            discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=15)
-            tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=30)
-            ta2=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=45)   
-            cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-            total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
+            ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
           elif cency_pos=="before amount with space":
-            discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=15)
-            tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=30) 
-            ta2=Label(summaryfrme, text=str(crcy_tp)+" "+"0.00").place(x=130 ,y=45)  
-            cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-            total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
+            ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
+            cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
           elif cency_pos=="after amount with space":
-            discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-            sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=15)
-            tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=30)  
-            ta2=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=45) 
-            cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
-            order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-            total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
-            balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+            discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
+            tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
+            ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+            total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
           else:
             pass
         else:
@@ -3226,36 +3355,36 @@ def view_invs_rir():
             total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
             balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
             if crcy_tp_ps=="before amount": 
-              discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
-              sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21) 
-              cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42) 
-              order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63)
-              total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
-              balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+              discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
+              cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
             elif cency_pos=="after amount":
-              discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-              sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+              discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
           
-              cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42) 
-              order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63)
-              total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-              balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+              cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
             elif cency_pos=="before amount with space":
-              discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-              sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+              discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
         
-              cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42) 
-              order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63)
-              total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-              balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+              cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
             elif cency_pos=="after amount with space":
-              discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-              sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+              discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+              sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
         
-              cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42) 
-              order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63)
-              total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-              balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+              cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
+              order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
+              total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
+              balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
             else:
               pass
 
@@ -3393,7 +3522,8 @@ def view_invs_rir():
   #delete line item  
   def rir_delete():
     messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before deleting line item .")
-    proskuid = prd_tree.item(prd_tree.focus())["values"][1]
+    proskuid = prd_tree.item(prd_tree.focus())["values"][0]
+    print(proskuid)
     sql_qr="DELETE FROM storingproduct WHERE sku=%s"
     sql_qr_val=(proskuid,)
     fbcursor.execute(sql_qr,sql_qr_val)
@@ -3493,7 +3623,163 @@ def view_invs_rir():
                     else:
                       pass
         
+    sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+    sm_qry_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(sm_qry,sm_qry_val)
+    smry_value=fbcursor.fetchone()
+    #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+    smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+    smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+    smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+    smr_ext_cst=rir_cost3.get()
+    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
     
+    in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+    in_tt_qry_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(in_tt_qry,in_tt_qry_val)
+    inv_value=fbcursor.fetchone()
+    if int(taxtype[0])==2:
+      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+      fir4Frame.place(x=740,y=520)
+      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+      summaryfrme.place(x=0,y=0,width=200,height=170)
+      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+      if crcy_tp_ps=="before amount": 
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
+      elif cency_pos=="after amount":
+        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
+      elif cency_pos=="before amount with space":
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
+      elif cency_pos=="after amount with space":
+        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
+      else:
+        pass
+    elif int(taxtype[0])==3:
+      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+      fir4Frame.place(x=740,y=520)
+      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+      summaryfrme.place(x=0,y=0,width=200,height=170)
+      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+      tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+      if crcy_tp_ps=="before amount": 
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
+      elif cency_pos=="after amount":
+        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
+        ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
+      elif cency_pos=="before amount with space":
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
+        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
+      elif cency_pos=="after amount with space":
+        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
+      else:
+        pass
+    else:
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+        if crcy_tp_ps=="before amount": 
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
+        elif cency_pos=="after amount":
+          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+      
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
+        elif cency_pos=="before amount with space":
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
+    
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
+        elif cency_pos=="after amount with space":
+          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+    
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        else:
+          pass
+
     
     
 
@@ -3576,14 +3862,14 @@ def view_invs_rir():
     emil_rir.insert(0,dtl_rir_cus[9])
     sms_shpto_rir.delete(0,END)
     sms_shpto_rir.insert(0,dtl_rir_cus[12])
-    inv_nmb_rir.delete(0,END)
-    inv_nmb_rir.insert(0,dtl_inv[1])
-    inv_dt_rir.delete(1,END)
-    inv_dt_rir.insert(0,dtl_inv[2])
-    due_dt_rir.delete(0,END)
-    due_dt_rir.insert(0,dtl_inv[2])
-    trms_cmb.delete(0,END)
-    trms_cmb.insert(0,dtl_inv[35])
+    # inv_nmb_rir.delete(0,END)
+    # inv_nmb_rir.insert(0,dtl_inv[1])
+    # inv_dt_rir.delete(1,END)
+    # inv_dt_rir.insert(0,dtl_inv[2])
+    # due_dt_rir.delete(0,END)
+    # due_dt_rir.insert(0,dtl_inv[2])
+    # trms_cmb.delete(0,END)
+    # trms_cmb.insert(0,dtl_inv[35])
 
     cmb_ext_nm.delete(0,END)
     cmb_ext_nm.insert(0,dtl_inv[11])
@@ -3635,6 +3921,10 @@ def view_invs_rir():
     smr_ext_cst=rir_cost3.get()
     smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
 
+    in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+    in_tt_qry_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(in_tt_qry,in_tt_qry_val)
+    inv_value=fbcursor.fetchone()
     if int(taxtype[0])==2:
       fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
       fir4Frame.place(x=740,y=520)
@@ -3647,39 +3937,38 @@ def view_invs_rir():
       order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
       total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
       balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-      
       if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[16])).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
       elif cency_pos=="after amount":
-        discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(dtl_inv[16])+str(crcy_tp)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
       elif cency_pos=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[16])).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[10])).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
       elif cency_pos=="after amount with space":
-        discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(dtl_inv[16])+" "+str(crcy_tp)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
       else:
         pass
     elif int(taxtype[0])==3:
@@ -3702,35 +3991,35 @@ def view_invs_rir():
         ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
         cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
         order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str("00.0")).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str("00.0")).place(x=130 ,y=126)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
       elif cency_pos=="after amount":
-        discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(dtl_inv[16])+str(crcy_tp)).place(x=130 ,y=30)
-        ta2=Label(summaryfrme, text=str(dtl_inv[36])+str(crcy_tp)).place(x=130 ,y=45)   
-        cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
+        ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
       elif cency_pos=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[16])).place(x=130 ,y=30) 
-        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(dtl_inv[36])).place(x=130 ,y=45)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
+        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
       elif cency_pos=="after amount with space":
-        discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(dtl_inv[16])+" "+str(crcy_tp)).place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(dtl_inv[36])+" "+str(crcy_tp)).place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=126)
+        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
+        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
+        ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
       else:
         pass
     else:
@@ -3745,36 +4034,36 @@ def view_invs_rir():
         total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
         balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
         if crcy_tp_ps=="before amount": 
-          discount1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[15])).place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[49])).place(x=130 ,y=21) 
-          cost=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[12])).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[8])).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[9])).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+str(dtl_inv[10])).place(x=130 ,y=105)
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
         elif cency_pos=="after amount":
-          discount1=Label(summaryfrme, text=str(dtl_inv[15])+str(crcy_tp)).place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(dtl_inv[49])+str(crcy_tp)).place(x=130 ,y=21)
+          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
       
-          cost=Label(summaryfrme, text=str(dtl_inv[12])+str(crcy_tp)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(dtl_inv[8])+str(crcy_tp)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(dtl_inv[9])+str(crcy_tp)).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(dtl_inv[10])+str(crcy_tp)).place(x=130 ,y=105)
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
         elif cency_pos=="before amount with space":
-          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[15])).place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[49])).place(x=130 ,y=21)
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
     
-          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[12])).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[8])).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[9])).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(dtl_inv[10])).place(x=130 ,y=105)
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
         elif cency_pos=="after amount with space":
-          discount1=Label(summaryfrme, text=str(dtl_inv[15])+" "+str(crcy_tp)).place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(dtl_inv[49])+" "+str(crcy_tp)).place(x=130 ,y=21)
+          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
     
-          cost=Label(summaryfrme, text=str(dtl_inv[12])+" "+str(crcy_tp)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(dtl_inv[8])+" "+str(crcy_tp)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(dtl_inv[9])+" "+str(crcy_tp)).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(dtl_inv[10])+" "+str(crcy_tp)).place(x=130 ,y=105)
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
         else:
           pass
 
@@ -3923,12 +4212,16 @@ def view_invs_rir():
   cust_selction_nm=StringVar()
   cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
   cmb_main_bx.insert(0,dtl_rissr_cus[4])
-  cmb_main_bx['values']=dtl_rir
+
+  rir_dt_cst=[]
+  for i in dtl_rir:
+    rir_dt_cst.append(i[0])
+    
+  cmb_main_bx['values']=rir_dt_cst
   
   cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
   cmb_main_bx.place(x=80,y=5)
 
-  # global e2,e3,e4,e5,e6,e7,e8,e9,e10
   
   sdrt_qsy='select * from customer where businessname=%s'
   sdrt_qry_qtr=(cusr_selct,)
@@ -3944,7 +4237,7 @@ def view_invs_rir():
 
   
 
-  sdous_qsy='select terms from invoice'
+  sdous_qsy='select distinct terms from invoice'
   fbcursor.execute(sdous_qsy)
   dtl_inv_all=fbcursor.fetchall()
 
@@ -3994,15 +4287,20 @@ def view_invs_rir():
   inv_dt_rir.delete(1,END)
   inv_dt_rir.insert(0,dtl_inv[2])
   inv_dt_rir.place(x=150,y=33)
-  checkvarStatus5=IntVar()
-  duedate=Checkbutton(labelframe,variable = checkvarStatus5,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
+  chk_dur=IntVar()
+  duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
   due_dt_rir=Entry(labelframe,width=20)
   due_dt_rir.delete(0,END)
   due_dt_rir.insert(0,dtl_inv[2])
   due_dt_rir.place(x=150,y=62)
   terms=Label(labelframe,text="Terms").place(x=5,y=92)
   trms_cmb=ttk.Combobox(labelframe,width=25)
-  trms_cmb['values']=dtl_inv_all[0]
+
+  dtl_trm=[]
+  for i in dtl_inv_all:
+    dtl_trm.append(i[0])
+
+  trms_cmb['values']=dtl_trm
   trms_cmb.delete(0,END)
   trms_cmb.insert(0,dtl_inv[35])
   trms_cmb.place(x=100,y=92)
@@ -4232,7 +4530,13 @@ def view_invs_rir():
   labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
   labelframe1.place(x=1,y=1,width=800,height=170)
   cost1=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
-  cmb_ext_nm=ttk.Combobox(labelframe1, value="",width=20)
+  sql_ytyf='select distinct extracostname,template from invoice'
+  fbcursor.execute(sql_ytyf)
+  dt_tmp=fbcursor.fetchall()
+  dtl_nm_ext=[]
+  for i in dt_tmp:
+    dtl_nm_ext.append(i[0])
+  cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20)
   cmb_ext_nm.delete(0,END)
   cmb_ext_nm.insert(0,dtl_inv[11])
   cmb_ext_nm.place(x=115,y=5)
@@ -4272,7 +4576,11 @@ def view_invs_rir():
     pass
 
   template=Label(labelframe1,text="Template").place(x=37,y=70)
-  tmp_rir=ttk.Combobox(labelframe1, value="",width=25)
+  dtl_tmpl=[]
+  for i in dt_tmp:
+    dtl_tmpl.append(i[1])
+
+  tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=25)
   tmp_rir.delete(0,END)
   tmp_rir.insert(0,dtl_inv[13])
   tmp_rir.place(x=115,y=70)
@@ -4303,35 +4611,44 @@ def view_invs_rir():
 
   text1=Label(headerFrame,text="Title text").place(x=50,y=5)
 
-  sdous_qsy='select title_text from invoice'
+  sdous_qsy='select distinct title_text from invoice'
   fbcursor.execute(sdous_qsy)
   inf_ttl=fbcursor.fetchall()
 
-  sdous_qsy='select header_text from invoice'
+  sdous_qsy='select distinct header_text from invoice'
   fbcursor.execute(sdous_qsy)
   inv_ht=fbcursor.fetchall()
 
-  sdous_qsy='select footer_text from invoice'
+  sdous_qsy='select distinct footer_text from invoice'
   fbcursor.execute(sdous_qsy)
   inv_ft=fbcursor.fetchall()
 
   cmp_ttl=ttk.Combobox(headerFrame,width=60)
   cmp_ttl.delete(0,END)
   cmp_ttl.insert(0,dtl_inv[39])
-  cmp_ttl['value']=inf_ttl
+  dtl_hd=[]
+  for i in inf_ttl:
+    dtl_hd.append(i[0])
+  cmp_ttl['value']=dtl_hd
   
   cmp_ttl.place(x=125,y=5)
   text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
   cmp_ht=ttk.Combobox(headerFrame,width=60)
   cmp_ht.delete(0,END)
   cmp_ht.insert(0,dtl_inv[40])
-  cmp_ht['value']=inv_ht
+  dtl_ht=[]
+  for i in inv_ht:
+      dtl_ht.append(i[0])
+  cmp_ht['value']=dtl_ht
   cmp_ht.place(x=125,y=45)
   text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
   cmp_ft=ttk.Combobox(headerFrame,width=60)
   cmp_ft.delete(0,END)
   cmp_ft.insert(0,dtl_inv[41])
-  cmp_ft['value']=inv_ft
+  dtl_ft=[]
+  for i in inv_ft:
+    dtl_ft.append(i[0])
+  cmp_ft['value']=dtl_ft
   cmp_ft.place(x=125,y=85)
 
   
@@ -4378,6 +4695,7 @@ def view_invs_rir():
   post_rp=fbcursor.fetchone()
   crcy_tp_ps=post_rp[0]
   
+  
 
   sm_qry="select sum(price) from storingproduct where invoice_number=%s"
   sm_qry_val=(inv_nmb_rir.get(),)
@@ -4389,7 +4707,13 @@ def view_invs_rir():
   smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
   smr_ext_cst=rir_cost3.get()
   smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
-
+  sum1=0.0
+  
+  
+  in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+  in_tt_qry_val=(inv_nmb_rir.get(),)
+  fbcursor.execute(in_tt_qry,in_tt_qry_val)
+  inv_value=fbcursor.fetchone()
   if int(taxtype[0])==2:
     fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
     fir4Frame.place(x=740,y=520)
@@ -4405,35 +4729,35 @@ def view_invs_rir():
     if crcy_tp_ps=="before amount": 
       discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
       sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(crcy_tp)+smr_tax1).place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(crcy_tp)+smr_ext_cst).place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
     elif cency_pos=="after amount":
-      discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-      total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
     elif cency_pos=="before amount with space":
-      discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
     elif cency_pos=="after amount with space":
-      discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-      total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+      tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
+      cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
     else:
       pass
   elif int(taxtype[0])==3:
@@ -4456,35 +4780,35 @@ def view_invs_rir():
       ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
       cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
       order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=126)
+      total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
     elif cency_pos=="after amount":
-      discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=30)
-      ta2=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=45)   
-      cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-      total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
+      ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
+      cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
     elif cency_pos=="before amount with space":
-      discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=30) 
-      ta2=Label(summaryfrme, text=str(crcy_tp)+" "+"0.00").place(x=130 ,y=45)  
-      cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
+      ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
+      cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
     elif cency_pos=="after amount with space":
-      discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=30)  
-      ta2=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=45) 
-      cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-      total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=126)
+      discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
+      ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
+      cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
     else:
       pass
   else:
@@ -4499,60 +4823,178 @@ def view_invs_rir():
       total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
       balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
       if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=21) 
-        cost=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+"0.00").place(x=130 ,y=105)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
+        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
       elif cency_pos=="after amount":
-        discount1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=21)
+        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
      
-        cost=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=63)
-        total1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text="0.00"+str(crcy_tp)).place(x=130 ,y=105)
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
       elif cency_pos=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=21)
+        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
   
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+"0.00").place(x=130 ,y=105)
+        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
       elif cency_pos=="after amount with space":
-        discount1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=21)
+        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
   
-        cost=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=63)
-        total1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text="0.00"+" "+str(crcy_tp)).place(x=130 ,y=105)
+        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
       else:
         pass
 
   #---------------------------------------------------------------------------------------recuring frame
+  def reir_chk():
+      if chk_sts.get() == 0:
+        rir_spn_bx['state'] = DISABLED
+        e1['state'] = DISABLED
+        dt_nxt_inv['state'] = DISABLED
+        stp_rir2['state'] = DISABLED
+        dt_stp_inv['state'] = DISABLED
+        rir_recalc_1['state'] = DISABLED
+        
+      else:
+        rir_spn_bx['state'] = NORMAL
+        e1['state'] = NORMAL
+        dt_nxt_inv['state'] = NORMAL
+        stp_rir2['state'] = NORMAL
+        dt_stp_inv['state'] = NORMAL
+        rir_recalc_1['state'] = NORMAL
+  def recalc_rir():
+      sql_rec='select * from company '
+      fbcursor.execute(sql_rec)
+      cmp_dtl=fbcursor.fetchone()
+      rir_spn_val = rir_spn_bx.get()
+      recur_stop = dt_nxt_inv.get_date()
+      print(type(recur_stop))
+      print(recur_stop)
+      if main_cus_rir.get() == "month(s)":
+        if cmp_dtl[10] == "mm-dd-yyyy":
+          stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
+          stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%m-%d-%Y")
+
+        elif cmp_dtl[10] == "dd-mm-yyyy":
+          stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
+          print(stop_date)
+          stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
+          print(stop_d)
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%d-%m-%Y")
+          print(nxt_inv)
+        elif cmp_dtl[10] == "yyyy.mm.dd":
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(months=+int(rir_spn_valrir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+        elif cmp_dtl[10] == "mm/dd/yyyy":
+          stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
+          stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%m/%d/%Y")
+        elif cmp_dtl[10] == "dd/mm/yyyy":
+          stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
+          stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%d/%m/%Y")
+        elif cmp_dtl[10] == "dd.mm.yyyy":
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+        elif cmp_dtl[10] == "yyyy/mm/dd":
+          stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
+          stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%Y/%m/%d")
+        else:
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(months=+int(rir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+        dt_nxt_inv.delete(0,END)
+        dt_nxt_inv.insert(0,nxt_inv)
+      else:
+        if cmp_dtl[10] == "mm-dd-yyyy":
+          stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
+          stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%m-%d-%Y")
+        elif cmp_dtl[10] == "dd-mm-yyyy":
+          stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
+          stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%d-%m-%Y")
+        elif cmp_dtl[10] == "yyyy.mm.dd":
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+        elif cmp_dtl[10] == "mm/dd/yyyy":
+          stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
+          stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%m/%d/%Y")
+        elif cmp_dtl[10] == "dd/mm/yyyy":
+          stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
+          stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%d/%m/%Y")
+        elif cmp_dtl[10] == "dd.mm.yyyy":
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+        elif cmp_dtl[10] == "yyyy/mm/dd":
+          stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
+          stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt_inv = datetime.strftime(n,"%Y/%m/%d")
+        else:
+          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+          n = stop_d + relativedelta(days=+int(rir_spn_val))
+          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+          nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+        dt_nxt_inv.delete(0,END)
+        dt_nxt_inv.insert(0,nxt_inv)
+
   labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
   labelframe2.place(x=1,y=1,width=730,height=170)
-  checkvarStatus5=IntVar()
 
-  
-    
-    
+  chk_sts=IntVar()
 
-
-  stp_rir=Checkbutton(labelframe2,variable = checkvarStatus5,text="Recurring",onvalue =0 ,offvalue = 1)
+  stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
   if dtl_inv[24] is not None:
     stp_rir.select()
   else:
     stp_rir.deselect()
   
+  
 
   stp_rir.place(x=40,y=5)
 
   text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
-  rir_spn_bx = Spinbox(labelframe2,from_=1,to=1000000,width=15,justify=RIGHT)
+  rir_spn_bx = Spinbox(labelframe2,from_=1,to=10,width=15,justify=RIGHT)
   
   rir_spn_bx.place(x=270,y=30)
 
@@ -4560,8 +5002,72 @@ def view_invs_rir():
   e1 = ttk.Combobox(labelframe2,width=15, textvariable=main_cus_rir)
   e1['values']=('month(s)',"day(s)")
   e1.place(x=380,y=30)
-  e1.insert(0,cusr_selct)
+  e1.current(0)
 
+  por_sql_st='select * from company'
+  fbcursor.execute(por_sql_st)
+  cmpy_dtl=fbcursor.fetchone()
+
+  sql='select dateformat from company'
+  fbcursor.execute(sql)
+  date_frmat=fbcursor.fetchone()
+          
+  # nxt =0
+  # stp=0
+  # if date_frmat[0] == "mm-dd-yyyy":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy")
+  #     stop_date = datetime.strftime(stp,"%m-%d-%Y")
+  #     nxt_inv = datetime.strftime(nxt,"%m-%d-%Y")
+  # elif date_frmat[0] == "dd-mm-yyyy":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy")
+  #     stop_date = datetime.strftime(stp,"%d-%m-%Y")
+  #     nxt_inv = datetime.strftime(nxt,"%d-%m-%Y")
+  # elif date_frmat[0] == "yyyy.mm.dd":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd")
+  #     s = datetime.strftime(stp,"%Y-%m-%d")
+  #     v= datetime.strftime(nxt,"%Y-%m-%d")
+  #     stop_d = datetime.strptime(s,"%Y-%m-%d")
+  #     stop_date = '{0}.{1:02}.{2:02}'.format(stop_d.year,stop_d.month,stop_d.day)
+  #     nxt = datetime.strptime(v,"%Y-%m-%d")
+  #     nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+  # elif date_frmat[0] == "mm/dd/yyyy":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy")
+  #     stop_date = datetime.strftime(stp,"%m/%d/%Y")
+  #     nxt_inv = datetime.strftime(nxt,"%m/%d/%Y")
+  # elif date_frmat[0] == "dd/mm/yyyy":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy")
+  #     stop_date = datetime.strftime(stp,"%d/%m/%Y")
+  #     nxt_inv = datetime.strftime(nxt,"%d/%m/%Y")
+  # elif date_frmat[0] == "dd.mm.yyyy":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy")
+  #     s = datetime.strftime(stp,"%Y-%m-%d")
+  #     v= datetime.strftime(nxt,"%Y-%m-%d")
+      
+  #     stop_d = datetime.strptime(s,"%Y-%m-%d")
+  #     stop_date = '{0:02}.{1:02}.{2:02}'.format(stop_d.day,stop_d.month,stop_d.year)
+  #     nxt = datetime.strptime(v,"%Y-%m-%d")
+  #     nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+  # elif date_frmat[0] == "yyyy/mm/dd":
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd")
+  #     dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd")
+  #     stop_date = datetime.strftime(stp,"%Y/%m/%d")
+  #     nxt_inv = datetime.strftime(nxt,"%Y/%m/%d")
+  # else:
+  #     dt_nxt_inv = DateEntry(labelframe2,width=20)
+  #     dt_stp_inv = DateEntry(labelframe2,width=20)
+  #     s = datetime.strftime(stp,"%Y-%m-%d")
+  #     v= datetime.strftime(nxt,"%Y-%m-%d")
+  #     stop_d = datetime.strptime(s,"%Y-%m-%d")
+  #     stop_date = '{0}/{1}/{2:02}'.format(stop_d.month,stop_d.day,stop_d.year % 100)
+  #     nxt = datetime.strptime(v,"%Y-%m-%d")
+  #     nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+  
   dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
   dt_nxt_inv=DateEntry(labelframe2,width=15)
   dt_nxt_inv.delete(0,END)
@@ -4580,6 +5086,25 @@ def view_invs_rir():
   dt_stp_inv.insert(0,dtl_inv[27])
   dt_stp_inv.place(x=380,y=90)
 
+  rir_recalc_1 = Button(labelframe2,image="",text="Recalculate",width=15,command=recalc_rir)
+  # recur_recalc_1 = Button(labelframe2,compound=LEFT,image="",text="Recalculate",width=80,height=12,state=DISABLED,command="")
+  # recur_recalc_1.place(x=480,y=70)
+  rir_recalc_1.place(x=540,y=60)
+
+  if chk_sts.get() == 0:
+        rir_spn_bx['state'] = DISABLED
+        e1['state'] = DISABLED
+        dt_nxt_inv['state'] = DISABLED
+        stp_rir2['state'] = DISABLED
+        dt_stp_inv['state'] = DISABLED
+        rir_recalc_1['state'] = DISABLED
+  else:
+        rir_spn_bx['state'] = NORMAL
+        e1['state'] = NORMAL
+        dt_nxt_inv['state'] = NORMAL
+        stp_rir2['state'] = NORMAL
+        dt_stp_inv['state'] = NORMAL
+        rir_recalc_1['state'] = NORMAL
 
   
 #-------------------------------------------------------------------------------------------payment frame
@@ -4660,20 +5185,19 @@ rir_srh_lbl.pack(side="left")
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
 
-rir_refresh_lbl = Button(rirmidFrame,compound="top", text="Refresh\nInvoices list",relief=RAISED, image=photo8,bg="#f8f8f2",fg="black", height=55, bd=1, width=75)
+rir_refresh_lbl = Button(rirmidFrame,compound="top", text="Refresh\nInvoices list",relief=RAISED, image=photo8,bg="#f8f8f2",fg="black", height=55, bd=1, width=75, command=rfh_rir)
 rir_refresh_lbl.pack(side="left")
 
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
-
-show_ttl_sum = Button(rirmidFrame,compound="top", text="Show totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=lambda: label.place())
+def sum_lbl():
+  labessl = Label(left_frame,bg="red",text = "$500")
+show_ttl_sum = Button(rirmidFrame,compound="top", text="Show totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=sum_lbl)
 show_ttl_sum.pack(side="left")
 
-rir_hd_lbl = Button(rirmidFrame,compound="top", text="Hide totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=lambda: label.place_forget())
+rir_hd_lbl = Button(rirmidFrame,compound="top", text="Hide totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=lambda: labessl.place_forget())
 rir_hd_lbl.pack(side="left")
 
-label = Label(rirmainframe, text = "$500")
-label.place(x= 100 , y=120)
 
 
 invoilabel = Label(rirmainframe, text="Recurring invoices", font=("arial", 18), bg="#f8f8f2")

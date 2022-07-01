@@ -5196,7 +5196,7 @@ def mainpage():
         elif cency_pos=="before amount with space":
           cus_por_tree.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[0],i[2],i[3],i[4],i[5],crcy+" "+str(i[9])))
           count_cus +=1
-        elif cency_pos=="after amount with space":
+        
           cus_por_tree.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[0],i[2],i[3],i[4],i[5],str(i[9])+" "+crcy))
           count_cus +=1
         else:
