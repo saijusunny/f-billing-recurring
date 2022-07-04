@@ -585,160 +585,4428 @@ def savesettings():
 
 
 def prview_rir_inv():
-    rir_in_preview = Toplevel()
-    rir_in_preview.title("F-Billing Revolution Invoice Report ")
-    rir_in_p2= PhotoImage(file = "images/fbicon.png")
-    rir_in_preview.iconphoto(False, rir_in_p2)
-    rir_in_preview.geometry("1800x1800+0+0")
-    rir_in_frame = Frame(rir_in_preview,width=1500,height=1800,bg="red")
-    rir_in_frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
-    rir_in_frame.place(x=0,y=30)
-    rir_in_canvas=Canvas(rir_in_frame,bg='grey',width=1400,height=1200,scrollregion=(0,0,1500, 1200))
+      
+    if not rir_tree.selection():
+        messagebox.showwarning("F-Billing Revolution","No line selected.\nSelect a line before printing.")
+    else:
+      prev_invo = Toplevel()
+      prev_invo.title("Preview Invoice")
+      p2 = PhotoImage(file = "images/fbicon.png")
+      prev_invo.iconphoto(False, p2)
+      prev_invo.geometry("1360x730+0+0")
+      rir_tree_prev = rir_tree.item(rir_tree.focus())["values"][1]
+      prev_sql = "SELECT * FROM invoice WHERE invoice_number=%s"
+      prev_val = (rir_tree_prev,)
+      fbcursor.execute(prev_sql,prev_val)
+      prev_data = fbcursor.fetchone()
+
+      pri_sql = "SELECT * FROM company"
+      fbcursor.execute(pri_sql)
+      comp_data = fbcursor.fetchone()
 
 
-    rir_in_vertibar=Scrollbar(rir_in_frame,orient=VERTICAL)
-    rir_in_vertibar.pack(side=RIGHT,fill=Y)
-    rir_in_vertibar.config(command=rir_in_canvas.yview)
-    rir_in_canvas.config(width=1338,height=710)
+      if prev_data[13] == 'Professional 1 (logo on left side)':
+        frame = Frame(prev_invo, width=953, height=300)
+        frame.pack(expand=True, fill=BOTH)
+        frame.place(x=5,y=30)
+        canvas=Canvas(frame, bg='grey', width=953, height=300, scrollregion=(0,0,700,1200))
+        
+        vertibar=Scrollbar(frame, orient=VERTICAL)
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        
+        canvas.config(width=1315,height=640)
+        canvas.config(yscrollcommand=vertibar.set)
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235, 25, 1035, 1430 , outline='yellow',fill='white')
+        inv_title_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_title_canvas.config(text=prev_data[39],anchor="center",bg="white")
+        canvas.create_window(637, 50,window=inv_title_canvas)
 
-    rir_in_canvas.config(yscrollcommand=rir_in_vertibar.set)
-    rir_in_canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        try:
+          image = Image.open("images/"+comp_data[13])
+          resize_image = image.resize((250, 125))
+          logo_img = ImageTk.PhotoImage(resize_image)
+          b2 = Label(canvas,image=logo_img, height=125, width=250,)
+          b2.photo = logo_img
+          canvas.create_window(410, 155,window=b2)
+        except:
+          pass
+        inv_pr_sql = "SELECT * FROM invoice_settings"
 
-    rir_in_paperheigth = rir_in_preview.winfo_fpixels('1m') * 297
-    rir_in_paperwidth = rir_in_preview.winfo_fpixels('1m') * 210
-    rir_in_canvas.create_rectangle(265, 20, 265+rir_in_paperwidth, 20+rir_in_paperheigth, outline='orange', fill='white')
-    rir_company = "SELECT * from company"
-    fbcursor.execute(rir_company)
-    rir_company= fbcursor.fetchone()
+        fbcursor.execute(inv_pr_sql)
+        inv_st = fbcursor.fetchone()
 
-  # try:
-    # rir_id=rir_main_tree.item(rir_main_tree.focus())["values"][3]
+        lb_inv1=Label(canvas,text=inv_st[4], bg="white",anchor="nw",font=("Helvetica", 11),height=1)#Invoice#
+        win_inv1 = canvas.create_window(290, 240, anchor="nw", window=lb_inv1)
 
-    # rir_main_table_sql="select * from orders where businessname=%s"
-    # rir_main_table_sql_val=(rir_id,)
-    # fbcursor.execute(rir_main_table_sql,rirrir_main_table_sql_val)
-    # main_tb_val=fbcursor.fetchone()
+        lb_inv1=Label(canvas,text=inv_st[5], bg="white",anchor="nw",font=("Helvetica", 11),height=1 )#Invoicedate
+        win_inv1 = canvas.create_window(290, 260, anchor="nw", window=lb_inv1)
+          
+        lb_inv1=Label(canvas,text="Due Date", bg="white",anchor="nw",font=("Helvetica", 11),height=1)#Due date
+        win_inv1 = canvas.create_window(290, 280, anchor="nw", window=lb_inv1)
 
-    sqlr= 'select currencysign from company'
-    fbcursor.execute(sqlr)
-    crncy=fbcursor.fetchone()
-    crc=crncy[0]
-    sqlrt= 'select currsignplace from company'
-    fbcursor.execute(sqlrt)
-    post_rp=fbcursor.fetchone()
-    ps_cr=post_rp[0]
-    
-    #-------------------------------------------------------------------------------------------------Heder data--------
-    labelcmp=Label(rir_in_canvas,text=rir_company[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
-    window = rir_in_canvas.create_window(300,80, anchor="nw", window=labelcmp)
+        lb_inv1=Label(canvas,text=inv_st[7], bg="white",anchor="nw",font=("Helvetica", 11),height=1)#Terms
+        win_inv1 = canvas.create_window(290, 300, anchor="nw", window=lb_inv1)
 
-    labelcmpl=Label(rir_in_canvas,text=rir_company[2], bg="white",font=("Helvetica", 9),anchor="nw", width=50,justify=LEFT, height=6)
-    windowl = rir_in_canvas.create_window(300,120, anchor="nw", window=labelcmpl)
-    rir_in_canvas.create_text(950,100, text="Invoices List",font=("Helvetica", 16), justify='right')
-    rir_in_canvas.create_text(350,228,text=rir_company[4],fill='black',font=("Helvetica", 8), justify='left')
-    # rir_in_canvas.create_text(953,220,text="Customer ID:"+str(main_tb_val[0]),fill='black',font=("Helvetica", 12), justify='right')
+        lb_inv1=Label(canvas,text=inv_st[6], bg="white",anchor="nw",font=("Helvetica", ),height=1)#Invoice ref.#
+        win_inv1 = canvas.create_window(290, 320, anchor="nw", window=lb_inv1)
 
-    # rir_sql5="select * from customer where businessname=%s"
-    # rir_sql5_vals=(rir_id,)
-    # fbcursor.execute(rir_sql5,rir_sql5_vals)
-    # rir_det=fbcursor.fetchone()
-    # rir_in_canvas.create_line(1038,235,280,235,fill="black", width=2)
-    
-    # rir_in_canvas.create_text(330,260,text="Bill To:",fill='black',font=("Helvetica", 12), justify='right')
-    # labelcmp=Label(rir_in_canvas,text=rir_det[4] , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=1)
-    # window = rir_in_canvas.create_window(305,275, anchor="nw", window=labelcmp)
-    # text=rir_det[5]
-    # wraped_text="\n".join(wrap(text,30))
-    # labelcmp=Label(rir_in_canvas,text=wraped_text , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=4)
-    # window = rir_in_canvas.create_window(305,295, anchor="nw", window=labelcmp)
+        lb_inv1=Label(canvas,text=str(inv_st[0])+str(prev_data[1]), bg="white",anchor="nw",font=("Helvetica", ),height=1)
+        win_inv1 = canvas.create_window(425, 240, anchor="nw", window=lb_inv1)
+        
+        lb_inv1=Label(canvas,text=inv_st[3], bg="white",anchor="ne",font=('Helvetica 14 bold'),height=1)#invoice
+        win_inv1 = canvas.create_window(990, 240, anchor="ne", window=lb_inv1)
 
-    # rir_in_canvas.create_text(720,260,text="Ship To:",fill='black',font=("Helvetica", 12), justify='right')
-    # labelcmp=Label(rir_in_canvas,text=rir_det[6] , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=1)
-    # window = rir_in_canvas.create_window(690,275, anchor="nw", window=labelcmp)
-    # text=rir_det[7]
-    # wraped_text="\n".join(wrap(text,30))
-    # labelcmp=Label(rirrir_in_canvas,text=wraped_text , bg="white",anchor="nw",font=("Helvetica", 10), width=40, height=4)
-    # window = rir_in_canvas.create_window(690,295, anchor="nw", window=labelcmp)
-    # #---------------------------------------------------------------------------------------------------Table Data
+        lb_inv1=Label(canvas,text=inv_st[24], bg="white",anchor="ne",font=("Helvetica 10" ),height=2)#TAX EXEMPTED
+        win_inv1 = canvas.create_window(990, 268, anchor="ne", window=lb_inv1)
 
-    # style=ttk.Style()
-    # style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-    # style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
-    # style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+        lb_inv1=Label(canvas,text=inv_st[8], bg="white",anchor="nw",font=("Helvetica 10 underline" ),height=1)#Invoice to
+        win_inv1 = canvas.create_window(298, 350, anchor="nw", window=lb_inv1)
 
-    # # Add a Treeview widge
-                        
-    # rir_prv_tree=ttk.Treeview(rir_in_canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7","c8"), show='headings', height=30, style='mystyle.Treeview')
-    # rir_prv_tree.column("# 1", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 1", text="Invoice No")
-    # rir_prv_tree.column("# 2", anchor=E, stretch=NO, width=80)
-    # rir_prv_tree.heading("# 2", text="Date")
-    # rir_prv_tree.column("# 3", anchor=E, stretch=NO, width=80)
-    # rir_prv_tree.heading("# 3", text="Due Date")
-    # rir_prv_tree.column("# 4", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 4", text="Recurring")
-    # rir_prv_tree.column("# 5", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 5", text="Status")
-    # rir_prv_tree.column("# 6", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 6", text="Invoice Total")
-    # rir_prv_tree.column("# 7", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 7", text="Total Paid")
-    # rir_prv_tree.column("# 8", anchor=E, stretch=NO, width=100)
-    # rir_prv_tree.heading("# 8", text="Balance")
+        lb_inv1=Label(canvas,text=inv_st[9], bg="white",anchor="nw",font=("Helvetica 10 underline"),height=1)#Ship to
+        win_inv1 = canvas.create_window(625, 350, anchor="nw", window=lb_inv1)
 
-    # sql_qry="select * from invoice where businessname=%s"
-    # sql_qryvlz=(rir_id,)
-    # fbcursor.execute(sql_qry,sql_qryvlz)
-    # tre=fbcursor.fetchall() 
-    # for record in rir_prv_tree.get_children():
-    #   rir_prv_tree.delete(record)
+        canvas.create_text(465, 270, text=prev_data[2], fill="black", font=('Helvetica 11'))
+        canvas.create_text(465, 290, text=prev_data[3], fill="black", font=('Helvetica 11'))
+        inv_terms_canvas = Label(canvas,font=('Helvetica 10'),width=30,bg='white')
+        inv_terms_canvas.config(text=prev_data[42],anchor="w")
+        canvas.create_window(548, 330,window=inv_terms_canvas)
+        inv_ref_canvas = Label(canvas,font=('Helvetica 10'),width=30,bg='white')
+        inv_ref_canvas.config(text=prev_data[43],anchor="w")
+        canvas.create_window(548, 330,window=inv_ref_canvas) 
+        
+        canvas.create_text(896, 110, text=comp_data[1], fill="black", font=('Helvetica 12 bold'))
+        comp_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=5,fg= "black",bg="white",cursor="arrow",bd=0,)
+        comp_addr_canvas.insert("1.0",comp_data[2])
+        comp_addr_canvas.tag_configure("tag_name", justify='right')
+        comp_addr_canvas.tag_add("tag_name", "1.0", "end")
+        comp_addr_canvas.config(state=DISABLED)
+        canvas.create_window(882, 165,window=comp_addr_canvas)
+        inv_stax_canvas = Label(canvas, font=('Helvetica 10 '),width=30,bg="white")
+        inv_stax_canvas.config(text=comp_data[4],anchor="e")
+        canvas.create_window(865, 220,window=inv_stax_canvas)
+     
+        inv_canv_name = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_canv_name.config(text=prev_data[18],anchor="w",bg="white")
+        canvas.create_window(419, 380,window=inv_canv_name)
+        inv_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_addr_canvas.insert("1.0",prev_data[19])
+        inv_addr_canvas.config(state=DISABLED)
+        canvas.create_window(405, 425, window=inv_addr_canvas)
+        
+        inv_ship_canv_lbl = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_ship_canv_lbl.config(text=prev_data[20],anchor="w",bg="white")
+        canvas.create_window(751, 380, window=inv_ship_canv_lbl)
+        inv_ship_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_ship_addr_canvas.insert("1.0",prev_data[21])
+        inv_ship_addr_canvas.config(state=DISABLED)
+        canvas.create_window(736, 425,window=inv_ship_addr_canvas)
+
+        inv_header_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_header_canvas.config(text=prev_data[40],anchor="center",bg="white")
+        canvas.create_window(637, 452,window=inv_header_canvas)
+        
+        s = ttk.Style()
+        s.configure('mystyles.Treeview.Heading', background=''+inv_st[2],State='DISABLE')
+        inv_prev_tree = ttk.Treeview(canvas,height=12,style='mystyles.Treeview')
+        inv_prev_tree["columns"] = ["1","2","3","4","5"]
+        inv_prev_tree.column("#0",width=1)
+        inv_prev_tree.column("1",width=100,anchor=CENTER)
+        inv_prev_tree.column("2",width=343,anchor=CENTER)
+        inv_prev_tree.column("3",width=80,anchor=CENTER)
+        inv_prev_tree.column("4",width=90,anchor=CENTER)
+        inv_prev_tree.column("5",width=80,anchor=CENTER)
+        inv_prev_tree.heading("#0",text="")
+        inv_prev_tree.heading("1",text=inv_st[10])
+        inv_prev_tree.heading("2",text=inv_st[11])
+        inv_prev_tree.heading("3",text=inv_st[12])
+        inv_prev_tree.heading("4",text=inv_st[14])
+        inv_prev_tree.heading("5",text=inv_st[15])
+        window = canvas.create_window(285, 462, anchor="nw", window=inv_prev_tree)
+
+        currency_sql = "SELECT currencysign,currsignplace FROM company"
+        fbcursor.execute(currency_sql,)
+        currency_symb = fbcursor.fetchone()
+
+        storing_sql = "SELECT * FROM storingproduct WHERE invoice_number=%s"
+        storing_val = (prev_data[1],)
+        fbcursor.execute(storing_sql,storing_val)
+        storing_data = fbcursor.fetchall()
+        
+        for record in storing_data:
+          inv_prev_tree.insert(parent='', index='end',text='', values=(record[5],record[6] + "  -  " + record[7],record[9],record[8],record[13]))
         
 
-    # count=0
-    # for i in tre:
-    #   if i[24] is None:
-    #     dfh="No"
-    #   else:
-    #     dfh="Yes"
-    #   if ps_cr=="before amount":
-    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], crc+str(i[8]), crc+str(i[9]), crc+str(i[10])))
-                      
-    #   elif ps_cr=="after amount":
-    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
-                        
-    #   elif ps_cr=="before amount with space":
-    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5], crc+" "+str(i[8]), crc+" "+str(i[9]), crc+" "+str(i[10])))
-                        
-    #   elif ps_cr=="after amount with space":
-    #     rir_prv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],dfh,i[5],  str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
-                        
-                    
-    #   else:
-    #     pass
-    #   count += 1
-    # rir_prv_tree.insert('', 'end',text="1",values=('','','','','','','',''))
-    # rir_prv_tree.insert('', 'end',text="1",values=('','','-End List-','','','Invoice Total','Total Paid','Balance'))
-    # sql_inv_t="select sum(invoicetot),sum(totpaid), sum(balance) from invoice where businessname=%s"
-    # sql_inv_t_val=(rir_id,)
-    # fbcursor.execute(sql_inv_t,sql_inv_t_val)
-    # inv_ttt=fbcursor.fetchone() 
-    
-    # if ps_cr=="before amount":
-    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',crc+str(inv_ttt[0]),crc+str(inv_ttt[1]),crc+str(inv_ttt[2])))
-    # elif ps_cr=="after amount":
-    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',str(inv_ttt[0])+crc,str(inv_ttt[1])+crc,str(inv_ttt[2])+crc))
-    # elif ps_cr=="before amount with space":
-    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',crc+" "+str(inv_ttt[0]),crc+" "+str(inv_ttt[1]),crc+" "+str(inv_ttt[2])))
-    # elif ps_cr=="after amount with space":
-    #   rir_prv_tree.insert('', 'end',text="1",values=('-Summary-','','','','',str(inv_ttt[0])+" "+crc,str(inv_ttt[1])+" "+crc,str(inv_ttt[2])+" "+crc))
-    # else:
-    #   pass
-    
+        if not comp_data:
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          
+          if currency_symb[1] == "before amount":
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,737,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,737,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,786,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,786,window=inv_tot1_canvas)
+
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            
+        elif comp_data[12] == "1":
+          canvas.create_line(980, 723, 980, 773 )
+          canvas.create_line(720, 723, 720, 773 )
+          canvas.create_line(860, 723, 860, 773 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          # canvas.create_line(980, 798, 720, 798 )
+          # canvas.create_line(980, 823, 720, 823 )
+          # canvas.create_line(980, 848, 720, 848 )
+          # canvas.create_line(980, 873, 720, 873 )
+
+          if currency_symb[1] == "before amount":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white', height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
 
 
-    # window = rir_in_canvas.create_window(280, 320, anchor="nw", window=rir_prv_tree)
-  # except:
-  #   pass 
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,761,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,761,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "before amount with space":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,761,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,761,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+           
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,761,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount with space":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,37,window=inv_sub1_canvas)
+
+            
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,761,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tot1_canvas)
+
+            
+        elif comp_data[12] == "2":
+          canvas.create_line(980, 723, 980, 798 )
+          canvas.create_line(720, 723, 720, 798 )
+          canvas.create_line(860, 723, 860, 798 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          # canvas.create_line(980, 823, 720, 823 )
+          # canvas.create_line(980, 848, 720, 848 )
+          # canvas.create_line(980, 873, 720, 873 )
+          # canvas.create_line(980, 898, 720, 898 )
+
+          if currency_symb[1] == "before amount":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,786,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,786,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "before amount with space":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white',height=1)
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount":
+       
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,786,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount with space":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,786,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tot1_canvas)
+
+            
+        elif comp_data[12] == "3":
+          canvas.create_line(980, 723, 980, 823 )
+          canvas.create_line(720, 723, 720, 823 )
+          canvas.create_line(860, 723, 860, 823 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+       
+          if currency_symb[1] == "before amount":
+           
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX2_canvas.config(text="TAX2",anchor="n")
+            canvas.create_window(790,786,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white',height=1)
+            inv_tax_2_canvas.config(text=currency_symb[0]+str(prev_data[36]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_2_canvas)
+
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "before amount with space":
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX2_canvas.config(text="TAX2",anchor="n")
+            canvas.create_window(790,786,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0] + " " + str(prev_data[36]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_excname_canvas.config(text=prev_data[11],anchor="n")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX2_canvas.config(text="TAX2",anchor="n")
+            canvas.create_window(790,761,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_excname_canvas.config(text=prev_data[11],anchor="n")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            
+          elif currency_symb[1] == "after amount with space":
+            
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_sub_canvas.config(text=inv_st[16],anchor="n")
+            canvas.create_window(790,737,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX1_canvas.config(text=inv_st[19],anchor="n")
+            canvas.create_window(790,761,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_TAX2_canvas.config(text="TAX2",anchor="n")
+            canvas.create_window(790,786,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white',height=1)
+            inv_excname_canvas.config(text=prev_data[11],anchor="n")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white',height=1)
+            inv_tot_canvas.config(text="Invoice Total",anchor="n")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            
+
+        inv_prev_comments = Text(canvas,font=('Helvetica 10'),width=100,height=6,fg= "black",
+        bg="white",cursor="arrow",bd=0)
+        inv_prev_comments.insert("1.0",prev_data[44])
+        inv_prev_comments.config(state=DISABLED)
+        canvas.create_window(635, 980,window=inv_prev_comments)
+        
+        lbx_inv=Label(canvas,text=inv_st[23], bg="white",anchor="n",font=("Helvetica 10 "),height=1)#"Terms and Conditions"
+        win_inv2 = canvas.create_window(560, 1055, anchor="nw", window=lbx_inv)
+        canvas.create_line(290, 1090, 982, 1090)
+
+        inv_prev_terms = Text(canvas,font=('Helvetica 10'),width=100,height=4,fg= "black",bg="white",cursor="arrow",bd=0)
+        inv_prev_terms.insert("1.0",prev_data[35])
+        inv_prev_terms.tag_configure("tag_name", justify='left')
+        inv_prev_terms.tag_add("tag_name", "1.0", "end")
+        inv_prev_terms.config(state=DISABLED)
+        canvas.create_window(642, 1125,window=inv_prev_terms)
+        canvas.create_text(330, 1165, text="Sale Person:", fill="black", font=('Helvetica 10'))
+        inv_prev_salesp = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_prev_salesp.config(text=prev_data[14],anchor="w",bg="white")
+        canvas.create_window(502, 1165, window = inv_prev_salesp)
+        inv_footer_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_footer_canvas.config(text=prev_data[41],anchor="w",bg="white")
+        canvas.create_window(413, 1185,window=inv_footer_canvas)
+    #----------------Professional 2 (logo on right side)------------------
+      elif prev_data[13] == 'Professional 2 (logo on right side)':
+        frame = Frame(prev_invo, width=953, height=300)
+        frame.pack(expand=True, fill=BOTH)
+        frame.place(x=5,y=30)
+        canvas=Canvas(frame, bg='grey', width=953, height=300, scrollregion=(0,0,700,1200))
+        
+        vertibar=Scrollbar(frame, orient=VERTICAL)
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        
+        canvas.config(width=1315,height=640)
+        canvas.config(yscrollcommand=vertibar.set)
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235, 25, 1035, 1430 , outline='yellow',fill='white')
+        inv_title_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_title_canvas.config(text=prev_data[39],anchor="center",bg="white")
+        canvas.create_window(637, 50,window=inv_title_canvas)
+
+        try:
+          image = Image.open("images/"+comp_data[13])
+          resize_image = image.resize((250, 125))
+          logo_img = ImageTk.PhotoImage(resize_image)
+          b2 = Label(canvas,image=logo_img, height=125, width=250,)
+          b2.photo = logo_img
+          canvas.create_window(860, 155,window=b2)
+        except:
+          pass
+        
+        canvas.create_text(715, 250, text="Invoice#", fill="black", font=('Helvetica 11'))
+        canvas.create_text(725, 270, text="Invoicedate", fill="black", font=('Helvetica 11'))
+        canvas.create_text(718, 290, text="Due date", fill="black", font=('Helvetica 11'))
+        canvas.create_text(710, 310, text="Terms", fill="black", font=('Helvetica 11'))
+        canvas.create_text(728, 330, text="Invoice ref.#", fill="black", font=('Helvetica 11'))
+        inv_num_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_num_canvas.config(text=prev_data[1],anchor="w")
+        canvas.create_window(918, 250,window=inv_num_canvas)
+        canvas.create_text(856, 270, text=prev_data[2], fill="black", font=('Helvetica 11'))
+        canvas.create_text(856, 290, text=prev_data[3], fill="black", font=('Helvetica 11'))
+        inv_terms_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_terms_canvas.config(text=prev_data[42],anchor="w")
+        canvas.create_window(918, 310,window=inv_terms_canvas)
+        inv_ref_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_ref_canvas.config(text=prev_data[43],anchor="w")
+        canvas.create_window(918, 330,window=inv_ref_canvas)
+        
+        canvas.create_text(379, 110, text=comp_data[1], fill="black", font=('Helvetica 12 bold'))
+        comp_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=5,fg= "black",bg="white",cursor="arrow",bd=0,)
+        comp_addr_canvas.insert("1.0",comp_data[2])
+        comp_addr_canvas.tag_configure("tag_name", justify='left')
+        comp_addr_canvas.tag_add("tag_name", "1.0", "end")
+        comp_addr_canvas.config(state=DISABLED)
+        canvas.create_window(392, 165,window=comp_addr_canvas)
+        inv_stax_canvas = Label(canvas, font=('Helvetica 10 '),width=30,bg='white')
+        inv_stax_canvas.config(text=comp_data[4],anchor="w")
+        canvas.create_window(405, 220,window=inv_stax_canvas)
+        canvas.create_text(320, 255, text="Invoice", fill="black", font=('Helvetica 14 bold'))
+        canvas.create_text(335, 285, text="TAX EXEMPTED", fill="black", font=('Helvetica 10'))
+        
+        canvas.create_text(315, 350, text="Invoice to", fill="black", font=('Helvetica 10 underline'))
+        inv_canv_name = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_canv_name.config(text=prev_data[18],anchor="w",bg="white")
+        canvas.create_window(409, 370,window=inv_canv_name)
+        inv_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_addr_canvas.insert("1.0",prev_data[19])
+        inv_addr_canvas.config(state=DISABLED)
+        canvas.create_window(395, 415, window=inv_addr_canvas)
+        canvas.create_text(650, 350, text="Ship to", fill="black", font=('Helvetica 10 underline'))
+        inv_ship_canv_lbl = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_ship_canv_lbl.config(text=prev_data[20],anchor="w",bg="white")
+        canvas.create_window(751, 370, window=inv_ship_canv_lbl)
+        inv_ship_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_ship_addr_canvas.insert("1.0",prev_data[21])
+        inv_ship_addr_canvas.config(state=DISABLED)
+        canvas.create_window(736, 415,window=inv_ship_addr_canvas)
+
+        inv_header_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_header_canvas.config(text=prev_data[40],anchor="center",bg="white")
+        canvas.create_window(637, 452,window=inv_header_canvas)
+        
+        s = ttk.Style()
+        s.configure('Treeview.Heading', background='',State='DISABLE')
+        inv_prev_tree = ttk.Treeview(canvas,height=12,style='mystyle.Treeview')
+        inv_prev_tree["columns"] = ["1","2","3","4","5"]
+        inv_prev_tree.column("#0",width=1)
+        inv_prev_tree.column("1",width=100,anchor=CENTER)
+        inv_prev_tree.column("2",width=343,anchor=CENTER)
+        inv_prev_tree.column("3",width=80,anchor=CENTER)
+        inv_prev_tree.column("4",width=90,anchor=CENTER)
+        inv_prev_tree.column("5",width=80,anchor=CENTER)
+        inv_prev_tree.heading("#0",text="")
+        inv_prev_tree.heading("1",text="ID/SKU")
+        inv_prev_tree.heading("2",text="Product/Service - Description")
+        inv_prev_tree.heading("3",text="Quantity")
+        inv_prev_tree.heading("4",text="Unit Price")
+        inv_prev_tree.heading("5",text="Price")
+        window = canvas.create_window(285, 462, anchor="nw", window=inv_prev_tree)
+
+        currency_sql = "SELECT currencysign,currsignplace FROM company"
+        fbcursor.execute(currency_sql,)
+        currency_symb = fbcursor.fetchone()
+        
+        storing_sql = "SELECT * FROM storingproduct WHERE invoice_number=%s"
+        storing_val = (prev_data[1],)
+        fbcursor.execute(storing_sql,storing_val)
+        storing_data = fbcursor.fetchall()
+        
+        for record in storing_data:
+          inv_prev_tree.insert(parent='', index='end',text='', values=(record[5],record[6] + "  -  " + record[7],record[9],record[8],record[13]))
+        
+
+        if not comp_data:
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "1":
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "2":
+          canvas.create_line(980, 723, 980, 898 )
+          canvas.create_line(720, 723, 720, 898 )
+          canvas.create_line(860, 723, 860, 898 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+        elif comp_data[12] == "3":
+          canvas.create_line(980, 723, 980, 923 )
+          canvas.create_line(720, 723, 720, 923 )
+          canvas.create_line(860, 723, 860, 923 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+          canvas.create_line(980, 923, 720, 923 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0]+str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0] + " " + str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+
+        inv_prev_comments = Text(canvas,font=('Helvetica 10'),width=100,height=6,fg= "black",
+        bg="white",cursor="arrow",bd=0)
+        inv_prev_comments.insert("1.0",prev_data[44])
+        inv_prev_comments.config(state=DISABLED)
+        canvas.create_window(635, 980,window=inv_prev_comments)
+        
+        canvas.create_text(635, 1075, text="Terms and Conditions", fill="black", font=('Helvetica 10'))
+        canvas.create_line(290, 1090, 982, 1090)
+        
+        inv_prev_terms = Text(canvas,font=('Helvetica 10'),width=100,height=4,fg= "black",bg="white",cursor="arrow",bd=0)
+        inv_prev_terms.insert("1.0",prev_data[35])
+        inv_prev_terms.tag_configure("tag_name", justify='left')
+        inv_prev_terms.tag_add("tag_name", "1.0", "end")
+        inv_prev_terms.config(state=DISABLED)
+        canvas.create_window(642, 1125,window=inv_prev_terms)
+        canvas.create_text(330, 1165, text="Sale Person:", fill="black", font=('Helvetica 10'))
+        inv_prev_salesp = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_prev_salesp.config(text=prev_data[14],anchor="w",bg="white")
+        canvas.create_window(502, 1165, window = inv_prev_salesp)
+        inv_footer_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_footer_canvas.config(text=prev_data[41],anchor="w",bg="white")
+        canvas.create_window(413, 1185,window=inv_footer_canvas)
+    #----------------Simplified 1 (logo on left side)------------------ 
+      elif prev_data[13] == 'Simplified 1 (logo on left side)':
+        frame = Frame(prev_invo, width=953, height=300)
+        frame.pack(expand=True, fill=BOTH)
+        frame.place(x=5,y=30)
+        canvas=Canvas(frame, bg='grey', width=953, height=300, scrollregion=(0,0,700,1200))
+        
+        vertibar=Scrollbar(frame, orient=VERTICAL)
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        
+        canvas.config(width=1315,height=640)
+        canvas.config(yscrollcommand=vertibar.set)
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235, 25, 1035, 1430 , outline='yellow',fill='white')
+        inv_title_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_title_canvas.config(text=prev_data[39],anchor="center",bg="white")
+        canvas.create_window(637, 50,window=inv_title_canvas)
+
+        try:
+          image = Image.open("images/"+comp_data[13])
+          resize_image = image.resize((250, 125))
+          logo_img = ImageTk.PhotoImage(resize_image)
+          b2 = Label(canvas,image=logo_img, height=125, width=250,)
+          b2.photo = logo_img
+          canvas.create_window(410, 155,window=b2)
+        except:
+          pass
+        
+        canvas.create_text(310, 250, text="Invoice#", fill="black", font=('Helvetica 11'))
+        canvas.create_text(320, 270, text="Invoicedate", fill="black", font=('Helvetica 11'))
+        canvas.create_text(313, 290, text="Due date", fill="black", font=('Helvetica 11'))
+        canvas.create_text(304, 310, text="Terms", fill="black", font=('Helvetica 11'))
+        canvas.create_text(323, 330, text="Invoice ref.#", fill="black", font=('Helvetica 11'))
+        inv_num_canvas = Label(canvas,font=('Helvetica 10'),width=30,bg='white')
+        inv_num_canvas.config(text=prev_data[1],anchor="w")
+        canvas.create_window(548, 250,window=inv_num_canvas)
+        canvas.create_text(465, 270, text=prev_data[2], fill="black", font=('Helvetica 11'))
+        canvas.create_text(465, 290, text=prev_data[3], fill="black", font=('Helvetica 11'))
+        inv_terms_canvas = Label(canvas,font=('Helvetica 10'),width=30,bg='white')
+        inv_terms_canvas.config(text=prev_data[42],anchor="w")
+        canvas.create_window(548, 310,window=inv_terms_canvas)
+        inv_ref_canvas = Label(canvas,font=('Helvetica 10'),width=30,bg='white')
+        inv_ref_canvas.config(text=prev_data[43],anchor="w")
+        canvas.create_window(548, 330,window=inv_ref_canvas)   
+        
+        canvas.create_text(896, 110, text=comp_data[1], fill="black", font=('Helvetica 12 bold'))
+        comp_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=5,fg= "black",bg="white",cursor="arrow",bd=0,)
+        comp_addr_canvas.insert("1.0",comp_data[2])
+        comp_addr_canvas.tag_configure("tag_name", justify='right')
+        comp_addr_canvas.tag_add("tag_name", "1.0", "end")
+        comp_addr_canvas.config(state=DISABLED)
+        canvas.create_window(882, 165,window=comp_addr_canvas)
+        inv_stax_canvas = Label(canvas, font=('Helvetica 10 '),width=30,bg="white")
+        inv_stax_canvas.config(text=comp_data[4],anchor="e")
+        canvas.create_window(865, 220,window=inv_stax_canvas)
+        canvas.create_text(951, 255, text="Invoice", fill="black", font=('Helvetica 14 bold'))
+        canvas.create_text(935, 285, text="TAX EXEMPTED", fill="black", font=('Helvetica 10'))
+        
+        canvas.create_text(325, 360, text="Invoice to", fill="black", font=('Helvetica 10 underline'))
+        inv_canv_name = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_canv_name.config(text=prev_data[18],anchor="w",bg="white")
+        canvas.create_window(419, 380,window=inv_canv_name)
+        inv_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_addr_canvas.insert("1.0",prev_data[19])
+        inv_addr_canvas.config(state=DISABLED)
+        canvas.create_window(405, 425, window=inv_addr_canvas)
+        canvas.create_text(650, 360, text="Ship to", fill="black", font=('Helvetica 10 underline'))
+        inv_ship_canv_lbl = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_ship_canv_lbl.config(text=prev_data[20],anchor="w",bg="white")
+        canvas.create_window(751, 380, window=inv_ship_canv_lbl)
+        inv_ship_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_ship_addr_canvas.insert("1.0",prev_data[21])
+        inv_ship_addr_canvas.config(state=DISABLED)
+        canvas.create_window(736, 425,window=inv_ship_addr_canvas)
+
+        inv_header_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_header_canvas.config(text=prev_data[40],anchor="center",bg="white")
+        canvas.create_window(637, 452,window=inv_header_canvas)
+        
+        s = ttk.Style()
+        s.configure('Treeview.Heading', background='',State='DISABLE')
+        inv_prev_tree = ttk.Treeview(canvas,height=12,style='mystyle.Treeview')
+        inv_prev_tree["columns"] = ["1","2","3"]
+        inv_prev_tree.column("#0",width=1)
+        inv_prev_tree.column("1",width=394,anchor=CENTER)
+        inv_prev_tree.column("2",width=150,anchor=CENTER)
+        inv_prev_tree.column("3",width=150,anchor=CENTER)
+        inv_prev_tree.heading("#0",text="")
+        inv_prev_tree.heading("1",text="Product/Service - Description")
+        inv_prev_tree.heading("2",text="Quantity")
+        inv_prev_tree.heading("3",text="Price")
+        window = canvas.create_window(285, 462, anchor="nw", window=inv_prev_tree)
+
+        currency_sql = "SELECT currencysign,currsignplace FROM company"
+        fbcursor.execute(currency_sql,)
+        currency_symb = fbcursor.fetchone()
+    
+        storing_sql = "SELECT * FROM storingproduct WHERE invoice_number=%s"
+        storing_val = (prev_data[1],)
+        fbcursor.execute(storing_sql,storing_val)
+        storing_data = fbcursor.fetchall()
+        
+        for record in storing_data:
+          inv_prev_tree.insert(parent='', index='end',text='', values=(record[6] + "  -  " + record[7],record[9],record[13]))
+
+        if not comp_data:
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "1":
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "2":
+          canvas.create_line(980, 723, 980, 898 )
+          canvas.create_line(720, 723, 720, 898 )
+          canvas.create_line(860, 723, 860, 898 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+        elif comp_data[12] == "3":
+          canvas.create_line(980, 723, 980, 923 )
+          canvas.create_line(720, 723, 720, 923 )
+          canvas.create_line(860, 723, 860, 923 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+          canvas.create_line(980, 923, 720, 923 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0]+str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0] + " " + str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+
+        inv_prev_comments = Text(canvas,font=('Helvetica 10'),width=100,height=6,fg= "black",
+        bg="white",cursor="arrow",bd=0)
+        inv_prev_comments.insert("1.0",prev_data[44])
+        inv_prev_comments.config(state=DISABLED)
+        canvas.create_window(635, 980,window=inv_prev_comments)
+        
+        canvas.create_text(635, 1075, text="Terms and Conditions", fill="black", font=('Helvetica 10'))
+        canvas.create_line(290, 1090, 982, 1090)
+        
+        inv_prev_terms = Text(canvas,font=('Helvetica 10'),width=100,height=4,fg= "black",bg="white",cursor="arrow",bd=0)
+        inv_prev_terms.insert("1.0",prev_data[35])
+        inv_prev_terms.tag_configure("tag_name", justify='left')
+        inv_prev_terms.tag_add("tag_name", "1.0", "end")
+        inv_prev_terms.config(state=DISABLED)
+        canvas.create_window(642, 1125,window=inv_prev_terms)
+        canvas.create_text(330, 1165, text="Sale Person:", fill="black", font=('Helvetica 10'))
+        inv_prev_salesp = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_prev_salesp.config(text=prev_data[14],anchor="w",bg="white")
+        canvas.create_window(502, 1165, window = inv_prev_salesp)
+        inv_footer_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_footer_canvas.config(text=prev_data[41],anchor="w",bg="white")
+        canvas.create_window(413, 1185,window=inv_footer_canvas)
+    #----------------Simplified 2 (logo on right side)------------------ 
+      elif prev_data[13] == 'Simplified 2 (logo on right side)':
+        frame = Frame(prev_invo, width=953, height=300)
+        frame.pack(expand=True, fill=BOTH)
+        frame.place(x=5,y=30)
+        canvas=Canvas(frame, bg='grey', width=953, height=300, scrollregion=(0,0,700,1200))
+        
+        vertibar=Scrollbar(frame, orient=VERTICAL)
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        
+        canvas.config(width=1315,height=640)
+        canvas.config(yscrollcommand=vertibar.set)
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235, 25, 1035, 1430 , outline='yellow',fill='white')
+        inv_title_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_title_canvas.config(text=prev_data[39],anchor="center",bg="white")
+        canvas.create_window(637, 50,window=inv_title_canvas)
+
+        try:
+          image = Image.open("images/"+comp_data[13])
+          resize_image = image.resize((250, 125))
+          logo_img = ImageTk.PhotoImage(resize_image)
+          b2 = Label(canvas,image=logo_img, height=125, width=250,)
+          b2.photo = logo_img
+          canvas.create_window(860, 155,window=b2)
+        except:
+          pass
+        
+        canvas.create_text(715, 250, text="Invoice#", fill="black", font=('Helvetica 11'))
+        canvas.create_text(725, 270, text="Invoicedate", fill="black", font=('Helvetica 11'))
+        canvas.create_text(718, 290, text="Due date", fill="black", font=('Helvetica 11'))
+        canvas.create_text(710, 310, text="Terms", fill="black", font=('Helvetica 11'))
+        canvas.create_text(728, 330, text="Invoice ref.#", fill="black", font=('Helvetica 11'))
+        inv_num_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_num_canvas.config(text=prev_data[1],anchor="w")
+        canvas.create_window(918, 250,window=inv_num_canvas)
+        canvas.create_text(856, 270, text=prev_data[2], fill="black", font=('Helvetica 11'))
+        canvas.create_text(856, 290, text=prev_data[3], fill="black", font=('Helvetica 11'))
+        inv_terms_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_terms_canvas.config(text=prev_data[42],anchor="w")
+        canvas.create_window(918, 310,window=inv_terms_canvas)
+        inv_ref_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_ref_canvas.config(text=prev_data[43],anchor="w")
+        canvas.create_window(918, 330,window=inv_ref_canvas)   
+        
+        canvas.create_text(379, 110, text=comp_data[1], fill="black", font=('Helvetica 12 bold'))
+        comp_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=5,fg= "black",bg="white",cursor="arrow",bd=0,)
+        comp_addr_canvas.insert("1.0",comp_data[2])
+        comp_addr_canvas.tag_configure("tag_name", justify='left')
+        comp_addr_canvas.tag_add("tag_name", "1.0", "end")
+        comp_addr_canvas.config(state=DISABLED)
+        canvas.create_window(392, 165,window=comp_addr_canvas)
+        inv_stax_canvas = Label(canvas, font=('Helvetica 10 '),width=30,bg="white")
+        inv_stax_canvas.config(text=comp_data[4],anchor="w")
+        canvas.create_window(405, 220,window=inv_stax_canvas)
+        canvas.create_text(320, 255, text="Invoice", fill="black", font=('Helvetica 14 bold'))
+        canvas.create_text(335, 285, text="TAX EXEMPTED", fill="black", font=('Helvetica 10'))
+        
+        canvas.create_text(315, 350, text="Invoice to", fill="black", font=('Helvetica 10 underline'))
+        inv_canv_name = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_canv_name.config(text=prev_data[18],anchor="w",bg="white")
+        canvas.create_window(409, 370,window=inv_canv_name)
+        inv_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_addr_canvas.insert("1.0",prev_data[19])
+        inv_addr_canvas.config(state=DISABLED)
+        canvas.create_window(395, 415, window=inv_addr_canvas)
+        canvas.create_text(650, 350, text="Ship to", fill="black", font=('Helvetica 10 underline'))
+        inv_ship_canv_lbl = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_ship_canv_lbl.config(text=prev_data[20],anchor="w",bg="white")
+        canvas.create_window(751, 370, window=inv_ship_canv_lbl)
+        inv_ship_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=4,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_ship_addr_canvas.insert("1.0",prev_data[21])
+        inv_ship_addr_canvas.config(state=DISABLED)
+        canvas.create_window(736, 415,window=inv_ship_addr_canvas)
+
+        inv_header_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_header_canvas.config(text=prev_data[40],anchor="center",bg="white")
+        canvas.create_window(637, 452,window=inv_header_canvas)
+        
+        s = ttk.Style()
+        s.configure('Treeview.Heading', background='',State='DISABLE')
+        inv_prev_tree = ttk.Treeview(canvas,height=12,style='mystyle.Treeview')
+        inv_prev_tree["columns"] = ["1","2","3"]
+        inv_prev_tree.column("#0",width=1)
+        inv_prev_tree.column("1",width=394,anchor=CENTER)
+        inv_prev_tree.column("2",width=150,anchor=CENTER)
+        inv_prev_tree.column("3",width=150,anchor=CENTER)
+        inv_prev_tree.heading("#0",text="")
+        inv_prev_tree.heading("1",text="Product/Service - Description")
+        inv_prev_tree.heading("2",text="Quantity")
+        inv_prev_tree.heading("3",text="Price")
+        window = canvas.create_window(285, 462, anchor="nw", window=inv_prev_tree)
+
+        currency_sql = "SELECT currencysign,currsignplace FROM company"
+        fbcursor.execute(currency_sql,)
+        currency_symb = fbcursor.fetchone()
+
+        storing_sql = "SELECT * FROM storingproduct WHERE invoice_number=%s"
+        storing_val = (prev_data[1],)
+        fbcursor.execute(storing_sql,storing_val)
+        storing_data = fbcursor.fetchall()
+
+        for record in storing_data:
+          inv_prev_tree.insert(parent='', index='end',text='', values=(record[6] + "  -  " + record[7],record[9],record[13]))
+
+        if not comp_data:
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "1":
+          canvas.create_line(980, 723, 980, 873 )
+          canvas.create_line(720, 723, 720, 873 )
+          canvas.create_line(860, 723, 860, 873 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,786,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,811,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,836,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,861,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_bal1_canvas)
+        elif comp_data[12] == "2":
+          canvas.create_line(980, 723, 980, 898 )
+          canvas.create_line(720, 723, 720, 898 )
+          canvas.create_line(860, 723, 860, 898 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,811,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,836,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,861,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,886,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_bal1_canvas)
+        elif comp_data[12] == "3":
+          canvas.create_line(980, 723, 980, 923 )
+          canvas.create_line(720, 723, 720, 923 )
+          canvas.create_line(860, 723, 860, 923 )#1st
+          canvas.create_line(980, 723, 720, 723 )
+          canvas.create_line(980, 748, 720, 748 )
+          canvas.create_line(980, 773, 720, 773 ) 
+          canvas.create_line(980, 798, 720, 798 )
+          canvas.create_line(980, 823, 720, 823 )
+          canvas.create_line(980, 848, 720, 848 )
+          canvas.create_line(980, 873, 720, 873 )
+          canvas.create_line(980, 898, 720, 898 )
+          canvas.create_line(980, 923, 720, 923 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0]+str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0] + " " + str(prev_data[36]),anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="center")
+            canvas.create_window(790,737,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,737,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="center")
+            canvas.create_window(790,761,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,761,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="center")
+            canvas.create_window(790,786,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,786,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="center")
+            canvas.create_window(790,811,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,811,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="center")
+            canvas.create_window(790,836,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,836,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="center")
+            canvas.create_window(790,861,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,861,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="center")
+            canvas.create_window(790,886,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,886,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="center")
+            canvas.create_window(790,911,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(925,911,window=inv_bal1_canvas)
+
+        inv_prev_comments = Text(canvas,font=('Helvetica 10'),width=100,height=6,fg= "black",
+        bg="white",cursor="arrow",bd=0)
+        inv_prev_comments.insert("1.0",prev_data[44])
+        inv_prev_comments.config(state=DISABLED)
+        canvas.create_window(635, 980,window=inv_prev_comments)
+        
+        canvas.create_text(635, 1075, text="Terms and Conditions", fill="black", font=('Helvetica 10'))
+        canvas.create_line(290, 1090, 982, 1090)
+        
+        inv_prev_terms = Text(canvas,font=('Helvetica 10'),width=100,height=4,fg= "black",bg="white",cursor="arrow",bd=0)
+        inv_prev_terms.insert("1.0",prev_data[35])
+        inv_prev_terms.tag_configure("tag_name", justify='left')
+        inv_prev_terms.tag_add("tag_name", "1.0", "end")
+        inv_prev_terms.config(state=DISABLED)
+        canvas.create_window(642, 1125,window=inv_prev_terms)
+        canvas.create_text(330, 1165, text="Sale Person:", fill="black", font=('Helvetica 10'))
+        inv_prev_salesp = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_prev_salesp.config(text=prev_data[14],anchor="w",bg="white")
+        canvas.create_window(502, 1165, window = inv_prev_salesp)
+        inv_footer_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_footer_canvas.config(text=prev_data[41],anchor="w",bg="white")
+        canvas.create_window(413, 1185,window=inv_footer_canvas)
+    #----------------Business Classic------------------ 
+      elif prev_data[13] == 'Business Classic':
+        frame = Frame(prev_invo, width=953, height=300)
+        frame.pack(expand=True, fill=BOTH)
+        frame.place(x=5,y=30)
+        canvas=Canvas(frame, bg='grey', width=953, height=300, scrollregion=(0,0,700,1200))
+        
+        vertibar=Scrollbar(frame, orient=VERTICAL)
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        
+        canvas.config(width=1315,height=640)
+        canvas.config(yscrollcommand=vertibar.set)
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235, 25, 1080, 1430 , outline='yellow',fill='white')
+        inv_title_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_title_canvas.config(text=prev_data[39],anchor="center",bg="white")
+        canvas.create_window(657, 50,window=inv_title_canvas)
+        canvas.create_line(290, 70, 1025, 70, fill='orange')
+        try:
+          image = Image.open("images/"+comp_data[13])
+          resize_image = image.resize((250, 125))
+          logo_img = ImageTk.PhotoImage(resize_image)
+          b2 = Label(canvas,image=logo_img, height=125, width=250,)
+          b2.photo = logo_img
+          canvas.create_window(417, 155,window=b2)
+        except:
+          pass
+        canvas.create_text(629, 110, text=comp_data[1], fill="black", font=('Helvetica 10 bold'))
+        comp_addr_canvas = Text(canvas,font=('Helvetica 10'),width=21,height=5,fg= "black",bg="white",cursor="arrow",bd=0,)
+        comp_addr_canvas.insert("1.0",comp_data[2])
+        comp_addr_canvas.tag_configure("tag_name", justify='left')
+        comp_addr_canvas.tag_add("tag_name", "1.0", "end")
+        comp_addr_canvas.config(state=DISABLED)
+        canvas.create_window(628, 165,window=comp_addr_canvas)
+        inv_stax_canvas = Label(canvas, font=('Helvetica 10 '),width=21,bg="white")
+        inv_stax_canvas.config(text=comp_data[4],anchor="w")
+        canvas.create_window(638, 220,window=inv_stax_canvas)
+        
+
+        inv_canv_name = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_canv_name.config(text=prev_data[18],anchor="w",bg="white")
+        canvas.create_window(868, 110,window=inv_canv_name)
+        inv_addr_canvas = Text(canvas,font=('Helvetica 10'),width=30,height=3,bd=0,fg= "black",
+        bg="white",cursor="arrow")
+        inv_addr_canvas.insert("1.0",prev_data[19])
+        inv_addr_canvas.config(state=DISABLED)
+        canvas.create_window(853, 157, window=inv_addr_canvas)
+        
+        canvas.create_text(765, 190, text="Invoice", fill="black", font=('Helvetica 10'))
+        canvas.create_text(780, 210, text="Invoice date", fill="black", font=('Helvetica 10'))
+        canvas.create_text(772, 230, text="Due date", fill="black", font=('Helvetica 10'))
+        canvas.create_text(763, 250, text="Terms", fill="black", font=('Helvetica 10'))
+        canvas.create_text(779, 270, text="Invoice ref.#", fill="black", font=('Helvetica 10'))
+        inv_num_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_num_canvas.config(text=prev_data[1],anchor="w")
+        canvas.create_window(963, 190,window=inv_num_canvas)
+        canvas.create_text(900, 210, text=prev_data[2], fill="black", font=('Helvetica 11'))
+        canvas.create_text(900, 230, text=prev_data[3], fill="black", font=('Helvetica 11'))
+        inv_terms_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_terms_canvas.config(text=prev_data[42],anchor="w")
+        canvas.create_window(963, 250,window=inv_terms_canvas)
+        inv_ref_canvas = Label(canvas,font=('Helvetica 10'),width=25,bg='white')
+        inv_ref_canvas.config(text=prev_data[43],anchor="w")
+        canvas.create_window(963, 270,window=inv_ref_canvas) 
+
+        inv_header_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_header_canvas.config(text=prev_data[40],anchor="center",bg="white")
+        canvas.create_window(657, 290,window=inv_header_canvas)
+
+
+        s = ttk.Style()
+        s.configure('Treeview.Heading', background='',State='DISABLE')
+        inv_prev_tree = ttk.Treeview(canvas,height=12,style='mystyle.Treeview')
+        inv_prev_tree["columns"] = ["1","2","3","4","5"]
+        inv_prev_tree.column("#0",width=1)
+        inv_prev_tree.column("1",width=240,anchor=CENTER)
+        inv_prev_tree.column("2",width=220,anchor=CENTER)
+        inv_prev_tree.column("3",width=90,anchor=CENTER)
+        inv_prev_tree.column("4",width=100,anchor=CENTER)
+        inv_prev_tree.column("5",width=90,anchor=CENTER)
+        inv_prev_tree.heading("#0",text="")
+        inv_prev_tree.heading("1",text="Product/Service")
+        inv_prev_tree.heading("2",text="Description")
+        inv_prev_tree.heading("3",text="Quantity")
+        inv_prev_tree.heading("4",text="Unit Price")
+        inv_prev_tree.heading("5",text="Price")
+        window = canvas.create_window(285, 300, anchor="nw", window=inv_prev_tree)
+        
+        
+        currency_sql = "SELECT currencysign,currsignplace FROM company"
+        fbcursor.execute(currency_sql,)
+        currency_symb = fbcursor.fetchone()
+
+        storing_sql = "SELECT * FROM storingproduct WHERE invoice_number=%s"
+        storing_val = (prev_data[1],)
+        fbcursor.execute(storing_sql,storing_val)
+        storing_data = fbcursor.fetchall()
+
+        for record in storing_data:
+          inv_prev_tree.insert(parent='', index='end',text='', values=(record[6],record[7],record[8],record[9],record[13]))
+        
+        if not comp_data:
+          canvas.create_line(1027, 560, 1027, 710 )
+          canvas.create_line(720, 560, 720, 710 )
+          canvas.create_line(1027, 560, 720, 560 )
+          canvas.create_line(1027, 585, 720, 585 )
+          canvas.create_line(1027, 610, 720, 610 ) 
+          canvas.create_line(1027, 635, 720, 635 )
+          canvas.create_line(1027, 660, 720, 660 )
+          canvas.create_line(1027, 685, 720, 685 )
+          canvas.create_line(1027, 710, 720, 710 )
+          
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+        elif comp_data[12] == "1":
+          canvas.create_line(1027, 560, 1027, 710 )
+          canvas.create_line(720, 560, 720, 710 )
+          canvas.create_line(1027, 560, 720, 560 )
+          canvas.create_line(1027, 585, 720, 585 )
+          canvas.create_line(1027, 610, 720, 610 ) 
+          canvas.create_line(1027, 635, 720, 635 )
+          canvas.create_line(1027, 660, 720, 660 )
+          canvas.create_line(1027, 685, 720, 685 )
+          canvas.create_line(1027, 710, 720, 710 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,624,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,649,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,674,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,699,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_bal1_canvas)
+        elif comp_data[12] == "2":
+          canvas.create_line(1027, 560, 1027, 735 )
+          canvas.create_line(720, 560, 720, 735 )
+          canvas.create_line(1027, 560, 720, 560 )
+          canvas.create_line(1027, 585, 720, 585 )
+          canvas.create_line(1027, 610, 720, 610 ) 
+          canvas.create_line(1027, 635, 720, 635 )
+          canvas.create_line(1027, 660, 720, 660 )
+          canvas.create_line(1027, 685, 720, 685 )
+          canvas.create_line(1027, 710, 720, 710 )
+          canvas.create_line(1027, 735, 720, 735 )
+
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,649,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(971,649,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,674,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(971,674,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,699,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(971,699,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,724,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(971,724,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,649,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(971,649,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,674,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(971,674,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,699,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(971,699,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,724,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(971,724,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,649,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,674,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,699,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,724,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(971,724,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,649,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,674,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,699,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,724,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,724,window=inv_bal1_canvas)
+        elif comp_data[12] == "3":
+          canvas.create_line(1027, 560, 1027, 760 )
+          canvas.create_line(720, 560, 720, 760 )
+          canvas.create_line(1027, 560, 720, 560 )
+          canvas.create_line(1027, 585, 720, 585 )
+          canvas.create_line(1027, 610, 720, 610 ) 
+          canvas.create_line(1027, 635, 720, 635 )
+          canvas.create_line(1027, 660, 720, 660 )
+          canvas.create_line(1027, 685, 720, 685 )
+          canvas.create_line(1027, 710, 720, 710 )
+          canvas.create_line(1027, 735, 720, 735 )
+          canvas.create_line(1027, 760, 720, 760)
+            
+          if currency_symb[1] == "before amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0]+str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0]+str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0]+str(prev_data[16]),anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="w")
+            canvas.create_window(784,649,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0]+str(prev_data[36]),anchor="e")
+            canvas.create_window(971,649,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,674,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0]+str(prev_data[12]),anchor="e")
+            canvas.create_window(971,674,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,699,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0]+str(prev_data[8]),anchor="e")
+            canvas.create_window(971,699,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,724,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0]+str(prev_data[9]),anchor="e")
+            canvas.create_window(971,724,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,749,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0]+str(prev_data[10]),anchor="e")
+            canvas.create_window(971,749,window=inv_bal1_canvas)
+          elif currency_symb[1] == "before amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=currency_symb[0] + " " + str(prev_data[31]),anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=currency_symb[0] + " " + str(prev_data[49]),anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=currency_symb[0] + " " + str(prev_data[16]),anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="w")
+            canvas.create_window(784,649,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=currency_symb[0] + " " + str(prev_data[36]),anchor="e")
+            canvas.create_window(971,649,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,674,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=currency_symb[0] + " " + str(prev_data[12]),anchor="e")
+            canvas.create_window(984,674,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,699,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=currency_symb[0] + " " + str(prev_data[8]),anchor="e")
+            canvas.create_window(971,699,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,724,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=currency_symb[0] + " " + str(prev_data[9]),anchor="e")
+            canvas.create_window(971,724,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,749,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=currency_symb[0] + " " + str(prev_data[10]),anchor="e")
+            canvas.create_window(971,749,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="w")
+            canvas.create_window(784,649,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,674,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,699,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,724,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+currency_symb[0],anchor="e")
+            canvas.create_window(971,724,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,749,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+currency_symb[0],anchor="e")
+            canvas.create_window(971,749,window=inv_bal1_canvas)
+          elif currency_symb[1] == "after amount with space":
+            inv_dis_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_dis_canvas.config(text=str(prev_data[15]) + "" + "% Discount",anchor="w")
+            canvas.create_window(784,574,window=inv_dis_canvas)
+            inv_dis1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_dis1_canvas.config(text=str(prev_data[31])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,574,window=inv_dis1_canvas)
+
+            inv_sub_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_sub_canvas.config(text="Subtotal",anchor="w")
+            canvas.create_window(784,599,window=inv_sub_canvas)
+            inv_sub1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_sub1_canvas.config(text=str(prev_data[49])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,599,window=inv_sub1_canvas)
+
+            inv_TAX1_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX1_canvas.config(text="TAX1",anchor="w")
+            canvas.create_window(784,624,window=inv_TAX1_canvas)
+            inv_tax_1_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_1_canvas.config(text=str(prev_data[16])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,624,window=inv_tax_1_canvas)
+
+            inv_TAX2_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_TAX2_canvas.config(text="TAX2",anchor="w")
+            canvas.create_window(784,649,window=inv_TAX2_canvas)
+            inv_tax_2_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_tax_2_canvas.config(text=str(prev_data[36])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,649,window=inv_tax_2_canvas)
+
+            inv_excname_canvas = Label(canvas,font=('Helvetica 10'),width=15,bg='white')
+            inv_excname_canvas.config(text=prev_data[11],anchor="w")
+            canvas.create_window(784,674,window=inv_excname_canvas)
+            inv_excost_canvas = Label(canvas,font=('Helvetica 10'),width=13,bg='white')
+            inv_excost_canvas.config(text=str(prev_data[12])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,674,window=inv_excost_canvas)
+
+            inv_tot_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_tot_canvas.config(text="Invoice Total",anchor="w")
+            canvas.create_window(784,699,window=inv_tot_canvas)
+            inv_tot1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_tot1_canvas.config(text=str(prev_data[8])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,699,window=inv_tot1_canvas)
+
+            inv_totp_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_totp_canvas.config(text="Total Paid",anchor="w")
+            canvas.create_window(784,724,window=inv_totp_canvas)
+            inv_totp1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_totp1_canvas.config(text=str(prev_data[9])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,724,window=inv_totp1_canvas)
+
+            inv_bal_canvas = Label(canvas,font=('Helvetica 10 bold'),width=15,bg='white')
+            inv_bal_canvas.config(text="Balance",anchor="w")
+            canvas.create_window(784,749,window=inv_bal_canvas)
+            inv_bal1_canvas = Label(canvas,font=('Helvetica 10 bold'),width=13,bg='white')
+            inv_bal1_canvas.config(text=str(prev_data[10])+ " " +currency_symb[0],anchor="e")
+            canvas.create_window(971,749,window=inv_bal1_canvas)
+
+        canvas.create_line(290, 810, 1030, 810, fill='orange')
+        inv_prev_comments = Text(canvas,font=('Helvetica 10'),width=106,height=6,fg= "black",
+        bg="white",cursor="arrow",bd=0)
+        inv_prev_comments.insert("1.0",prev_data[44])
+        inv_prev_comments.config(state=DISABLED)
+        canvas.create_window(661, 860,window=inv_prev_comments)
+
+        canvas.create_text(635, 1075, text="Terms and Conditions", fill="black", font=('Helvetica 10'))
+        canvas.create_line(290, 1090, 1030, 1090, fill='orange')
+        
+        inv_prev_terms = Text(canvas,font=('Helvetica 10'),width=106,height=4,fg= "black",bg="white",cursor="arrow",bd=0)
+        inv_prev_terms.insert("1.0",prev_data[35])
+        inv_prev_terms.tag_configure("tag_name", justify='left')
+        inv_prev_terms.tag_add("tag_name", "1.0", "end")
+        inv_prev_terms.config(state=DISABLED)
+        canvas.create_window(661, 1125,window=inv_prev_terms)
+        canvas.create_text(330, 1165, text="Sale Person:", fill="black", font=('Helvetica 10'))
+        inv_prev_salesp = Label(canvas, font=('Helvetica 10 '),width=30)
+        inv_prev_salesp.config(text=prev_data[14],anchor="w",bg="white")
+        canvas.create_window(502, 1165, window = inv_prev_salesp)
+        inv_footer_canvas = Label(canvas,font=('Helvetica 10 '),width=30)
+        inv_footer_canvas.config(text=prev_data[41],anchor="w",bg="white")
+        canvas.create_window(413, 1185,window=inv_footer_canvas)
+      else:
+          pass
+
+  
 
 #------------------------------------------------------------------------------------------------convert to invoice
 def convert():
@@ -913,8 +5181,7 @@ def view_invs_rir():
   pop=Toplevel(rirmidFrame)
   pop.title("Invoice")
   pop.geometry("950x690+150+0")
-
-
+  
   #select customer
   def customer_invoice_recurring():
     cuselection=Toplevel()
@@ -3521,265 +7788,324 @@ def view_invs_rir():
   
   #delete line item  
   def rir_delete():
-    messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before deleting line item .")
-    proskuid = prd_tree.item(prd_tree.focus())["values"][0]
-    print(proskuid)
-    sql_qr="DELETE FROM storingproduct WHERE sku=%s"
-    sql_qr_val=(proskuid,)
-    fbcursor.execute(sql_qr,sql_qr_val)
-    fbilldb.commit()
-    
+    try:
+      proskuid = prd_tree.item(prd_tree.focus())["values"][0]
+      sql_qr="DELETE FROM storingproduct WHERE sku=%s"
+      sql_qr_val=(proskuid,)
+      fbcursor.execute(sql_qr,sql_qr_val)
+      fbilldb.commit()
+      
 
-    sqlr= 'select currencysign from company'
-    fbcursor.execute(sqlr)
-    crncy=fbcursor.fetchone()
-    crcy_tp=crncy[0]
-    sqlrt= 'select currsignplace from company'
-    fbcursor.execute(sqlrt)
-    post_rp=fbcursor.fetchone()
-    crcy_tp_ps=post_rp[0]
-    
-    if int(taxtype[0])==2:
-        rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-        rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-        fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-        main_prd_val=fbcursor.fetchall()
-        count_prd=0
-        for record in prd_tree.get_children():
-          prd_tree.delete(record)
-        for i in main_prd_val:
-              if i[11] is not None:
-                dgt="Yes"
-              else:
-                dgt="No"
-                if crcy_tp_ps=="before amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-                  count_prd +=1
-                elif crcy_tp_ps=="after amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
-                  count_prd +=1
-                elif crcy_tp_ps=="before amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                elif crcy_tp_ps=="after amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-                  count_prd +=1
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      crcy_tp=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      crcy_tp_ps=post_rp[0]
+      
+      if int(taxtype[0])==2:
+          rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+          rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+          fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+          main_prd_val=fbcursor.fetchall()
+          count_prd=0
+          for record in prd_tree.get_children():
+            prd_tree.delete(record)
+          for i in main_prd_val:
+                if i[11] is not None:
+                  dgt="Yes"
                 else:
-                  pass
-
-    elif int(taxtype[0])==3:
-            rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-            rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-            fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-            main_prd_val=fbcursor.fetchall()
-            count_prd=0
-            for record in prd_tree.get_children():
-              prd_tree.delete(record)
-
-            for i in main_prd_val:
-                  if i[11] is not None:
-                    dgt="Yes"
-                  else:
-                    dgt="No"
-                  if i[12] is not None:
-                    dlt="Yes"
-                  else:
-                    dlt="No"
+                  dgt="No"
                   if crcy_tp_ps=="before amount":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-                      count_prd +=1
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+                    count_prd +=1
                   elif crcy_tp_ps=="after amount":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-                      count_prd +=1
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
+                    count_prd +=1
                   elif crcy_tp_ps=="before amount with space":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
                   elif crcy_tp_ps=="after amount with space":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-                      count_prd +=1
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+                    count_prd +=1
                   else:
-                      pass
+                    pass
 
-    else:
-            
-            rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-            rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-            fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-            main_prd_val=fbcursor.fetchall()
-            count_prd=0
-            
-            for record in prd_tree.get_children():
-              prd_tree.delete(record)
-            for i in main_prd_val:
-                    if crcy_tp_ps=="before amount":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-                      count_prd +=1
-                    elif crcy_tp_ps=="after amount":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-                      count_prd +=1
-                    elif crcy_tp_ps=="before amount with space":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-                    elif crcy_tp_ps=="after amount with space":
-                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-                      count_prd +=1
+      elif int(taxtype[0])==3:
+              rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+              rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+              fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+              main_prd_val=fbcursor.fetchall()
+              count_prd=0
+              for record in prd_tree.get_children():
+                prd_tree.delete(record)
+
+              for i in main_prd_val:
+                    if i[11] is not None:
+                      dgt="Yes"
                     else:
-                      pass
-        
-    sm_qry="select sum(price) from storingproduct where invoice_number=%s"
-    sm_qry_val=(inv_nmb_rir.get(),)
-    fbcursor.execute(sm_qry,sm_qry_val)
-    smry_value=fbcursor.fetchone()
-    #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
-    smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
-    smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
-    smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
-    smr_ext_cst=rir_cost3.get()
-    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
-    
-    in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
-    in_tt_qry_val=(inv_nmb_rir.get(),)
-    fbcursor.execute(in_tt_qry,in_tt_qry_val)
-    inv_value=fbcursor.fetchone()
-    if int(taxtype[0])==2:
-      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-      fir4Frame.place(x=740,y=520)
-      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-      summaryfrme.place(x=0,y=0,width=200,height=170)
-      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
-      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
-      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
-      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-      if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
-      elif cency_pos=="after amount":
-        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
-      elif cency_pos=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
-      elif cency_pos=="after amount with space":
-        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
+                      dgt="No"
+                    if i[12] is not None:
+                      dlt="Yes"
+                    else:
+                      dlt="No"
+                    if crcy_tp_ps=="before amount":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+                        count_prd +=1
+                    elif crcy_tp_ps=="after amount":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+                        count_prd +=1
+                    elif crcy_tp_ps=="before amount with space":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+                    elif crcy_tp_ps=="after amount with space":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+                        count_prd +=1
+                    else:
+                        pass
+
       else:
-        pass
-    elif int(taxtype[0])==3:
-      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-      fir4Frame.place(x=740,y=520)
-      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-      summaryfrme.place(x=0,y=0,width=200,height=170)
-      discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
-      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
-      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
-      tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
-      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
-      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-      if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
-      elif cency_pos=="after amount":
-        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
-        ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
-      elif cency_pos=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
-        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
-      elif cency_pos=="after amount with space":
-        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
-      else:
-        pass
-    else:
+              
+              rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+              rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+              fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+              main_prd_val=fbcursor.fetchall()
+              count_prd=0
+              
+              for record in prd_tree.get_children():
+                prd_tree.delete(record)
+              for i in main_prd_val:
+                      if crcy_tp_ps=="before amount":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+                        count_prd +=1
+                      elif crcy_tp_ps=="after amount":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+                        count_prd +=1
+                      elif crcy_tp_ps=="before amount with space":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+                      elif crcy_tp_ps=="after amount with space":
+                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+                        count_prd +=1
+                      else:
+                        pass
+          
+      sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+      sm_qry_val=(inv_nmb_rir.get(),)
+      fbcursor.execute(sm_qry,sm_qry_val)
+      smry_value=fbcursor.fetchone()
+      #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+      smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+      smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+      smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+      smr_ext_cst=rir_cost3.get()
+      smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
+      
+      in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+      in_tt_qry_val=(inv_nmb_rir.get(),)
+      fbcursor.execute(in_tt_qry,in_tt_qry_val)
+      inv_value=fbcursor.fetchone()
+      if int(taxtype[0])==2:
         fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
         fir4Frame.place(x=740,y=520)
         summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
         summaryfrme.place(x=0,y=0,width=200,height=170)
         discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
         sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
-        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
-        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
-        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+        tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
         if crcy_tp_ps=="before amount": 
           discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
-          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
         elif cency_pos=="after amount":
           discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
           sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
-      
-          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
         elif cency_pos=="before amount with space":
           discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
           sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
-    
-          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
         elif cency_pos=="after amount with space":
           discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
           sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
-    
-          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
         else:
           pass
+      elif int(taxtype[0])==3:
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+        tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+        tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+        if crcy_tp_ps=="before amount": 
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1)).place(x=130 ,y=30)  
+          ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2)).place(x=130 ,y=45) 
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=126)
+        elif cency_pos=="after amount":
+          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp)).place(x=130 ,y=30)
+          ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp)).place(x=130 ,y=45)   
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=126)
+        elif cency_pos=="before amount with space":
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1)).place(x=130 ,y=30) 
+          ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2)).place(x=130 ,y=45)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=126)
+        elif cency_pos=="after amount with space":
+          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp)).place(x=130 ,y=30)  
+          ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp)).place(x=130 ,y=45) 
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=126)
+        else:
+          pass
+      else:
+          fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+          fir4Frame.place(x=740,y=520)
+          summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+          summaryfrme.place(x=0,y=0,width=200,height=170)
+          discount=Label(summaryfrme, text="Discount").place(x=0 ,y=0)
+          sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+          cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+          order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+          total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+          balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+          if crcy_tp_ps=="before amount": 
+            discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0])).place(x=130 ,y=21) 
+            cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst)).place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl)).place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0])).place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1])).place(x=130 ,y=105)
+          elif cency_pos=="after amount":
+            discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp)).place(x=130 ,y=21)
+        
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp)).place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp)).place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp)).place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp)).place(x=130 ,y=105)
+          elif cency_pos=="before amount with space":
+            discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0])).place(x=130 ,y=21)
+      
+            cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst)).place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl)).place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0])).place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1])).place(x=130 ,y=105)
+          elif cency_pos=="after amount with space":
+            discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp)).place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp)).place(x=130 ,y=21)
+      
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp)).place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp)).place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp)).place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp)).place(x=130 ,y=105)
+          else:
+            pass
+    except:
+      messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before deleting line item .")       
+#------------------------------------------------------------------------------------save edit
+  def sv_edit():
+    sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+    sm_qry_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(sm_qry,sm_qry_val)
+    smry_value=fbcursor.fetchone()
 
+    invoice_number=inv_nmb_rir.get()
+    invodate=inv_dt_rir.get_date()
+    duedate=due_dt_rir.get_date()
+    invoicetot=smr_iv_ttl
+    extracostname=ext_dt.get()
+    extracost=rir_cost3.get()
+    template=tmpl_dt.get()
+    salesper=sl_prsn.get()
+    discourate=dsc_rt.get()
+    tax1=tax1_rir.get()
+    category=ct_rir.get()
+    businessname=cust_selction_nm.get()
+    businessaddress=address_rir.get(1.0,END)
+    shipname=shp_to_rir.get()
+    shipaddress=shp_to_adr_rir.get(1.0,END)
+    cpemail=emil_rir.get()
+    cpmobileforsms=sms_shpto_rir.get()
+    recurring_check=chk_sts.get()
+    recurring_period=rir_spn_bx.get()
+    next_invoice=dt_nxt_inv.get_date()
+    stop_recurring=dt_stp_inv.get_date()
+    discount=smr_discount
+    terms=trms.get(1.0,END)
+    term_of_payment=cmb_trms.get()
+    tax2=tax2_rir.get()
+    quantity=1
+    title_text=ttl_inv.get()
+    header_text=hd_inv.get()
+    footer_text=fd_inv.get()
+    comments=cmm.get(1.0,END)
+    privatenotes=prv_nt.get(1.0,END)
+    subtotal=smry_value[0]
+    stop_recurring_check=stp_chk.get()
+    
+    rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s where invoice_number=%s"
+    rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,invoice_number,)
+    fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
+    fbilldb.commit()
+
+    for record in rir_tree.get_children():
+          rir_tree.delete(record)
+    rir_main_table_sql="select * from invoice where recurring_period IS NOT NULL"
+  
+    fbcursor.execute(rir_main_table_sql)
+    main_rir_val=fbcursor.fetchall()
+    count_rir=0
+
+    for i in main_rir_val:
+      rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+      count_rir +=1
+    
+    
     
     
 
@@ -3836,6 +8162,12 @@ def view_invs_rir():
   calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
   calc.pack(side="left", pady=3, ipadx=4)
 
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
+
+  calc= Button(firFrame,compound="top", text="Save",relief=RAISED, image=saves,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sv_edit)
+  calc.pack(side="left", pady=3, ipadx=4)
+
   fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
   fir1Frame.pack(side="top", fill=X)
   #---------------------------------------------------------------------------------------------Customer Selection Functiopn
@@ -3853,15 +8185,15 @@ def view_invs_rir():
     dtl_inv=fbcursor.fetchone()
   
     address_rir.delete(1.0,END)
-    address_rir.insert(1.0,dtl_rir_cus[5])
+    address_rir.insert(1.0,dtl_inv[5])
     shp_to_rir.delete(0,END)
-    shp_to_rir.insert(0,dtl_rir_cus[6])
+    shp_to_rir.insert(0,dtl_inv[6])
     shp_to_adr_rir.delete(1.0,END)
-    shp_to_adr_rir.insert(1.0,dtl_rir_cus[7])
+    shp_to_adr_rir.insert(1.0,dtl_inv[7])
     emil_rir.delete(0,END)
-    emil_rir.insert(0,dtl_rir_cus[9])
+    emil_rir.insert(0,dtl_inv[9])
     sms_shpto_rir.delete(0,END)
-    sms_shpto_rir.insert(0,dtl_rir_cus[12])
+    sms_shpto_rir.insert(0,dtl_inv[12])
     # inv_nmb_rir.delete(0,END)
     # inv_nmb_rir.insert(0,dtl_inv[1])
     # inv_dt_rir.delete(1,END)
@@ -4197,6 +8529,11 @@ def view_invs_rir():
   sdrt_qry_qtr=(cusr_selct,)
   fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
   dtl_rissr_cus=fbcursor.fetchone()
+
+  sdou_qsy='select * from invoice where businessname=%s'
+  sdou_qsy_qry=(cusr_selct,)
+  fbcursor.execute(sdou_qsy,sdou_qsy_qry)
+  dtl_inv=fbcursor.fetchone()
   #-----------------------------------------------------------------------------------button >>
   def cpy_dts():
     
@@ -4211,7 +8548,7 @@ def view_invs_rir():
   
   cust_selction_nm=StringVar()
   cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
-  cmb_main_bx.insert(0,dtl_rissr_cus[4])
+  cmb_main_bx.insert(0,dtl_inv[18])
 
   rir_dt_cst=[]
   for i in dtl_rir:
@@ -4230,14 +8567,11 @@ def view_invs_rir():
 
     
 
-  sdou_qsy='select * from invoice where businessname=%s'
-  sdou_qsy_qry=(cusr_selct,)
-  fbcursor.execute(sdou_qsy,sdou_qsy_qry)
-  dtl_inv=fbcursor.fetchone()
+  
 
   
 
-  sdous_qsy='select distinct terms from invoice'
+  sdous_qsy='select distinct term_of_payment from invoice'
   fbcursor.execute(sdous_qsy)
   dtl_inv_all=fbcursor.fetchall()
 
@@ -4245,18 +8579,18 @@ def view_invs_rir():
   address=Label(labelframe1,text="Address").place(x=10,y=30)
   address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
   address_rir.delete(1.0,END)
-  address_rir.insert(1.0,dtl_rir_cus[5])
+  address_rir.insert(1.0,dtl_inv[19])
   address_rir.place(x=80,y=30,height=70)
 
   ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
   shp_to_rir=Entry(labelframe1,width=30)
   shp_to_rir.delete(0,END)
-  shp_to_rir.insert(0,dtl_rir_cus[6])
+  shp_to_rir.insert(0,dtl_inv[20])
   shp_to_rir.place(x=402,y=3)
   address1=Label(labelframe1,text="Address").place(x=340,y=30)
   shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
   shp_to_adr_rir.delete(1.0,END)
-  shp_to_adr_rir.insert(1.0,dtl_rir_cus[7])
+  shp_to_adr_rir.insert(1.0,dtl_inv[21])
   shp_to_adr_rir.place(x=402,y=30,height=70)
 
   btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
@@ -4266,13 +8600,13 @@ def view_invs_rir():
   email=Label(labelframe2,text="Email").place(x=10,y=5)
   emil_rir=Entry(labelframe2,width=30)
   emil_rir.delete(0,END)
-  emil_rir.insert(0,dtl_rir_cus[9])
+  emil_rir.insert(0,dtl_inv[22])
 
   emil_rir.place(x=80,y=5)
   sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
   sms_shpto_rir=Entry(labelframe2,width=30)
   sms_shpto_rir.delete(0,END)
-  sms_shpto_rir.insert(0,dtl_rir_cus[12])
+  sms_shpto_rir.insert(0,dtl_inv[23])
   sms_shpto_rir.place(x=402,y=5)
       
   labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
@@ -4283,18 +8617,19 @@ def view_invs_rir():
   inv_nmb_rir.insert(0,dtl_inv[1])
   inv_nmb_rir.place(x=100,y=5,)
   orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
-  inv_dt_rir=Entry(labelframe,width=20)
+  inv_dt_rir=DateEntry(labelframe,width=20)
   inv_dt_rir.delete(1,END)
   inv_dt_rir.insert(0,dtl_inv[2])
   inv_dt_rir.place(x=150,y=33)
   chk_dur=IntVar()
   duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
-  due_dt_rir=Entry(labelframe,width=20)
+  due_dt_rir=DateEntry(labelframe,width=20)
   due_dt_rir.delete(0,END)
   due_dt_rir.insert(0,dtl_inv[2])
   due_dt_rir.place(x=150,y=62)
   terms=Label(labelframe,text="Terms").place(x=5,y=92)
-  trms_cmb=ttk.Combobox(labelframe,width=25)
+  cmb_trms=StringVar()
+  trms_cmb=ttk.Combobox(labelframe,width=25,textvariable=cmb_trms)
 
   dtl_trm=[]
   for i in dtl_inv_all:
@@ -4536,7 +8871,8 @@ def view_invs_rir():
   dtl_nm_ext=[]
   for i in dt_tmp:
     dtl_nm_ext.append(i[0])
-  cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20)
+  ext_dt=StringVar()
+  cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20, textvariable=ext_dt)
   cmb_ext_nm.delete(0,END)
   cmb_ext_nm.insert(0,dtl_inv[11])
   cmb_ext_nm.place(x=115,y=5)
@@ -4579,10 +8915,11 @@ def view_invs_rir():
   dtl_tmpl=[]
   for i in dt_tmp:
     dtl_tmpl.append(i[1])
-
-  tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=25)
+  tmpl_dt=StringVar()
+  tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=30, textvariable=tmpl_dt)
   tmp_rir.delete(0,END)
   tmp_rir.insert(0,dtl_inv[13])
+  tmp_rir['value']=("Professional 1 (logo on left side)","Professional 2 (logo on right side)","Simplified 1 (logo on left side)","Simplified 2 (logo on right side)","Business Classic")
   tmp_rir.place(x=115,y=70)
 
   sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
@@ -4622,8 +8959,10 @@ def view_invs_rir():
   sdous_qsy='select distinct footer_text from invoice'
   fbcursor.execute(sdous_qsy)
   inv_ft=fbcursor.fetchall()
-
-  cmp_ttl=ttk.Combobox(headerFrame,width=60)
+  ttl_inv=StringVar()
+  hd_inv=StringVar()
+  fd_inv=StringVar()
+  cmp_ttl=ttk.Combobox(headerFrame,width=60, textvariable=ttl_inv)
   cmp_ttl.delete(0,END)
   cmp_ttl.insert(0,dtl_inv[39])
   dtl_hd=[]
@@ -4633,7 +8972,7 @@ def view_invs_rir():
   
   cmp_ttl.place(x=125,y=5)
   text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
-  cmp_ht=ttk.Combobox(headerFrame,width=60)
+  cmp_ht=ttk.Combobox(headerFrame,width=60,textvariable=hd_inv)
   cmp_ht.delete(0,END)
   cmp_ht.insert(0,dtl_inv[40])
   dtl_ht=[]
@@ -4642,7 +8981,7 @@ def view_invs_rir():
   cmp_ht['value']=dtl_ht
   cmp_ht.place(x=125,y=45)
   text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
-  cmp_ft=ttk.Combobox(headerFrame,width=60)
+  cmp_ft=ttk.Combobox(headerFrame,width=60,textvariable=fd_inv)
   cmp_ft.delete(0,END)
   cmp_ft.insert(0,dtl_inv[41])
   dtl_ft=[]
@@ -4984,7 +9323,7 @@ def view_invs_rir():
   chk_sts=IntVar()
 
   stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
-  if dtl_inv[24] is not None:
+  if int(dtl_inv[50])==1:
     stp_rir.select()
   else:
     stp_rir.deselect()
@@ -5074,9 +9413,14 @@ def view_invs_rir():
   dt_nxt_inv.insert(0,dtl_inv[26])
   dt_nxt_inv.place(x=380,y=60)
 
-  checkvarStatus5=IntVar()
-  stp_rir2=Checkbutton(labelframe2,variable = checkvarStatus5,text="Stop Recurring After",onvalue =0 ,offvalue = 1)
-  if dtl_inv[27] is not None:
+  def stp_dt():
+    if stp_chk.get()==0:
+      dt_stp_inv["state"] =DISABLED
+    else:
+      dt_stp_inv["state"] =NORMAL
+  stp_chk=IntVar()
+  stp_rir2=Checkbutton(labelframe2,variable = stp_chk,text="Stop Recurring After",onvalue =1 ,offvalue = 0, command=stp_dt)
+  if int(dtl_inv[50])==1:
       stp_rir2.select()
   else:
       stp_rir2.deselect()

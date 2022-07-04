@@ -3044,9 +3044,7 @@ def mainpage():
               cus_ins_valse=fbcursor.fetchone()
             
               cus_tbl_edit="update customer set customerno=%s,category=%s,status=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,contactperson=%s,cpemail=%s,cptelno=%s,cpfax=%s,cpmobileforsms=%s,shipcontactperson=%s,shipcpemail=%s,shipcptelno=%s,shipcpfax=%s,taxexempt=%s,specifictax1=%s,discount=%s,country=%s,city=%s,customertype=%s,notes=%s, specifictax2=%s where customerno = %s" #adding values into db
-              cus_tbl_edit_val=(cst_id,cus_shp_cat,cus_shp_st,cus_bs_nm,cus_bs_ad_cus,cus_shp_cnt_pr,cus_shp_adr,cus_bs_cnt,cus_bs_em,cus_bs_tel,cus_bs_fax,cus_bs_mob,cus_shp_cnt,cus_shp_em,cus_shp_tel,cus_shp_fax,cus_bs_pymcheck,cus_bs_spc_tax,cus_bs_dis,cus_shp_cntry,cus_shp_city,cus_bs_ctr,cus_shp_ntre,cus_bs_spc_tax2,cus_id,)
-              fbcursor.execute(cus_tbl_edit,cus_tbl_edit_val)
-              fbilldb.commit()
+              
               cus_main_s=ttk.Style()
               for record in cus_main_tree.get_children():
                 cus_main_tree.delete(record)
@@ -26253,6 +26251,7 @@ def mainpage():
   #Filter by category----------------------------------------------------------------------------
   #-----------------------------------------------ScreenChart-------------------------------
   def screen_flt(): 
+    try:
       sql='select dateformat from company'
       fbcursor.execute(sql)
       rp_date_for=fbcursor.fetchone()
@@ -26299,7 +26298,7 @@ def mainpage():
               
               rp_scr_frm.delete(0,'end')
               rp_scr_frm.insert(0, in_dat.strftime(dts))
-
+     
               cr=date.today()
               rp_sc_to.delete(0,'end')
               rp_sc_to.insert(0, cr.strftime(dts))
@@ -29856,7 +29855,110 @@ def mainpage():
           #============================================================================================
       else:
           pass
-      
+    except:
+             
+              frame = Frame(
+                      reportframe,
+                      width=1380,
+                      height=1000,
+                      bg='#b3b3b3',
+                      )
+              frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                  
+              frame.pack()
+
+
+              x=datetime.today()
+
+              y=0
+
+              x=datetime.today()
+              figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+              plt.bar(x,y, label="Invoice", color="orange")
+              plt.legend()
+              plt.xlabel("Total Amount")
+              plt.ylabel("Date")
+              axes=plt.gca()
+              axes.yaxis.grid()
+
+              # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+              #**************add dates********
+
+              dates=date.today()
+
+              y=0
+              x=dates
+              plt.bar(x,y, label="Outstanding", color="blue")
+              plt.legend()
+              plt.xlabel("Total Amount")
+              plt.ylabel("Date")
+              axes=plt.gca()
+              axes.yaxis.grid()
+              # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+              dates3=date.today()
+              y=0
+              x=dates3
+              plt.bar(x,y, label="Paid", color="green") 
+              plt.legend()
+              plt.xlabel("Total Amount")
+              plt.ylabel("Date")
+              axes=plt.gca()
+              axes.yaxis.grid()
+              # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+              #used to display chart in our frame
+              canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+              canvasbar.draw()
+              canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+              #second graph
+
+
+
+              figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+              x="Haii"
+              y=0
+              plt.barh(x,y, label="Top Billed Customer", color="orange") 
+              plt.legend()
+              plt.xlabel("Invoiced Amount")
+              plt.ylabel("")
+              axes=plt.gca()
+              axes.xaxis.grid()
+
+
+              canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+              canvasbar.draw()
+              canvasbar.get_tk_widget().place(x=0, y=370)
+
+              # #second graph
+
+              
+
+              figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+              x="0"
+              y=0
+              plt.barh(x,y, label="Top Product Sale", color="blue") 
+              plt.legend()
+              plt.xlabel("Total Sales")
+              plt.ylabel("")
+              axes=plt.gca()
+              axes.xaxis.grid()
+              
+
+              canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+              canvasbar.draw()
+              canvasbar.get_tk_widget().place(x=650, y=370)
+
+              lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+              lbl_invdtt2.place(x=2, y=85)  
 
   #---------------------------------------------------INVOICE FILTER-----------------------------------------------
   def emailkj():
@@ -30038,11 +30140,11 @@ def mainpage():
           fbcursor.execute(sql)
           rp_date_for=fbcursor.fetchone()
 
-          print(rp_exir.get())
+          
           lkj=rp_exir.get()
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
-          print(in_dat)
+         
           rp_exir.delete(0,'end')
         #   jh=rp_exir.insert(0, in_dat)
           rp_exir.set_date(in_dat.strftime(dts))
@@ -46713,7 +46815,7 @@ def mainpage():
           menuir = StringVar()
           drop1ir=ttk.Combobox(midFrame, textvariable=menuir)
           drop1ir.place(x=530,y=10)
-          drop1ir["values"]=("Java","Php", "POP")
+          drop1ir["values"]=("0")
           drop1ir.current(0)
 
           
@@ -46760,150 +46862,255 @@ def mainpage():
 
 
           #########################################(Graph Section)#############################################################
-          sql_paid = "SELECT SUM(invoicetot)from invoice"
-          fbcursor.execute(sql_paid)
-          invoice= fbcursor.fetchone()
+          try:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
 
-          x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-          fbcursor.execute(x_axis)
-          axis_x= fbcursor.fetchone()
-
-
-
-          sql_company = "SELECT SUM(totpaid)from invoice"
-          fbcursor.execute(sql_company)
-          paid= fbcursor.fetchone()
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
 
 
 
-          sql_outstanding = "SELECT SUM(balance)from invoice"
-          fbcursor.execute(sql_outstanding)
-          outstanding= fbcursor.fetchone()
-
-
-          frame = Frame(
-                  reportframe,
-                  width=1380,
-                  height=1000,
-                  bg='#b3b3b3',
-                  )
-          frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
-              
-          frame.pack()
-
-
-          x=datetime.today()
-
-          y=invoice
-
-          x=axis_x
-          figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
-          plt.bar(x,y, label="Invoice", color="orange")
-          plt.legend()
-          plt.xlabel("x-axis")
-          plt.ylabel("y-label")
-          axes=plt.gca()
-          axes.yaxis.grid()
-
-          # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
 
 
 
-
-          #**************add dates********
-
-          dates=axis_x[0]+timedelta(days=2)
-
-          y=outstanding
-          x=dates
-          plt.bar(x,y, label="Outstanding", color="blue")
-          plt.legend()
-          plt.xlabel("x-axis")
-          plt.ylabel("y-label")
-          axes=plt.gca()
-          axes.yaxis.grid()
-          # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
 
 
-          dates3=axis_x[0]-timedelta(days=2)
-          y=paid
-          x=dates3
-          plt.bar(x,y, label="Paid", color="green") 
-          plt.legend()
-          plt.xlabel("x-axis")
-          plt.ylabel("y-label")
-          axes=plt.gca()
-          axes.yaxis.grid()
-          # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-          #used to display chart in our frame
-          canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
-          canvasbar.draw()
-          canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
-
-          #second graph
-
-          sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
-          fbcursor.execute(sec_paid)
-          paid_sec_x= fbcursor.fetchone()
-
-          
-          sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
-          fbcursor.execute(sec_paid_y)
-
-          paid_sec_y= fbcursor.fetchone()
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
 
 
-          figsecond = plt.figure(figsize=(9, 4), dpi=80)
+            x=datetime.today()
 
-          x=paid_sec_y
-          y=paid_sec_x
-          plt.barh(x,y, label="Top Billed Customer", color="orange") 
-          plt.legend()
-          plt.xlabel("Invoiced Amount")
-          plt.ylabel("")
-          axes=plt.gca()
-          axes.xaxis.grid()
+            y=invoice
 
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
 
-          canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
-          canvasbar.draw()
-          canvasbar.get_tk_widget().place(x=0, y=370)
-
-          # #second graph
-
-          thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
-          fbcursor.execute(thrd_paid)
-          paid_thrd_x= fbcursor.fetchone()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
 
-          thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
 
-          fbcursor.execute(thrd_paid_y)
 
-          paid_thrd_y= fbcursor.fetchone()
+            #**************add dates********
 
-          figlast = plt.figure(figsize=(9, 4), dpi=80)
+            dates=axis_x[0]+timedelta(days=2)
 
-          x=paid_thrd_y
-          y=paid_thrd_x   
-          plt.barh(x,y, label="Top Product Sale", color="blue") 
-          plt.legend()
-          plt.xlabel("Total Sales")
-          plt.ylabel("")
-          axes=plt.gca()
-          axes.xaxis.grid()
-          
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
-          canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
-          canvasbar.draw()
-          canvasbar.get_tk_widget().place(x=650, y=370)
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            
+            sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+          except:
+            
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=date.today()
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=datetime.today()
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=datetime.today()
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x="0"
+            y=0
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x="0"
+            y=0
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
 
           lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
           lbl_ir.place(x=1115,y=85)
 
-          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
-          lbl_invdtt2.place(x=2, y=85)
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white",anchor="nw", width=20, font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=87)
 
     elif menuvar== "Invoice Report":
       #frame for display data to a a4 sheet
@@ -46955,7 +47162,7 @@ def mainpage():
       menuir = StringVar()
       drop1ir=ttk.Combobox(midFrame, textvariable=menuir)
       drop1ir.place(x=530,y=10)
-      drop1ir["values"]=("Java","Php", "POP")
+      drop1ir["values"]=("0")
       drop1ir.current(0)
 
       lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
@@ -47081,36 +47288,7 @@ def mainpage():
       irwcto1=DateEntry(midFrame, textvariable=irwcto,date_pattern=ldt)
       irwcto1.place(x=721,y=50)
       
-      sql='select dateformat from company'
-      fbcursor.execute(sql)
-      rp_date_for=fbcursor.fetchone()
-      if not rp_date_for:
-          pass
-      else:
-          if rp_date_for[0]=="mm-dd-yyyy":
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%m-%d-%Y'))
-              irwcto1.set_date(irwcto1._date.strftime('%m-%d-%Y'))
-          elif rp_date_for[0]=="dd-mm-yyyy":
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%d-%m-%Y'))
-              irwcto1.set_date(irwcto1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #       rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-          elif rp_date_for[0]=="mm/dd/yyyy":
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%m/%d/%y'))
-              irwcto1.set_date(irwcto1._date.strftime('%m/%d/%y'))
-          elif rp_date_for[0]=="dd/mm/yyyy":
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%d/%m/%Y'))
-              irwcto1.set_date(irwcto1._date.strftime('%d/%m/%Y'))
-          elif rp_date_for[0]=="dd.mm.yyyy":
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%d.%m.%Y'))
-              irwcto1.set_date(irwcto1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #       rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-          else:
-              irwcfrm1.set_date(irwcfrm1._date.strftime('%d-%m-%Y'))
-              irwcto1.set_date(irwcto1._date.strftime('%d-%m-%Y'))
+      
 
       lbl_irwc = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_irwc.place(x=470,y=10)
@@ -47119,7 +47297,7 @@ def mainpage():
       menuirwc = StringVar()
       drop1irwc=ttk.Combobox(midFrame, textvariable=menuirwc)
       drop1irwc.place(x=530,y=10)
-      drop1irwc["values"]=("Java","Php", "POP")
+      drop1irwc["values"]=("0")
       drop1irwc.current(0)
 
       
@@ -47240,7 +47418,7 @@ def mainpage():
       menuor = StringVar()
       drop1or=ttk.Combobox(midFrame, textvariable=menuor)
       drop1or.place(x=530,y=10)
-      drop1or["values"]=("Java","Php", "POP")
+      drop1or["values"]=("0")
       drop1or.current(0)
 
 
@@ -47406,7 +47584,7 @@ def mainpage():
       menupdi = StringVar()
       drop1pdi=ttk.Combobox(midFrame, textvariable=menupdi, width=30)
       drop1pdi.place(x=530,y=50)
-      drop1pdi["values"]=("Java","Php", "POP")
+      drop1pdi["values"]=("0")
       drop1pdi.current(0)
 
       mainchartframe6 =Frame(reportframe,height=1500, width=200)
@@ -47965,7 +48143,7 @@ def mainpage():
       menutri = StringVar()
       drop1tri=ttk.Combobox(midFrame, textvariable=menutri)
       drop1tri.place(x=530,y=10)
-      drop1tri["values"]=("Java","Php", "POP")
+      drop1tri["values"]=("0")
       drop1tri.current(0)
 
 
@@ -48084,7 +48262,7 @@ def mainpage():
       menutro = StringVar()
       drop1tro=ttk.Combobox(midFrame, textvariable=menutro)
       drop1tro.place(x=530,y=10)
-      drop1tro["values"]=("Java","Php", "POP")
+      drop1tro["values"]=("0")
       drop1tro.current(0)
     
   
@@ -48309,7 +48487,7 @@ def mainpage():
       menuird = StringVar()
       drop1ird=ttk.Combobox(midFrame, textvariable=menuird, width=30)
       drop1ird.place(x=530,y=10)
-      drop1ird["values"]=("Java","Php", "POP")
+      drop1ird["values"]=("0")
       drop1ird.current(0) 
 
       rpdrop2_ird=ttk.Combobox(midFrame, textvariable=irdfilter,width=30)
@@ -48844,31 +49022,43 @@ def mainpage():
   #***************************************************(Three Check Box)**************************************
 
   def chek_function():
-    
+    try:
+      var_1=rp_scr_frm.get_date()
+      var_2=rp_sc_to.get_date()
           
+
+         
       if checkvar1.get()==0 and checkvar2.get()==1 and checkvar3.get()==1:
               global canvasbar_ch
               global lbl_invdtt2
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
+              
+
+            
 
               x=datetime.today()
 
@@ -48925,24 +49115,28 @@ def mainpage():
               lbl_invdtt2.place(x=2, y=85)
 
       elif checkvar1.get()==0 and checkvar2.get()==0 and checkvar3.get()==1:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49001,24 +49195,28 @@ def mainpage():
               lbl_invdtt2.place(x=2, y=85)
 
       elif checkvar1.get()==0 and checkvar2.get()==1 and checkvar3.get()==0:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49077,100 +49275,119 @@ def mainpage():
               lbl_invdtt2.place(x=2, y=85)
       
       elif checkvar1.get()==1 and checkvar2.get()==1 and checkvar3.get()==1:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
-              invoice= fbcursor.fetchone()
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
-              axis_x= fbcursor.fetchone()
-
-
-
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
-              paid= fbcursor.fetchone()
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
-              outstanding= fbcursor.fetchone()
-
-
-              x=datetime.today()
-
-              y=invoice
-
-              x=axis_x
-              figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
-              plt.bar(x,y, label="Invoice", color="orange")
-              plt.legend()
-              plt.xlabel("Date")
-              plt.ylabel("Total Amount")
-              axes=plt.gca()
-              axes.yaxis.grid()
-
-              # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-              
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
 
 
 
-              #**************add dates********
-
-              dates=axis_x[0]+timedelta(days=2)
-              
-              y=outstanding
-              x=dates
-              plt.bar(x,y, label="Outstanding", color="blue")
-              plt.legend()
-              plt.xlabel("Date")
-              plt.ylabel("Total Amount")
-              axes=plt.gca()
-              axes.yaxis.grid()
-              # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
 
 
-              dates3=axis_x[0]-timedelta(days=2)
-              y=paid
-              x=dates3
-              plt.bar(x,y, label="Paid", color="green") 
-              plt.legend()
-              plt.xlabel("Date")
-              plt.ylabel("Total Amount")
-              axes=plt.gca()
-              axes.yaxis.grid()
-              # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
-              #used to display chart in our frame
-              canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
-              canvasbar_ch.draw()
-              canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
 
-              lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
-              lbl_ir.place(x=1115,y=85)
 
-              lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
-              lbl_invdtt2.place(x=2, y=85)
+            x=datetime.today()
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=1235967
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white",anchor="nw", width=20, font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=87)
       elif checkvar1.get()==1 and checkvar2.get()==0 and checkvar3.get()==1:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49229,24 +49446,28 @@ def mainpage():
               lbl_invdtt2.place(x=2, y=85)
 
       elif checkvar1.get()==1 and checkvar2.get()==1 and checkvar3.get()==0:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49304,24 +49525,28 @@ def mainpage():
               lbl_invdtt2.place(x=2, y=85)
 
       elif checkvar1.get()==1 and checkvar2.get()==0 and checkvar3.get()==0:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49379,24 +49604,28 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
       elif checkvar1.get()==0 and checkvar2.get()==0 and checkvar3.get()==0:
-              sql_paid = "SELECT SUM(invoicetot)from invoice"
-              fbcursor.execute(sql_paid)
+              sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_paid,inv_valuz)
               invoice= fbcursor.fetchone()
 
-              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-              fbcursor.execute(x_axis)
+              x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(x_axis, inv_valuz)
               axis_x= fbcursor.fetchone()
 
 
 
-              sql_company = "SELECT SUM(totpaid)from invoice"
-              fbcursor.execute(sql_company)
+              sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_company,inv_valuz)
               paid= fbcursor.fetchone()
 
 
 
-              sql_outstanding = "SELECT SUM(balance)from invoice"
-              fbcursor.execute(sql_outstanding)
+              sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+              inv_valuz=(var_1,var_2)
+              fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
 
@@ -49459,7 +49688,104 @@ def mainpage():
       else:
           
           pass
-        
+    except:
+           
+            frame = Frame(reportframe,width=1380,height=1000,bg='#b3b3b3')
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=date.today()
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=date.today()
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=date.today()
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x="0" 
+            y=0
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x="0" 
+            y=0 
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
 
   def check_function_por():
       sqlr= 'select currencysign from company'
@@ -55594,195 +55920,294 @@ def mainpage():
 
 
   #########################################(Graph Section)############################################################  #
+  try:
 
-  sql_paid = "SELECT SUM(invoicetot)from invoice"
-  fbcursor.execute(sql_paid)
-  invoiced= fbcursor.fetchone()
-  sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
-  fbcursor.execute(sec_paid_y)
-  paidcheck= fbcursor.fetchone()
+    sql_paid = "SELECT SUM(invoicetot)from invoice"
+    fbcursor.execute(sql_paid)
+    invoiced= fbcursor.fetchone()
+    sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
+    fbcursor.execute(sec_paid_y)
+    paidcheck= fbcursor.fetchone()
 
-  sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
-  fbcursor.execute(sec_paid)
-  second= fbcursor.fetchone()
+    sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
+    fbcursor.execute(sec_paid)
+    second= fbcursor.fetchone()
 
-  thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid  ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
-  fbcursor.execute(thrd_paid_y)
-  third= fbcursor.fetchone()
+    thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid  ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
+    fbcursor.execute(thrd_paid_y)
+    third= fbcursor.fetchone()
 
-  thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
+    thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
 
-  fbcursor.execute(thrd_paid)
-  third2= fbcursor.fetchone()
-
-
-  #first graph
-  sql_paid = "SELECT SUM(invoicetot)from invoice"
-  fbcursor.execute(sql_paid)
-  invoice= fbcursor.fetchone()
-
-  x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
-  fbcursor.execute(x_axis)
-  axis_x= fbcursor.fetchone()
+    fbcursor.execute(thrd_paid)
+    third2= fbcursor.fetchone()
 
 
+    #first graph
+    sql_paid = "SELECT SUM(invoicetot)from invoice"
+    fbcursor.execute(sql_paid)
+    invoice= fbcursor.fetchone()
 
-  sql_company = "SELECT SUM(totpaid)from invoice"
-  fbcursor.execute(sql_company)
-  paid= fbcursor.fetchone()
+    x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+    fbcursor.execute(x_axis)
+    axis_x= fbcursor.fetchone()
 
 
 
-  sql_outstanding = "SELECT SUM(balance)from invoice"
-  fbcursor.execute(sql_outstanding)
-  outstanding= fbcursor.fetchone()
+    sql_company = "SELECT SUM(totpaid)from invoice"
+    fbcursor.execute(sql_company)
+    paid= fbcursor.fetchone()
 
 
 
-  # print(rp_scr_frm.get_date())
-  # x=rp_scr_frm.get_date()
-  # # print(x.get_date())
-  # invoice=1200
-  # outstanding=22
-  # paid=14
-
-  #------------------------------------with cursor----------------
-  # y=float(invoice)
-  # x+=1
-  # fig, ax =plt.subplots()
-  # plt.bar(x,y, label="Invoice", color="orange")
-  # plt.legend()
-  # plt.xlabel("x-axis")
-  # plt.ylabel("y-label")
-  # axes=plt.gca()
-  # axes.yaxis.grid()
-  # cursor=Cursor(ax, horizOn=True, vertOn=True, color='r', linewidth=1)
-  # plt.show()
-  #-------------------------------------------------------------------------------
-
-
-  frame = Frame(
-          reportframe,
-          width=1380,
-          height=1000,
-          bg='#b3b3b3',
-          )
-  frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
-      
-  frame.pack()
-
-
-  x=datetime.today()
-
-  y=invoice
-
-  x=axis_x
-  figfirst = plt.figure(figsize=(17, 3.58), dpi=81)
-  plt.bar(x,y, label="Invoice", color="orange")
-  plt.legend()
-  plt.xlabel("Date")
-  plt.ylabel("Total Amount")
-  axes=plt.gca()
-  axes.yaxis.grid()
-
-  # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+    sql_outstanding = "SELECT SUM(balance)from invoice"
+    fbcursor.execute(sql_outstanding)
+    outstanding= fbcursor.fetchone()
 
 
 
+    # print(rp_scr_frm.get_date())
+    # x=rp_scr_frm.get_date()
+    # # print(x.get_date())
+    # invoice=1200
+    # outstanding=22
+    # paid=14
 
-  #**************add dates********
-
-  dates=axis_x[0]+timedelta(days=2)
-
-  y=outstanding
-  x=dates
-  plt.bar(x,y, label="Outstanding", color="blue")
-  plt.legend()
-  plt.xlabel("Date")
-  plt.ylabel("Total Amount")
-  axes=plt.gca()
-  axes.yaxis.grid()
-  # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-
-  dates3=axis_x[0]-timedelta(days=2)
-  y=paid
-  x=dates3
-  plt.bar(x,y, label="Paid", color="green") 
-  plt.legend()
-  plt.xlabel("Date")
-  plt.ylabel("Total Amount")
-  axes=plt.gca()
-  axes.yaxis.grid()
-  # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-  #used to display chart in our frame
-  canvasbar = FigureCanvasTkAgg(figfirst, master=frame)
-  canvasbar.draw()
-  canvasbar.get_tk_widget().place(x=0, y=0) # show the barchart on the ouput window
-
-  #second graph
-
-  sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
-  fbcursor.execute(sec_paid)
-  paid_sec_x= fbcursor.fetchone()
-  print(paid_sec_x)
-
-          
-  sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
-  fbcursor.execute(sec_paid_y)
-
-  paid_sec_y= fbcursor.fetchone()
-  print(paid_sec_y)
+    #------------------------------------with cursor----------------
+    # y=float(invoice)
+    # x+=1
+    # fig, ax =plt.subplots()
+    # plt.bar(x,y, label="Invoice", color="orange")
+    # plt.legend()
+    # plt.xlabel("x-axis")
+    # plt.ylabel("y-label")
+    # axes=plt.gca()
+    # axes.yaxis.grid()
+    # cursor=Cursor(ax, horizOn=True, vertOn=True, color='r', linewidth=1)
+    # plt.show()
+    #-------------------------------------------------------------------------------
 
 
-
-  figsecond = plt.figure(figsize=(9, 4), dpi=80)
-
-  x=paid_sec_y
-  y=paid_sec_x
-  plt.barh(x,y, label="Top Billed Customer", color="orange") 
-  plt.legend()
-  plt.xlabel("Invoiced Amount")
-  plt.ylabel("")
-  axes=plt.gca()
-  axes.xaxis.grid()
+    frame = Frame(
+            reportframe,
+            width=1380,
+            height=1000,
+            bg='#b3b3b3',
+            )
+    frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+        
+    frame.pack()
 
 
-  canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
-  canvasbar.draw() 
-  canvasbar.get_tk_widget().place(x=0, y=372)
+    x=datetime.today()
 
-  # #second graph
+    y=invoice
 
-  thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
+    x=axis_x
+    figfirst = plt.figure(figsize=(17, 3.58), dpi=81)
+    plt.bar(x,y, label="Invoice", color="orange")
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Total Amount")
+    axes=plt.gca()
+    axes.yaxis.grid()
 
-  fbcursor.execute(thrd_paid)
-  paid_thrd_x= fbcursor.fetchone()
-              
+    # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
 
-  thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid  ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
 
-  fbcursor.execute(thrd_paid_y)
 
-  paid_thrd_y= fbcursor.fetchone()
+    #**************add dates********
 
-  figlast = plt.figure(figsize=(9, 4), dpi=80)
+    dates=axis_x[0]+timedelta(days=2)
 
-  x=paid_thrd_y
-  y=paid_thrd_x   
-  plt.barh(x,y, label="Top Product Sales", color="blue") 
-  plt.legend()
-  plt.xlabel("Total Sales")
-  plt.ylabel("")
-  axes=plt.gca()
-  axes.xaxis.grid()
+    y=outstanding
+    x=dates
+    plt.bar(x,y, label="Outstanding", color="blue")
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Total Amount")
+    axes=plt.gca()
+    axes.yaxis.grid()
+    # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+    dates3=axis_x[0]-timedelta(days=2)
+    y=paid
+    x=dates3
+    plt.bar(x,y, label="Paid", color="green") 
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Total Amount")
+    axes=plt.gca()
+    axes.yaxis.grid()
+    # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+    #used to display chart in our frame
+    canvasbar = FigureCanvasTkAgg(figfirst, master=frame)
+    canvasbar.draw()
+    canvasbar.get_tk_widget().place(x=0, y=0) # show the barchart on the ouput window
+
+    #second graph
+
+    sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
+    fbcursor.execute(sec_paid)
+    paid_sec_x= fbcursor.fetchone()
   
 
-  canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
-  canvasbar.draw()
-  canvasbar.get_tk_widget().place(x=650, y=372)  
+            
+    sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
+    fbcursor.execute(sec_paid_y)
+
+    paid_sec_y= fbcursor.fetchone()
+  
+
+
+
+    figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+    x=paid_sec_y
+    y=paid_sec_x
+    plt.barh(x,y, label="Top Billed Customer", color="orange") 
+    plt.legend()
+    plt.xlabel("Invoiced Amount")
+    plt.ylabel("")
+    axes=plt.gca()
+    axes.xaxis.grid()
+
+
+    canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+    canvasbar.draw() 
+    canvasbar.get_tk_widget().place(x=0, y=372)
+
+    # #second graph
+
+    thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
+
+    fbcursor.execute(thrd_paid)
+    paid_thrd_x= fbcursor.fetchone()
+                
+
+
+    thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid  ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
+
+    fbcursor.execute(thrd_paid_y)
+
+    paid_thrd_y= fbcursor.fetchone()
+
+    figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+    x=paid_thrd_y
+    y=paid_thrd_x   
+    plt.barh(x,y, label="Top Product Sales", color="blue") 
+    plt.legend()
+    plt.xlabel("Total Sales")
+    plt.ylabel("")
+    axes=plt.gca()
+    axes.xaxis.grid()
+    
+
+    canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+    canvasbar.draw()
+    canvasbar.get_tk_widget().place(x=650, y=372)  
+  except:
+    
+    frame = Frame(
+            reportframe,
+            width=1380,
+            height=1000,
+            bg='#b3b3b3',
+            )
+    frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+        
+    frame.pack()
+
+
+    x=datetime.today()
+
+    y=0
+
+    x=date.today()
+    figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+    plt.bar(x,y, label="Invoice", color="orange")
+    plt.legend()
+    plt.xlabel("x-axis")
+    plt.ylabel("y-label")
+    axes=plt.gca()
+    axes.yaxis.grid()
+
+ 
+
+    #**************add dates********
+
+    dates=date.today()
+
+    y=0
+    x=dates
+    plt.bar(x,y, label="Outstanding", color="blue")
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Total Amount")
+    axes=plt.gca()
+    axes.yaxis.grid()
+    # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+    dates3=date.today()
+    y=0
+    x=dates3
+    plt.bar(x,y, label="Paid", color="green") 
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Total Amount")
+    axes=plt.gca()
+    axes.yaxis.grid()
+    # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+    #used to display chart in our frame
+    canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+    canvasbar.draw()
+    canvasbar.get_tk_widget().place(x=0, y=86) # show the barchart on the ouput window
+
+    #second graph
+
+
+    figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+    x="0"
+    y=0
+    plt.barh(x,y, label="Top Billed Customer", color="orange") 
+    plt.legend()
+    plt.xlabel("Invoiced Amount")
+    plt.ylabel("")
+    axes=plt.gca()
+    axes.xaxis.grid()
+
+
+    canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+    canvasbar.draw() 
+    canvasbar.get_tk_widget().place(x=0, y=372)
+
+    # #second graph
+
+    
+
+    figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+    x="0"
+    y=0
+    plt.barh(x,y, label="Top Product Sales", color="blue") 
+    plt.legend()
+    plt.xlabel("Total Sales")
+    plt.ylabel("")
+    axes=plt.gca()
+    axes.xaxis.grid()
+    
+
+    canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+    canvasbar.draw()
+    canvasbar.get_tk_widget().place(x=650, y=372)  
+
   lbl_ir = Label(reportframe, text="                                                                                                                                                                                                                                       ", bg="white" , font=("arial", 15))
   lbl_ir.place(x=0,y=692)
 
@@ -55790,8 +56215,8 @@ def mainpage():
   lbl_ir.place(x=1115,y=85)
 
 
-  lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
-  lbl_invdtt2.place(x=2, y=85)
+  lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white",anchor="nw", width=20, font=("arial", 16))
+  lbl_invdtt2.place(x=2, y=87)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@End Reports@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
