@@ -1721,17 +1721,17 @@ def mainpage():
   # ad_usr = PIL.Image.open("images/user_add.png")
   # cus_addcustomerIcon=ImageTk.PhotoImage(ad_usr)
 
-  cus_addcustomerLabel = Button(CusmidFrame,compound="top", text="Add new\nCustomer",relief=RAISED,  command=lambda:cus_add_customer(),          image=cus_addcustomerIcon, font=("arial", 8),bg="#f5f3f2", fg="black", height=55, bd=1, width=55)
+  cus_addcustomerLabel = Button(CusmidFrame,compound="top", text="Add new\nCustomer",relief=RAISED,  command=lambda:auth_cus_add_customer(),          image=cus_addcustomerIcon, font=("arial", 8),bg="#f5f3f2", fg="black", height=55, bd=1, width=55)
   cus_addcustomerLabel.pack(side="left", pady=3, ipadx=4)
 
   # usr_edit = PIL.Image.open("images/user_edit.png")
   # cus_editcustomerIcon=ImageTk.PhotoImage(usr_edit)
-  cus_editcustomerLabel = Button(CusmidFrame,compound="top", text="Edit/View\nCustomer",relief=RAISED,command=lambda:cus_edit_customer(), image=cus_editcustomerIcon,  font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
+  cus_editcustomerLabel = Button(CusmidFrame,compound="top", text="Edit/View\nCustomer",relief=RAISED,command=lambda:auth_cus_edit_customer(), image=cus_editcustomerIcon,  font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
   cus_editcustomerLabel.pack(side="left")
 
   # usr_del = PIL.Image.open("images/user_delete.png")
   # cus_deletecustomerIcon=ImageTk.PhotoImage(usr_del)
-  cus_deletecustomerLabel = Button(CusmidFrame,compound="top", text="Delete\nSelected",relief=RAISED, command=lambda:cus_delete_customer(),image=cus_deletecustomerIcon, font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
+  cus_deletecustomerLabel = Button(CusmidFrame,compound="top", text="Delete\nSelected",relief=RAISED, command=lambda:auth_cus_delete_customer(),image=cus_deletecustomerIcon, font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
   cus_deletecustomerLabel.pack(side="left")
 
   cus_pn = Canvas(CusmidFrame, width=1, height=65, bg="#b3b3b3", bd=0)
@@ -1765,7 +1765,7 @@ def mainpage():
 
   # usr_imp = PIL.Image.open("images/import.png")
   # cus_importcustomerIcon=ImageTk.PhotoImage(usr_imp)
-  cus_importcustomerLabel = Button(CusmidFrame,compound="top", text="Import\nCustomers",command=lambda:import_customer_check(),relief=RAISED, image=cus_importcustomerIcon, font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
+  cus_importcustomerLabel = Button(CusmidFrame,compound="top", text="Import\nCustomers",command=lambda:auth_import_customer_check(),relief=RAISED, image=cus_importcustomerIcon, font=("arial", 8),bg="#f8f8f2", fg="black", height=55, bd=1, width=55)
   cus_importcustomerLabel.pack(side="left")
 
   # usr_exp = PIL.Image.open("images/export.png")
@@ -1920,6 +1920,7 @@ def mainpage():
           cus_htcodeframe.insert(0, cus_filenamez.split('/')[-1]) 
   def cus_addemail_order():
           try:
+            cus_id=cus_main_tree.item(cus_main_tree.focus())["values"][1]
             cus_mailDetail=Toplevel()
             cus_mailDetail.title("Send E-mail")
             cus_mailDetail.geometry("1080x550")
@@ -2227,7 +2228,7 @@ def mainpage():
             cus_dropcomp11 = ttk.Combobox(cus_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,17)))
             
             cus_dropcomp11.place(x=530, y=5)
-          #   cus_dropcomp11.bind('<<ComboboxSelected>>',frmar)
+            #   cus_dropcomp11.bind('<<ComboboxSelected>>',frmar)
             
             font_family_variable=StringVar()
             font_familyes=font.families()
@@ -2532,8 +2533,31 @@ def mainpage():
             cus_pswrdent=Entry(cus_sendatalbframe, width=40, textvariable=cus_email_pswrd,show="*")
             cus_pswrdent.place(x=195, y=40)
           except:
+            messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Sending")
             pass
   #------------------------------------------------------------------------------------Add Customer
+
+  def auth_cus_add_customer():
+    
+    invuser_sql = "SELECT * FROM users"
+    fbcursor.execute(invuser_sql,)
+    invuser_data = fbcursor.fetchall()
+
+    if not invuser_data:
+      cus_add_customer()
+    else:
+      try:
+        inv_username = username1.get()
+        usrch_sql = "SELECT create_customer FROM users WHERE username=%s"
+        usrch_val = (inv_username,)
+        fbcursor.execute(usrch_sql,usrch_val)
+        usrch_data = fbcursor.fetchone()
+        if usrch_data[0] == 1:
+          cus_add_customer()
+        else:
+          messagebox.showerror("F-Billing Revolution 2022","User does not have permission to perform this action")
+      except:
+        cus_add_customer()
   def cus_add_customer():
     #-------------------------------------------------------------------------------Add to database
     def cancel_add():
@@ -2995,6 +3019,26 @@ def mainpage():
     btn2=Button(add_customer,width=80,compound = LEFT,image=cancel,text="  Cancel",command=cancel_add).place(x=665, y=545)
     add_customer.mainloop()
   #-----------------------------------------------------------------------------------Edit Customer
+  def auth_cus_edit_customer():
+    invuser_sql = "SELECT * FROM users"
+    fbcursor.execute(invuser_sql,)
+    invuser_data = fbcursor.fetchall()
+
+    if not invuser_data:
+      cus_edit_customer()
+    else:
+      try:
+        inv_username = username1.get()
+        usrch_sql = "SELECT create_customer FROM users WHERE username=%s"
+        usrch_val = (inv_username,)
+        fbcursor.execute(usrch_sql,usrch_val)
+        usrch_data = fbcursor.fetchone()
+        if usrch_data[0] == 1:
+          cus_edit_customer()
+        else:
+          messagebox.showerror("F-Billing Revolution 2022","User does not have permission to perform this action")
+      except:
+        cus_edit_customer()
   def cus_edit_customer():
     try:
       cus_id=cus_main_tree.item(cus_main_tree.focus())["values"][1]
@@ -3486,8 +3530,29 @@ def mainpage():
       btn2=Button(edit_customer,width=80,compound = LEFT,image=cancel,text="  Cancel", command=cancel_edt).place(x=665, y=545)
       edit_customer.mainloop()
     except:
+      messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Editing.")
       pass
   #-----------------------------------------------------------------------------------Delete Customer
+  def auth_cus_delete_customer():
+    invuser_sql = "SELECT * FROM users"
+    fbcursor.execute(invuser_sql,)
+    invuser_data = fbcursor.fetchall()
+
+    if not invuser_data:
+      cus_delete_customer()
+    else:
+      try:
+        inv_username = username1.get()
+        usrch_sql = "SELECT create_customer FROM users WHERE username=%s"
+        usrch_val = (inv_username,)
+        fbcursor.execute(usrch_sql,usrch_val)
+        usrch_data = fbcursor.fetchone()
+        if usrch_data[0] == 1:
+          cus_delete_customer()
+        else:
+          messagebox.showerror("F-Billing Revolution 2022","User does not have permission to perform this action")
+      except:
+        cus_delete_customer()
   def cus_delete_customer(): 
     try:
       cus_id=cus_main_tree.item(cus_main_tree.focus())["values"][1]
@@ -3511,11 +3576,13 @@ def mainpage():
         cus_main_tree.insert(parent='', index='end', iid=count_cus, text='hello', values=("",i[24],i[2],i[4],i[8],i[10],i[12],i[22]))
         count_cus +=1
     except:
+      messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Delete.")
       pass
 
   #-----------------------------------------------------------------------------------Preview Invoice Customer
   def cus_previewinvoice_customer():
     try:
+      cus_id=cus_main_tree.item(cus_main_tree.focus())["values"][3]
       cus_in_preview = Toplevel()
       cus_in_preview.title("F-Billing Revolution Invoice Report ")
       cus_in_p2= PhotoImage(file = "images/fbicon.png")
@@ -3683,6 +3750,7 @@ def mainpage():
 
       window = cus_in_canvas.create_window(280, 320, anchor="nw", window=cus_prv_tree)
     except:
+      messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Preview.")
       pass
 
                 
@@ -3949,6 +4017,7 @@ def mainpage():
     
       #   pass
     except:
+      messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Printing.")
       pass
   #-----------------------------------------------------------------------------------Customer Sms
   def cus_customersms():
@@ -4024,6 +4093,26 @@ def mainpage():
     checkvar1=IntVar()
     chkbtn1=Checkbutton(tiplbf,text="I have read and agree to the terms of service above",variable=checkvar1,onvalue=1,offvalue=0).place(x=130, y=200)  
   #-----------------------------------------------------------------------------------Import Customer
+  def auth_import_customer_check():
+    invuser_sql = "SELECT * FROM users"
+    fbcursor.execute(invuser_sql,)
+    invuser_data = fbcursor.fetchall()
+
+    if not invuser_data:
+      import_customer_check()
+    else:
+      try:
+        inv_username = username1.get()
+        usrch_sql = "SELECT create_customer FROM users WHERE username=%s"
+        usrch_val = (inv_username,)
+        fbcursor.execute(usrch_sql,usrch_val)
+        usrch_data = fbcursor.fetchone()
+        if usrch_data[0] == 1:
+          import_customer_check()
+        else:
+          messagebox.showerror("F-Billing Revolution 2022","User does not have permission to perform this action")
+      except:
+        import_customer_check()
   def import_customer_check():
       sql = "select * from users"
       fbcursor.execute(sql)
@@ -25820,7 +25909,7 @@ def mainpage():
   def rp_send_mails():
 
       rp_sender_email = "saijuinfox@gmail.com"    
-      rp_sender_password = "8848937577" 
+      rp_sender_password = "eywcinveepcwchnn" 
 
       rp_server = smtplib.SMTP('smtp.gmail.com', 587)
     
@@ -50787,8 +50876,8 @@ def mainpage():
           pass
 
   def check_irwc():
-      in_dat=irwcfrm.get_date()
-      cr=irwcto.get_date()
+      in_dat=irwcfrm1.get_date()
+      cr=irwcto1.get_date()
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
