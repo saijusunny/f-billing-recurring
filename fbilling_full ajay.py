@@ -54445,7 +54445,7 @@ def mainpage():
         elif KB <= BYTE < MB:
           return '{0:.2f} KB'.format(BYTE / KB)
         elif MB <= BYTE:
-          return '{0:.2f} MB'.format(BYTE / MB)
+          return '{0:.2f} MB' .format(BYTE / MB)
       ############### delete file #################
       def delete_file_1():
         selected_doc_item_1 = doc_tree_1.selection()[0]
