@@ -116,6 +116,7 @@ mark2 = PhotoImage(file="images/mark2.png")
 photo10 = PhotoImage(file = "images/text-message.png")
 addnew = PhotoImage(file="images/plus.png")
 delete = PhotoImage(file="images/delete_E.png")
+color = PhotoImage(file="images/font_color.png")
 tabControl = ttk.Notebook(root)
 tab1 = ttk.Frame(tabControl)
 tab2 = ttk.Frame(tabControl)
@@ -8315,149 +8316,155 @@ def rir_prnt_main_rir():
 
         rir_pdf.save()
         win32api.ShellExecute(0,"",os.getcwd()+"/recurring_reports/"+invnumber+".pdf",None,".",0)
-
-           
-#----------------------------------------------------------------------------------------------------------email
-def cus_send_mails():
-      try:
-        cus_sender_email = "saijuinfox@gmail.com"    
-        cus_sender_password = "eywcinveepcwchnn" 
-
-        cus_server = smtplib.SMTP('smtp.gmail.com', 587)
-      
-        cus_server.starttls()
-
-        cus_server.login(cus_sender_email, cus_sender_password)
-
-      
-        cus_carbcopy_info = cus_carcopyem_address.get()
         
+#----------------------------------------------------------------------------------------------------------email
+def rir_send_mails():
+      # try:
+        rir_sender_email = "saijuinfox@gmail.com"    
+        rir_sender_password = "eywcinveepcwchnn" 
+
+        rir_server = smtplib.SMTP('smtp.gmail.com', 587)
+      
+        rir_server.starttls()
+
+        rir_server.login(rir_sender_email, rir_sender_password)
 
       
-        cus_msg = MIMEMultipart()
-        cus_msg['Subject'] = cus_email_subject.get() 
+        rir_carbcopy_info = rir_carcopyem_address.get()
+        
+        
       
-        cus_mail_content  = cus_mframe.get('1.0','end-1c') 
-        cus_msg['From'] = cus_email_from.get()
-        cus_msg['To'] = cus_email_address.get()
+        rir_msg = MIMEMultipart()
+        rir_msg['Subject'] = rir_email_subject.get() 
+      
+        rir_mail_content  = rir_mframe.get('1.0','end-1c') 
+        rir_msg['From'] = rir_email_from.get()
+        rir_msg['To'] = rir_email_address.get()
       
           
-        cus_gettingimg=cus_lstfrm.get()
-        cus_lst_data = cus_gettingimg[1:-1].split(',')
+        rir_gettingimg=rir_lstfrm.get()
+        rir_lst_data = rir_gettingimg[1:-1].split(',')
 
 
-        cus_msg.attach(MIMEText(cus_mail_content, 'plain'))
+        rir_msg.attach(MIMEText(rir_mail_content, 'plain'))
 
-        for i in cus_lst_data:
+        for i in rir_lst_data:
             if len(i.strip()[1:-1])>1:
               
-                with open('customer_Reports/'+ i.strip()[1:-1], "rb") as attachment:
+                with open('recurring_reports/'+ i.strip()[1:-1], "rb") as attachment:
       
-                    cus_part = MIMEBase("application", "octet-stream")
-                    cus_part.set_payload(attachment.read())
+                    rir_part = MIMEBase("application", "octet-stream")
+                    rir_part.set_payload(attachment.read())
 
-                    encoders.encode_base64(cus_part)
-                    cus_part.add_header('Content-Disposition', "attachment; filename= %s" % 'customer_Reports/'+ i.strip()[1:-1]) 
+                    encoders.encode_base64(rir_part)
+                    rir_part.add_header('Content-Disposition', "attachment; filename= %s" % 'recurring_reports/'+ i.strip()[1:-1]) 
 
         
-                    cus_msg.attach(cus_part)
+                    rir_msg.attach(rir_part)
           
 
-        cus_server.sendmail(cus_email_from.get(),cus_email_address.get(),cus_msg.as_string())
-        cus_server.sendmail(cus_email_from.get(), cus_carbcopy_info,cus_msg.as_string()) 
-      except:
-        pass
-def cus_empsfile_image(event):
-              global cus_yawn
-              for i in cus_htcodeframe.curselection():
-                print("hloo",cus_htcodeframe.get(i))
-                cus_yawn=cus_htcodeframe.get(i)        
+        rir_server.sendmail(rir_email_from.get(),rir_email_address.get(),rir_msg.as_string())
+        rir_server.sendmail(rir_email_from.get(), rir_carbcopy_info,rir_msg.as_string()) 
+        
+      # except:
+      #   pass
+def rir_empsfile_image(event):
+              global rir_yawn
+              for i in rir_htcodeframe.curselection():
+                print("hloo",rir_htcodeframe.get(i))
+                rir_yawn=rir_htcodeframe.get(i)        
                 edit_window_img = Toplevel()
                 edit_window_img.title("View Image")
                 edit_window_img.geometry("700x500")
-                image = Image.open("images/"+cus_yawn)
+                image = Image.open("images/"+rir_yawn)
                 resize_image = image.resize((700, 500))
                 image = ImageTk.PhotoImage(resize_image)
-                cus_psimage = Label(edit_window_img,image=image)
-                cus_psimage.photo = image
-                cus_psimage.pack()
-def cus_file(event):
+                rir_psimage = Label(edit_window_img,image=image)
+                rir_psimage.photo = image
+                rir_psimage.pack()
+def rir_file(event):
       try:
-        all_items = cus_htcodeframe.get(0, tk.END) # tuple with text of all items in Listbox
-        sel_idx = cus_htcodeframe.curselection() # tuple with indexes of selected items
+        invnumber=rir_tree.item(rir_tree.focus())["values"][1]
+      
+        all_items = rir_htcodeframe.get(0, tk.END) # tuple with text of all items in Listbox
+        
+        sel_idx = rir_htcodeframe.curselection() # tuple with indexes of selected items
         sel_list = [all_items[item] for item in sel_idx]
         
-        if sel_list[0]==os.getcwd()+"/recurring_reports/"+invnumber+".pdf":
-          win32api.ShellExecute(0,"",cus_filenamezrrr,None,".",0)
+        
+        if sel_list[0]==str(invnumber)+".pdf":
+          
+          win32api.ShellExecute(0,"",rir_filenamezrrr,None,".",0)
         else:
-          win32api.ShellExecute(0,"",cus_filenamez,None,".",0)
+          win32api.ShellExecute(0,"",rir_filenamez,None,".",0)
       except:
         pass
-def cus_UploadAction(event=None):
-          global cus_filenamez
-          cus_filenamez = askopenfilename(filetypes=(('PDF', '*.pdf',),("png file ",'.png'),("jpg file", ".jpg"),  ("All files", "*.*"),))
+      
+def rir_UploadAction(event=None):
+          global rir_filenamez
+          rir_filenamez = askopenfilename(filetypes=(('PDF', '*.pdf',),("png file ",'.png'),("jpg file", ".jpg"),  ("All files", "*.*"),))
           
-          shutil.copyfile(cus_filenamez, os.getcwd()+'/customer_Reports/'+cus_filenamez.split('/')[-1])
-          cus_htcodeframe.insert(0, cus_filenamez.split('/')[-1]) 
-def cus_addemail_order():
+          shutil.copyfile(rir_filenamez, os.getcwd()+'/rirtomer_Reports/'+rir_filenamez.split('/')[-1])
+          rir_htcodeframe.insert(0, rir_filenamez.split('/')[-1]) 
+def rir_addemail_order():
           try:
             
-            cus_mailDetail=Toplevel()
-            cus_mailDetail.title("Send E-mail")
-            cus_mailDetail.geometry("1080x550")
-            cus_mailDetail.resizable(False, False)
+            rir_mailDetail=Toplevel()
+            rir_mailDetail.title("Send E-mail")
+            rir_mailDetail.geometry("1080x550")
+            rir_mailDetail.resizable(False, False)
 
             style = ttk.Style()
             style.theme_use('default')
             style.configure('TNotebook.Tab', background="#999999", padding=5)
-            cus_email_Notebook = ttk.Notebook(cus_mailDetail)
-            cus_email_Frame = Frame(cus_email_Notebook, height=500, width=1080)
-            cus_account_Frame = Frame(cus_email_Notebook, height=550, width=1080)
-            cus_email_Notebook.add(cus_email_Frame, text="E-mail")
-            cus_email_Notebook.add(cus_account_Frame, text="Account")
-            cus_email_Notebook.place(x=0, y=0)
+            rir_email_Notebook = ttk.Notebook(rir_mailDetail)
+            rir_email_Frame = Frame(rir_email_Notebook, height=500, width=1080)
+            rir_account_Frame = Frame(rir_email_Notebook, height=550, width=1080)
+            rir_email_Notebook.add(rir_email_Frame, text="E-mail")
+            rir_email_Notebook.add(rir_account_Frame, text="Account")
+            rir_email_Notebook.place(x=0, y=0)
 
-            cus_messagelbframe=LabelFrame(cus_email_Frame,text="Message", height=500, width=730)
-            cus_messagelbframe.place(x=5, y=5)
-            global cus_email_address, cus_email_subject, cus_email_from,cus_email_pswrd,cus_carcopyem_address,cus_mframe,cus_htcodeframe,cus_lstfrm,cus_langs
-            cus_email_address = StringVar() 
-            cus_email_subject = StringVar()
+            rir_messagelbframe=LabelFrame(rir_email_Frame,text="Message", height=500, width=730)
+            rir_messagelbframe.place(x=5, y=5)
+            global rir_email_address, rir_email_subject, rir_email_from,rir_email_pswrd,rir_carcopyem_address,rir_mframe,rir_htcodeframe,rir_lstfrm,rir_langs
+            rir_email_address = StringVar() 
+            rir_email_subject = StringVar()
 
-            cus_email_from = StringVar()
-            cus_email_pswrd = StringVar()
-            cus_carcopyem_address = StringVar()
+            rir_email_from = StringVar()
+            rir_email_pswrd = StringVar()
+            rir_carcopyem_address = StringVar()
             
             
-            cus_lbl_emailtoaddr=Label(cus_messagelbframe, text="Email to address").place(x=5, y=5)
-            cus_emailtoent=Entry(cus_messagelbframe, width=50,textvariable=cus_email_address)
-            cus_emailtoent.place(x=120, y=5)
+            rir_lbl_emailtoaddr=Label(rir_messagelbframe, text="Email to address").place(x=5, y=5)
+            rir_emailtoent=Entry(rir_messagelbframe, width=50,textvariable=rir_email_address)
+            rir_emailtoent.place(x=120, y=5)
             
             
           
-            cus_sendemail_btn=Button(cus_messagelbframe, text="Send Email", width=10, height=1, command=cus_send_mails).place(x=600, y=10)
+            rir_sendemail_btn=Button(rir_messagelbframe, text="Send Email", width=10, height=1, command=rir_send_mails).place(x=600, y=10)
 
-            cus_lbl_carcopyto=Label(cus_messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            cus_carcopyent=Entry(cus_messagelbframe, width=50,textvariable=cus_carcopyem_address)
-            cus_carcopyent.place(x=120, y=32)
+            rir_lbl_carcopyto=Label(rir_messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            rir_carcopyent=Entry(rir_messagelbframe, width=50,textvariable=rir_carcopyem_address)
+            rir_carcopyent.place(x=120, y=32)
 
-            cus_lbl_subject=Label(cus_messagelbframe, text="Subject").place(x=5, y=59)
-            cus_subent=Entry(cus_messagelbframe, width=50, textvariable=cus_email_subject)
-            cus_subent.place(x=120, y=59)
-            cus_subjectinsrt='Invoice Report'+str("")
-            cus_subent.delete(0,'end')
-            cus_subent.insert(0, cus_subjectinsrt)
+            rir_lbl_subject=Label(rir_messagelbframe, text="Subject").place(x=5, y=59)
+            rir_subent=Entry(rir_messagelbframe, width=50, textvariable=rir_email_subject)
+            rir_subent.place(x=120, y=59)
+            rir_subjectinsrt='Invoice Report'+str("")
+            rir_subent.delete(0,'end')
+            rir_subent.insert(0, rir_subjectinsrt)
 
             
             style = ttk.Style()
             style.theme_use('default')
             style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            cus_mess_Notebook = ttk.Notebook(cus_messagelbframe)
-            cus_emailmessage_Frame =Frame(cus_mess_Notebook, height=350, width=710)
-            cus_htmlsourse_Frame = Frame(cus_mess_Notebook, height=350, width=710)
-            cus_mess_Notebook.add(cus_emailmessage_Frame, text="E-mail message")
+            rir_mess_Notebook = ttk.Notebook(rir_messagelbframe)
+            rir_emailmessage_Frame =Frame(rir_mess_Notebook, height=350, width=710)
+            rir_htmlsourse_Frame = Frame(rir_mess_Notebook, height=350, width=710)
+            rir_mess_Notebook.add(rir_emailmessage_Frame, text="E-mail message")
 
-            cus_mess_Notebook.add(cus_htmlsourse_Frame, )
-            cus_mess_Notebook.place(x=5, y=90)
+            rir_mess_Notebook.add(rir_htmlsourse_Frame, )
+            rir_mess_Notebook.place(x=5, y=90)
             
 
             
@@ -8466,102 +8473,102 @@ def cus_addemail_order():
             fontSize=16
             fontStyle='Arial'
             
-            def cus_font_style(event):
+            def rir_font_style(event):
                 global fontStyle
                 fontStyle=font_family_variable.get()
-                cus_mframe.config(font=(fontStyle,fontSize))
+                rir_mframe.config(font=(fontStyle,fontSize))
 
-            def cus_font_size(event):
+            def rir_font_size(event):
                 global fontSize
                 
                 fontSize=size_variable.get()
                 
                 
-                cus_mframe.config(font=(fontStyle,fontSize))
+                rir_mframe.config(font=(fontStyle,fontSize))
 
-            def cus_bold_text():
-                bold_font = font.Font(cus_mframe, cus_mframe.cget("font"))
+            def rir_bold_text():
+                bold_font = font.Font(rir_mframe, rir_mframe.cget("font"))
                 bold_font.configure(weight="bold")
 
-                cus_mframe.tag_configure("bold", font=bold_font)
+                rir_mframe.tag_configure("bold", font=bold_font)
 
-                current_tags = cus_mframe.tag_names("sel.first")
+                current_tags = rir_mframe.tag_names("sel.first")
 
                 if "bold" in current_tags:
-                  cus_mframe.tag_remove("bold", "sel.first", "sel.last")
+                  rir_mframe.tag_remove("bold", "sel.first", "sel.last")
                 else:
-                  cus_mframe.tag_add("bold", "sel.first", "sel.last")    
+                  rir_mframe.tag_add("bold", "sel.first", "sel.last")    
             
-            def cus_italic_text():
-                italic_font = font.Font(cus_mframe, cus_mframe.cget("font"))
+            def rir_italic_text():
+                italic_font = font.Font(rir_mframe, rir_mframe.cget("font"))
                 italic_font.configure(slant="italic")
 
-                cus_mframe.tag_configure("italic", font=italic_font)
+                rir_mframe.tag_configure("italic", font=italic_font)
 
-                current_tags = cus_mframe.tag_names("sel.first")
+                current_tags = rir_mframe.tag_names("sel.first")
 
                 if "italic" in current_tags:
-                  cus_mframe.tag_remove("italic", "sel.first", "sel.last")
+                  rir_mframe.tag_remove("italic", "sel.first", "sel.last")
                 else:
-                  cus_mframe.tag_add("italic", "sel.first", "sel.last")
+                  rir_mframe.tag_add("italic", "sel.first", "sel.last")
 
-            def cus_underline_text():
+            def rir_underline_text():
               try:
-                  if cus_mframe.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
-                      cus_mframe.tag_remove('underline_selection', 'sel.first', 'sel.last')
+                  if rir_mframe.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
+                      rir_mframe.tag_remove('underline_selection', 'sel.first', 'sel.last')
                   else:
-                      cus_mframe.tag_add('underline_selection', 'sel.first', 'sel.last')
-                      cus_mframe.tag_configure('underline_selection', underline=True)
+                      rir_mframe.tag_add('underline_selection', 'sel.first', 'sel.last')
+                      rir_mframe.tag_configure('underline_selection', underline=True)
               except TclError:
                   pass
 
-            def cus_color_select():
+            def rir_color_select():
                 color=colorchooser.askcolor()[1]
                 if color:
               # if color:
 
-                  color_font = font.Font(cus_mframe, cus_mframe.cget("font"))
+                  color_font = font.Font(rir_mframe, rir_mframe.cget("font"))
 
-                  cus_mframe.tag_configure("colored", font=color_font, foreground=color)
+                  rir_mframe.tag_configure("colored", font=color_font, foreground=color)
 
-                  current_tags = cus_mframe.tag_names("sel.first")
+                  current_tags = rir_mframe.tag_names("sel.first")
 
                 if "colored" in current_tags:
-                  cus_mframe.tag_remove("colored", "sel.first", "sel.last")
+                  rir_mframe.tag_remove("colored", "sel.first", "sel.last")
                 else:
-                  cus_mframe.tag_add("colored", "sel.first", "sel.last")
+                  rir_mframe.tag_add("colored", "sel.first", "sel.last")
 
-            def cus_align_right():
-                data=cus_mframe.get(0.0,END)
-                cus_mframe.tag_config('right',justify=RIGHT)
-                cus_mframe.delete(0.0,END)
-                cus_mframe.insert(INSERT,data,'right')
+            def rir_align_right():
+                data=rir_mframe.get(0.0,END)
+                rir_mframe.tag_config('right',justify=RIGHT)
+                rir_mframe.delete(0.0,END)
+                rir_mframe.insert(INSERT,data,'right')
 
-            def cus_align_left():
-                data=cus_mframe.get(0.0,END)
-                cus_mframe.tag_config('left',justify=LEFT)
-                cus_mframe.delete(0.0,END)
-                cus_mframe.insert(INSERT,data,'left')
+            def rir_align_left():
+                data=rir_mframe.get(0.0,END)
+                rir_mframe.tag_config('left',justify=LEFT)
+                rir_mframe.delete(0.0,END)
+                rir_mframe.insert(INSERT,data,'left')
 
-            def cus_align_center():
-                data=cus_mframe.get(0.0,END)
-                cus_mframe.tag_config('center',justify=CENTER)
-                cus_mframe.delete(0.0,END)
-                cus_mframe.insert(INSERT,data,'center')
+            def rir_align_center():
+                data=rir_mframe.get(0.0,END)
+                rir_mframe.tag_config('center',justify=CENTER)
+                rir_mframe.delete(0.0,END)
+                rir_mframe.insert(INSERT,data,'center')
 
             def add_link():
                 # from tkHyperLinkManager import HyperlinkManager
                 # import webbrowser
                 # from functools import partial
                 
-                hghf=cus_mframe.selection_get()
+                hghf=rir_mframe.selection_get()
                 content=hghf
                 
                 
               #   content.configure(foreground="red")
-                cus_mframe.insert(END, " "+content)
+                rir_mframe.insert(END, " "+content)
                 
-                # cus_mframe.delete(1.0,END)
+                # rir_mframe.delete(1.0,END)
                 
                 
                 
@@ -8621,10 +8628,10 @@ def cus_addemail_order():
 
                 hyp_lbl2 = Label(top,text="URL:")
                 hyp_lbl2.place(x=18, y=55)
-                global cus_hyper
-                cus_hyper = StringVar()
+                global rir_hyper
+                rir_hyper = StringVar()
                 
-                hyp= Entry(top,textvariable=cus_hyper,width=35)
+                hyp= Entry(top,textvariable=rir_hyper,width=35)
                 hyp.place(x=90,y=55)
 
                 
@@ -8637,82 +8644,82 @@ def cus_addemail_order():
 
           
 
-            cus_mframe=Text(cus_emailmessage_Frame,undo=True,width=84, bg="white", height=20)
-            cus_mframe.pack(padx=0,pady=28,expand=False)
+            rir_mframe=Text(rir_emailmessage_Frame,undo=True,width=84, bg="white", height=20)
+            rir_mframe.pack(padx=0,pady=28,expand=False)
 
 
-            cus_scrollbar1 = Scrollbar(cus_emailmessage_Frame,orient=VERTICAL,command=cus_mframe.yview)
-            cus_scrollbar3= Scrollbar(cus_emailmessage_Frame,orient=HORIZONTAL,command=cus_mframe.xview, width=0)
-            cus_scrollbar3.place(x=0, y=340, height=20,width=690)
-            cus_scrollbar2= Scrollbar(cus_mframe,orient=HORIZONTAL,command=cus_mframe.xview, width=0)
-            cus_scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=310,pady=155)
-            #   cus_scrollbar2.place(x=0, y=310, height=20,width=670)
-            cus_mframe.config(xscrollcommand=cus_scrollbar2.set)
-            cus_mframe.config(yscrollcommand=cus_scrollbar1.set)
-            cus_scrollbar1.config(command=cus_mframe.yview)
-            cus_scrollbar1.place(x =690, y=0, height=360)
-            cus_scrollbar2.config(command=cus_mframe.xview)
+            rir_scrollbar1 = Scrollbar(rir_emailmessage_Frame,orient=VERTICAL,command=rir_mframe.yview)
+            rir_scrollbar3= Scrollbar(rir_emailmessage_Frame,orient=HORIZONTAL,command=rir_mframe.xview, width=0)
+            rir_scrollbar3.place(x=0, y=340, height=20,width=690)
+            rir_scrollbar2= Scrollbar(rir_mframe,orient=HORIZONTAL,command=rir_mframe.xview, width=0)
+            rir_scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=310,pady=155)
+            #   rir_scrollbar2.place(x=0, y=310, height=20,width=670)
+            rir_mframe.config(xscrollcommand=rir_scrollbar2.set)
+            rir_mframe.config(yscrollcommand=rir_scrollbar1.set)
+            rir_scrollbar1.config(command=rir_mframe.yview)
+            rir_scrollbar1.place(x =690, y=0, height=360)
+            rir_scrollbar2.config(command=rir_mframe.xview)
 
 
-            cus_btn1=Button(cus_emailmessage_Frame,width=20,height=20,compound = LEFT,image=selectall,command=lambda :cus_mframe.event_generate('<Control a>'))
-            cus_btn1.place(x=0, y=1)
+            rir_btn1=Button(rir_emailmessage_Frame,width=20,height=20,compound = LEFT,image=selectall,command=lambda :rir_mframe.event_generate('<Control a>'))
+            rir_btn1.place(x=0, y=1)
 
                     
-            cus_btn2=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :cus_mframe.event_generate('<Control x>'))
-            cus_btn2.place(x=36, y=1)
+            rir_btn2=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :rir_mframe.event_generate('<Control x>'))
+            rir_btn2.place(x=36, y=1)
 
-            cus_btn3=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :cus_mframe.event_generate('<Control c>'))
-            cus_btn3.place(x=73, y=1)
+            rir_btn3=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :rir_mframe.event_generate('<Control c>'))
+            rir_btn3.place(x=73, y=1)
 
-            cus_btn4=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :cus_mframe.event_generate('<Control v>'))
-            cus_btn4.place(x=105, y=1)
-            cus_btn5=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo, command=lambda:cus_mframe.event_generate("<<Undo>>")).place(x=140, y=1)
+            rir_btn4=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :rir_mframe.event_generate('<Control v>'))
+            rir_btn4.place(x=105, y=1)
+            rir_btn5=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo, command=lambda:rir_mframe.event_generate("<<Undo>>")).place(x=140, y=1)
 
-            cus_btn6=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo, command=lambda:cus_mframe.event_generate("<<Redo>>")).place(x=175, y=1)
+            rir_btn6=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo, command=lambda:rir_mframe.event_generate("<<Redo>>")).place(x=175, y=1)
 
-            cus_btn7=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=cus_bold_text)
-            cus_btn7.place(x=210, y=1)
+            rir_btn7=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=rir_bold_text)
+            rir_btn7.place(x=210, y=1)
 
-            cus_btn8=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=cus_italic_text)
-            cus_btn8.place(x=245, y=1)
+            rir_btn8=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=rir_italic_text)
+            rir_btn8.place(x=245, y=1)
 
-            cus_btn9=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=cus_underline_text)
-            cus_btn9.place(x=280, y=1)
+            rir_btn9=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=rir_underline_text)
+            rir_btn9.place(x=280, y=1)
 
-            cus_btn10=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=cus_align_left)
-            cus_btn10.place(x=315, y=1)
+            rir_btn10=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=rir_align_left)
+            rir_btn10.place(x=315, y=1)
 
-            cus_btn11=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=cus_align_right)
-            cus_btn11.place(x=350, y=1)
+            rir_btn11=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=rir_align_right)
+            rir_btn11.place(x=350, y=1)
 
-            cus_btn12=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=cus_align_center)
-            cus_btn12.place(x=385, y=1)
+            rir_btn12=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=rir_align_center)
+            rir_btn12.place(x=385, y=1)
 
-            cus_btn14=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :cus_mframe.delete(0.0,END))
-            cus_btn14.place(x=455, y=1)
+            rir_btn14=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :rir_mframe.delete(0.0,END))
+            rir_btn14.place(x=455, y=1)
             
-            cus_btn15=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=cus_color_select)
-            cus_btn15.place(x=420, y=1)
-            cus_btn16=Button(cus_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command="addlinkbox")
-            cus_btn16.place(x=491, y=1)
+            rir_btn15=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=rir_color_select)
+            rir_btn15.place(x=420, y=1)
+            rir_btn16=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command="addlinkbox")
+            rir_btn16.place(x=491, y=1)
             global size_variable
             size_variable=IntVar()
 
-            cus_dropcomp11 = ttk.Combobox(cus_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,17)))
+            rir_dropcomp11 = ttk.Combobox(rir_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,17)))
             
-            cus_dropcomp11.place(x=530, y=5)
-            #   cus_dropcomp11.bind('<<ComboboxSelected>>',frmar)
+            rir_dropcomp11.place(x=530, y=5)
+            #   rir_dropcomp11.bind('<<ComboboxSelected>>',frmar)
             
             font_family_variable=StringVar()
             font_familyes=font.families()
-            # dropcompo147 = ttk.Combobox(cus_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
+            # dropcompo147 = ttk.Combobox(rir_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
             # dropcompo147.place(x=600, y=5)
             # dropcompo147.current(font_familyes.index('Arial'))
-            # dropcompo147.bind('<<ComboboxSelected>>', cus_font_style)
-            cus_dropcomp11.bind('<<ComboboxSelected>>', cus_font_size)
+            # dropcompo147.bind('<<ComboboxSelected>>', rir_font_style)
+            rir_dropcomp11.bind('<<ComboboxSelected>>', rir_font_size)
             
-            cus_attachlbframe=LabelFrame(cus_email_Frame,text="Attachment(s)", height=350, width=280)
-            cus_attachlbframe.place(x=740, y=5)
+            rir_attachlbframe=LabelFrame(rir_email_Frame,text="Attachment(s)", height=350, width=280)
+            rir_attachlbframe.place(x=740, y=5)
             ##########################################################print()
             
             try:
@@ -16829,46 +16836,51 @@ def cus_addemail_order():
 
 
                   rir_pdf.save()
-                  # win32api.ShellExecute(0,"",os.getcwd()+"/recurring_reports/"+invnumber+".pdf",None,".",0)
+         
 
             except:
+              
                       pass
             try:
+            
 
-                    cus_lstfrm=StringVar()  
-                    cus_htcodeframe=Listbox(cus_attachlbframe, height=13, width=43,listvariable=cus_lstfrm, bg="white")
-                    global cus_filenamezrrr
-                    cus_filenamezrrr =os.getcwd()+"/recurring_reports/"+invnumber+".pdf"
-                    wraped_text="/".join(wrap(cus_filenamezrrr,17))
-                    hrt=wraped_text.split('/')
-                    cus_htcodeframe.insert(0,hrt[1])
+              rir_lstfrm=StringVar()  
+              rir_htcodeframe=Listbox(rir_attachlbframe, height=13, width=43,listvariable=rir_lstfrm, bg="white")
+              global rir_filenamezrrr
+              rir_filenamezrrr =os.getcwd()+"/recurring_reports/"+invnumber+".pdf"
+              wraped_text="/".join(wrap(rir_filenamezrrr,50))
+                      
+              hrt=wraped_text.split('/')
+            
+              rir_htcodeframe.insert(0,hrt[2])
+              
 
-                    cus_htcodeframe.place(x=5, y=5)
-                    cus_htcodeframe.bind('<Double-Button-1>' , cus_file)
+              rir_htcodeframe.place(x=5, y=5)
+              rir_htcodeframe.bind('<Double-Button-1>' , rir_file)
 
-                    def cus_deslist():
-                        cus_laa=cus_htcodeframe.curselection()
-                        print("hloo",cus_htcodeframe.get(cus_laa))
-                        cus_yawn=cus_htcodeframe.get(cus_laa)        
-                        cus_htcodeframe.delete(ACTIVE)
+              def rir_deslist():
+                          rir_laa=rir_htcodeframe.curselection()
+                          print("hloo",rir_htcodeframe.get(rir_laa))
+                          rir_yawn=rir_htcodeframe.get(rir_laa)        
+                          rir_htcodeframe.delete(ACTIVE)
 
-                    cus_lbl_btn_info=Label(cus_attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-                    cus_btn17=Button(cus_attachlbframe, width=20, text="Add attachment file...", command=cus_UploadAction).place(x=60, y=260)
-                    cus_btn18=Button(cus_attachlbframe, width=20, text="Remove attachment",command=cus_deslist).place(x=60, y=295)
-                    cus_lbl_tt_info=Label(cus_email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-                    cus_lbl_tt_info.place(x=740, y=370)
+              rir_lbl_btn_info=Label(rir_attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+              rir_btn17=Button(rir_attachlbframe, width=20, text="Add attachment file...", command=rir_UploadAction).place(x=60, y=260)
+              rir_btn18=Button(rir_attachlbframe, width=20, text="Remove attachment",command=rir_deslist).place(x=60, y=295)
+              rir_lbl_tt_info=Label(rir_email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+              rir_lbl_tt_info.place(x=740, y=370)
 
-                    cus_ready_frame=Frame(cus_mailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-                    
-                    cus_sendatalbframe=LabelFrame(cus_account_Frame,text="E-Mail(Sender data)",height=140, width=600)
-                    cus_sendatalbframe.place(x=240, y=165 )
-                    cus_lbl_sendermail=Label(cus_sendatalbframe, text="Company email address").place(x=5, y=10)
-                    cus_sentent=Entry(cus_sendatalbframe, width=40, textvariable=cus_email_from)
-                    cus_sentent.place(x=195, y=10)
+              rir_ready_frame=Frame(rir_mailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+                      
+              rir_sendatalbframe=LabelFrame(rir_account_Frame,text="E-Mail(Sender data)",height=140, width=600)
+              rir_sendatalbframe.place(x=240, y=165 )
+              rir_lbl_sendermail=Label(rir_sendatalbframe, text="Company email address").place(x=5, y=10)
+              rir_sentent=Entry(rir_sendatalbframe, width=40, textvariable=rir_email_from)
+              rir_sentent.place(x=195, y=10)
 
-                    cus_lbl_sendecusswrd=Label(cus_sendatalbframe, text="Email Password").place(x=5, y=40)
-                    cus_pswrdent=Entry(cus_sendatalbframe, width=40, textvariable=cus_email_pswrd,show="*")
-                    cus_pswrdent.place(x=195, y=40)
+              rir_lbl_senderirswrd=Label(rir_sendatalbframe, text="Email Password").place(x=5, y=40)
+              rir_pswrdent=Entry(rir_sendatalbframe, width=40, textvariable=rir_email_pswrd,show="*")
+              rir_pswrdent.place(x=195, y=40)
             except:
               pass
           except:
@@ -21906,8 +21918,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(cecy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="Next Invoice":
@@ -21920,8 +21953,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="Recurring Period":
@@ -21934,8 +21988,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="Stop After":
@@ -21948,8 +22023,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="Customer Name":
@@ -21962,8 +22058,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="Invoice Total":
@@ -21976,8 +22093,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
       elif find_txt_var.get()=="<<All>>":
@@ -21990,8 +22128,29 @@ def srh_rir():
         count_rir=0
 
         for i in main_rir_val:
-            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-            count_rir +=1
+            sqlr= 'select currencysign from company'
+            fbcursor.execute(sqlr)
+            crncy=fbcursor.fetchone()
+            crcy_tp=crncy[0]
+            sqlrt= 'select currsignplace from company'
+            fbcursor.execute(sqlrt)
+            post_rp=fbcursor.fetchone()
+            crcy_tp_ps=post_rp[0]
+            
+            if crcy_tp_ps=="before amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+              count_rir +=1
+            elif crcy_tp_ps=="before amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+              count_rir +=1
+            elif crcy_tp_ps=="after amount with space":
+              rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+              count_rir +=1
+            else:
+              pass
 
         top.destroy()
     def fnd_dist():
@@ -24679,8 +24838,34 @@ def view_invs_rir():
 
     
   #voidinvoice
-  def voidinvoice_recurring():
+  def rir_voidinvoice_recurring():
     messagebox.askyesno("F-Billing Revolution","Are you sure to avoid this invoice?\nAll products will be placed back into stock and all payemnts will be voided.")
+
+    rir_draft.config(text="void",fg="black")
+    try:
+      rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
+    except:
+      messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before void invoice item .")  
+
+
+    sql_mrk_void="update invoice set recurring_check=%s, status=%s where invoice_number=%s"
+    sql_mrk_voi_val=(0,"void",rir_inv_nbs)
+    fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
+    fbilldb.commit()
+
+    for record in rir_tree.get_children():
+          rir_tree.delete(record)
+    rir_main_table_sql="select * from invoice where recurring_check='1'"
+    
+    fbcursor.execute(rir_main_table_sql)
+    main_rir_val=fbcursor.fetchall()
+    count_rir=0
+
+    for i in main_rir_val:
+            rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
+            count_rir +=1
+    pop.destroy()
+    
   
   #delete line item  
   def rir_delete():
@@ -25173,6 +25358,7 @@ def view_invs_rir():
       count_rir +=1
     
   def priv_vi_ed():
+    
     pri_sql = "SELECT * FROM company"
     fbcursor.execute(pri_sql)
     comp_data = fbcursor.fetchone()
@@ -29994,6 +30180,7 @@ def view_invs_rir():
           pass
 
   def rir_prnt_inv_rir():
+    
     pri_sql = "SELECT * FROM company"
     fbcursor.execute(pri_sql)
     comp_data = fbcursor.fetchone()
@@ -39584,133 +39771,10730 @@ def view_invs_rir():
 
         rir_pdf.save()
         win32api.ShellExecute(0,"",os.getcwd()+"/recurring_reports/"+invnumber+".pdf",None,".",0)
+    nev2.config(text=date.today())
+    try:
+        rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
+    except:
+        messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before printing") 
+    sql_mrk_void="update invoice set printon=%s where invoice_number=%s"
+    sql_mrk_voi_val=(date.today(),rir_inv_nbs)
+    fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
+    fbilldb.commit()
+
+  def rir2_send_mails():
+      # try:
+        nev1.config(text=date.today())
+        try:
+          rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
+        except:
+          messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before void invoice item .") 
+        sql_mrk_void="update invoice set emailon=%s where invoice_number=%s"
+        sql_mrk_voi_val=(date.today(),rir_inv_nbs)
+        fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
+        fbilldb.commit()
+        
+        rir_sender_email = "saijuinfox@gmail.com"    
+        rir_sender_password = "eywcinveepcwchnn" 
+
+        rir_server = smtplib.SMTP('smtp.gmail.com', 587)
+      
+        rir_server.starttls()
+
+        rir_server.login(rir_sender_email, rir_sender_password)
+
+      
+        rir_carbcopy_info = rir_carcopyem_address.get()
+        
+
+      
+        rir_msg = MIMEMultipart()
+        rir_msg['Subject'] = rir_email_subject.get() 
+      
+        rir_mail_content  = rir_mframe.get('1.0','end-1c') 
+        rir_msg['From'] = rir_email_from.get()
+        rir_msg['To'] = rir_email_address.get()
+      
+          
+        rir_gettingimg=rir_lstfrm.get()
+        rir_lst_data = rir_gettingimg[1:-1].split(',')
+
+
+        rir_msg.attach(MIMEText(rir_mail_content, 'plain'))
+
+        for i in rir_lst_data:
+            if len(i.strip()[1:-1])>1:
+              
+                with open('recurring_reports/'+ i.strip()[1:-1], "rb") as attachment:
+      
+                    rir_part = MIMEBase("application", "octet-stream")
+                    rir_part.set_payload(attachment.read())
+
+                    encoders.encode_base64(rir_part)
+                    rir_part.add_header('Content-Disposition', "attachment; filename= %s" % 'recurring_reports/'+ i.strip()[1:-1]) 
+
+        
+                    rir_msg.attach(rir_part)
+          
+
+        rir_server.sendmail(rir_email_from.get(),rir_email_address.get(),rir_msg.as_string())
+        rir_server.sendmail(rir_email_from.get(), rir_carbcopy_info,rir_msg.as_string()) 
+        
+      # except:
+      #   pass
+  def rir2_empsfile_image(event):
+                global rir_yawn
+                for i in rir_htcodeframe.curselection():
+                  
+                  rir_yawn=rir_htcodeframe.get(i)        
+                  edit_window_img = Toplevel()
+                  edit_window_img.title("View Image")
+                  edit_window_img.geometry("700x500")
+                  image = Image.open("images/"+rir_yawn)
+                  resize_image = image.resize((700, 500))
+                  image = ImageTk.PhotoImage(resize_image)
+                  rir_psimage = Label(edit_window_img,image=image)
+                  rir_psimage.photo = image
+                  rir_psimage.pack()
+  def rir2_file(event):
+        try:
+          invnumber=rir_tree.item(rir_tree.focus())["values"][1]
+        
+          all_items = rir_htcodeframe.get(0, tk.END) # tuple with text of all items in Listbox
+          
+          sel_idx = rir_htcodeframe.curselection() # tuple with indexes of selected items
+          sel_list = [all_items[item] for item in sel_idx]
+          
+          
+          if sel_list[0]==str(invnumber)+".pdf":
+            
+            win32api.ShellExecute(0,"",rir_filenamezrrr,None,".",0)
+          else:
+            win32api.ShellExecute(0,"",rir_filenamez,None,".",0)
+        except:
+          pass
+        
+  def rir2_UploadAction(event=None):
+            global rir_filenamez
+            rir_filenamez = askopenfilename(filetypes=(('PDF', '*.pdf',),("png file ",'.png'),("jpg file", ".jpg"),  ("All files", "*.*"),))
+            
+            shutil.copyfile(rir_filenamez, os.getcwd()+'/rirtomer_Reports/'+rir_filenamez.split('/')[-1])
+            rir_htcodeframe.insert(0, rir_filenamez.split('/')[-1]) 
+  def rir2_addemail_order(): 
+    try:
+              
+              rir_mailDetail=Toplevel()
+              rir_mailDetail.title("Send E-mail")
+              rir_mailDetail.geometry("1080x550")
+              rir_mailDetail.resizable(False, False)
+
+              style = ttk.Style()
+              style.theme_use('default')
+              style.configure('TNotebook.Tab', background="#999999", padding=5)
+              rir_email_Notebook = ttk.Notebook(rir_mailDetail)
+              rir_email_Frame = Frame(rir_email_Notebook, height=500, width=1080)
+              rir_account_Frame = Frame(rir_email_Notebook, height=550, width=1080)
+              rir_email_Notebook.add(rir_email_Frame, text="E-mail")
+              rir_email_Notebook.add(rir_account_Frame, text="Account")
+              rir_email_Notebook.place(x=0, y=0)
+
+              rir_messagelbframe=LabelFrame(rir_email_Frame,text="Message", height=500, width=730)
+              rir_messagelbframe.place(x=5, y=5)
+              global rir_email_address, rir_email_subject, rir_email_from,rir_email_pswrd,rir_carcopyem_address,rir_mframe,rir_htcodeframe,rir_lstfrm,rir_langs
+              rir_email_address = StringVar() 
+              rir_email_subject = StringVar()
+
+              rir_email_from = StringVar()
+              rir_email_pswrd = StringVar()
+              rir_carcopyem_address = StringVar()
+              
+              
+              rir_lbl_emailtoaddr=Label(rir_messagelbframe, text="Email to address").place(x=5, y=5)
+              rir_emailtoent=Entry(rir_messagelbframe, width=50,textvariable=rir_email_address)
+              rir_emailtoent.place(x=120, y=5)
+              
+              
+            
+              rir_sendemail_btn=Button(rir_messagelbframe, text="Send Email", width=10, height=1, command=rir2_send_mails).place(x=600, y=10)
+
+              rir_lbl_carcopyto=Label(rir_messagelbframe, text="Carbon copy to").place(x=5, y=32)
+              rir_carcopyent=Entry(rir_messagelbframe, width=50,textvariable=rir_carcopyem_address)
+              rir_carcopyent.place(x=120, y=32)
+
+              rir_lbl_subject=Label(rir_messagelbframe, text="Subject").place(x=5, y=59)
+              rir_subent=Entry(rir_messagelbframe, width=50, textvariable=rir_email_subject)
+              rir_subent.place(x=120, y=59)
+              rir_subjectinsrt='Invoice Report'+str("")
+              rir_subent.delete(0,'end')
+              rir_subent.insert(0, rir_subjectinsrt)
+
+              
+              style = ttk.Style()
+              style.theme_use('default')
+              style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+              rir_mess_Notebook = ttk.Notebook(rir_messagelbframe)
+              rir_emailmessage_Frame =Frame(rir_mess_Notebook, height=350, width=710)
+              rir_htmlsourse_Frame = Frame(rir_mess_Notebook, height=350, width=710)
+              rir_mess_Notebook.add(rir_emailmessage_Frame, text="E-mail message")
+
+              rir_mess_Notebook.add(rir_htmlsourse_Frame, )
+              rir_mess_Notebook.place(x=5, y=90)
+              
+
+              
+
+              from tkinter import font,colorchooser
+              fontSize=16
+              fontStyle='Arial'
+              
+              def rir_font_style(event):
+                  global fontStyle
+                  fontStyle=font_family_variable.get()
+                  rir_mframe.config(font=(fontStyle,fontSize))
+
+              def rir_font_size(event):
+                  global fontSize
+                  
+                  fontSize=size_variable.get()
+                  
+                  
+                  rir_mframe.config(font=(fontStyle,fontSize))
+
+              def rir_bold_text():
+                  bold_font = font.Font(rir_mframe, rir_mframe.cget("font"))
+                  bold_font.configure(weight="bold")
+
+                  rir_mframe.tag_configure("bold", font=bold_font)
+
+                  current_tags = rir_mframe.tag_names("sel.first")
+
+                  if "bold" in current_tags:
+                    rir_mframe.tag_remove("bold", "sel.first", "sel.last")
+                  else:
+                    rir_mframe.tag_add("bold", "sel.first", "sel.last")    
+              
+              def rir_italic_text():
+                  italic_font = font.Font(rir_mframe, rir_mframe.cget("font"))
+                  italic_font.configure(slant="italic")
+
+                  rir_mframe.tag_configure("italic", font=italic_font)
+
+                  current_tags = rir_mframe.tag_names("sel.first")
+
+                  if "italic" in current_tags:
+                    rir_mframe.tag_remove("italic", "sel.first", "sel.last")
+                  else:
+                    rir_mframe.tag_add("italic", "sel.first", "sel.last")
+
+              def rir_underline_text():
+                try:
+                    if rir_mframe.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
+                        rir_mframe.tag_remove('underline_selection', 'sel.first', 'sel.last')
+                    else:
+                        rir_mframe.tag_add('underline_selection', 'sel.first', 'sel.last')
+                        rir_mframe.tag_configure('underline_selection', underline=True)
+                except TclError:
+                    pass
+
+              def rir_color_select():
+                  color=colorchooser.askcolor()[1]
+                  if color:
+                # if color:
+
+                    color_font = font.Font(rir_mframe, rir_mframe.cget("font"))
+
+                    rir_mframe.tag_configure("colored", font=color_font, foreground=color)
+
+                    current_tags = rir_mframe.tag_names("sel.first")
+
+                  if "colored" in current_tags:
+                    rir_mframe.tag_remove("colored", "sel.first", "sel.last")
+                  else:
+                    rir_mframe.tag_add("colored", "sel.first", "sel.last")
+
+              def rir_align_right():
+                  data=rir_mframe.get(0.0,END)
+                  rir_mframe.tag_config('right',justify=RIGHT)
+                  rir_mframe.delete(0.0,END)
+                  rir_mframe.insert(INSERT,data,'right')
+
+              def rir_align_left():
+                  data=rir_mframe.get(0.0,END)
+                  rir_mframe.tag_config('left',justify=LEFT)
+                  rir_mframe.delete(0.0,END)
+                  rir_mframe.insert(INSERT,data,'left')
+
+              def rir_align_center():
+                  data=rir_mframe.get(0.0,END)
+                  rir_mframe.tag_config('center',justify=CENTER)
+                  rir_mframe.delete(0.0,END)
+                  rir_mframe.insert(INSERT,data,'center')
+
+              def add_link():
+                  # from tkHyperLinkManager import HyperlinkManager
+                  # import webbrowser
+                  # from functools import partial
+                  
+                  hghf=rir_mframe.selection_get()
+                  content=hghf
+                  
+                  
+                #   content.configure(foreground="red")
+                  rir_mframe.insert(END, " "+content)
+                  
+                  # rir_mframe.delete(1.0,END)
+                  
+                  
+                  
+              def callback(url):
+                  webbrowser.open_new_tab_url(url)
+
+              def addlinkbox():
+                  global top
+                  top = Toplevel()
+                  top.title('Hyperlink')
+                  top.geometry("400x100")
+                  hyp_lbl = LabelFrame(top,text="Hyperlink Information", height=80, width=300)
+                  hyp_lbl.place(x=10, y=5)
+
+                  hyp_lbl1 = Label(top,text="Type:")
+                  hyp_lbl1.place(x=18, y=24)
+                  
+                  def comb_select(event):
+                      hyper = cb_comb.get()
+                      if hyper == "(other)":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "(other)")
+                      elif hyper == "file://":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "file://")
+                      elif hyper == "ftp://":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "ftp://") 
+                      elif hyper == "http://":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "http://") 
+                      elif hyper == "https://":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "https://") 
+                      elif hyper == "mailto:":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "mailto:") 
+                      elif hyper == "telnet:":
+                          hyp= Entry(top,width=35)
+                          hyp.place(x=90,y=55)
+                          hyp.insert(END,  "telnet:")
+
+
+                  cb_comb = StringVar()
+                  cb1=ttk.Combobox(top,textvariable=cb_comb,width=15)
+                  cb1.grid(row=1,column=1,padx=90,pady=30)
+                  cb1['values']=('(other)','file://','ftp://','http://','https://','mailto:','news:','telnet:')
+                  cb1.current(0)
+                  cb1.bind('<<ComboboxSelected>>',comb_select)
+
+
+                  hyp_lbl2 = Label(top,text="URL:")
+                  hyp_lbl2.place(x=18, y=55)
+                  global rir_hyper
+                  rir_hyper = StringVar()
+                  
+                  hyp= Entry(top,textvariable=rir_hyper,width=35)
+                  hyp.place(x=90,y=55)
+
+                  
+
+                  hypbtn1 = Button(top,text="OK",width=10, command=add_link)
+                  hypbtn1.place(x=315,y=8)
+
+                  hypbtn2 = Button(top,text="Cancel",width=10)
+                  hypbtn2.place(x=315,y=35)
+
+            
+
+              rir_mframe=Text(rir_emailmessage_Frame,undo=True,width=84, bg="white", height=20)
+              rir_mframe.pack(padx=0,pady=28,expand=False)
+
+
+              rir_scrollbar1 = Scrollbar(rir_emailmessage_Frame,orient=VERTICAL,command=rir_mframe.yview)
+              rir_scrollbar3= Scrollbar(rir_emailmessage_Frame,orient=HORIZONTAL,command=rir_mframe.xview, width=0)
+              rir_scrollbar3.place(x=0, y=340, height=20,width=690)
+              rir_scrollbar2= Scrollbar(rir_mframe,orient=HORIZONTAL,command=rir_mframe.xview, width=0)
+              rir_scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=310,pady=155)
+              #   rir_scrollbar2.place(x=0, y=310, height=20,width=670)
+              rir_mframe.config(xscrollcommand=rir_scrollbar2.set)
+              rir_mframe.config(yscrollcommand=rir_scrollbar1.set)
+              rir_scrollbar1.config(command=rir_mframe.yview)
+              rir_scrollbar1.place(x =690, y=0, height=360)
+              rir_scrollbar2.config(command=rir_mframe.xview)
+
+
+              rir_btn1=Button(rir_emailmessage_Frame,width=20,height=20,compound = LEFT,image=selectall,command=lambda :rir_mframe.event_generate('<Control a>'))
+              rir_btn1.place(x=0, y=1)
+
+                      
+              rir_btn2=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :rir_mframe.event_generate('<Control x>'))
+              rir_btn2.place(x=36, y=1)
+
+              rir_btn3=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :rir_mframe.event_generate('<Control c>'))
+              rir_btn3.place(x=73, y=1)
+
+              rir_btn4=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :rir_mframe.event_generate('<Control v>'))
+              rir_btn4.place(x=105, y=1)
+              rir_btn5=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo, command=lambda:rir_mframe.event_generate("<<Undo>>")).place(x=140, y=1)
+
+              rir_btn6=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo, command=lambda:rir_mframe.event_generate("<<Redo>>")).place(x=175, y=1)
+
+              rir_btn7=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=rir_bold_text)
+              rir_btn7.place(x=210, y=1)
+
+              rir_btn8=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=rir_italic_text)
+              rir_btn8.place(x=245, y=1)
+
+              rir_btn9=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=rir_underline_text)
+              rir_btn9.place(x=280, y=1)
+
+              rir_btn10=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=rir_align_left)
+              rir_btn10.place(x=315, y=1)
+
+              rir_btn11=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=rir_align_right)
+              rir_btn11.place(x=350, y=1)
+
+              rir_btn12=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=rir_align_center)
+              rir_btn12.place(x=385, y=1)
+
+              rir_btn14=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :rir_mframe.delete(0.0,END))
+              rir_btn14.place(x=455, y=1)
+              
+              rir_btn15=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=rir_color_select)
+              rir_btn15.place(x=420, y=1)
+              rir_btn16=Button(rir_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command="addlinkbox")
+              rir_btn16.place(x=491, y=1)
+              global size_variable
+              size_variable=IntVar()
+
+              rir_dropcomp11 = ttk.Combobox(rir_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,17)))
+              
+              rir_dropcomp11.place(x=530, y=5)
+              #   rir_dropcomp11.bind('<<ComboboxSelected>>',frmar)
+              
+              font_family_variable=StringVar()
+              font_familyes=font.families()
+              # dropcompo147 = ttk.Combobox(rir_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
+              # dropcompo147.place(x=600, y=5)
+              # dropcompo147.current(font_familyes.index('Arial'))
+              # dropcompo147.bind('<<ComboboxSelected>>', rir_font_style)
+              rir_dropcomp11.bind('<<ComboboxSelected>>', rir_font_size)
+              
+              rir_attachlbframe=LabelFrame(rir_email_Frame,text="Attachment(s)", height=350, width=280)
+              rir_attachlbframe.place(x=740, y=5)
+              ##########################################################print()
+              
+              try:
+              
+                pri_sql = "SELECT * FROM company"
+                fbcursor.execute(pri_sql)
+                comp_data = fbcursor.fetchone()
+                inv_numb=rir_tree.item(rir_tree.focus())["values"][1]
+                from reportlab.pdfgen import canvas
+                from reportlab.lib.pagesizes import letter, inch
+
+                sql_srt="select * from invoice_settings"
+                fbcursor.execute(sql_srt)
+                stn_cmp=fbcursor.fetchone()
+
+                invto_addr = cmb_trms.get()
+                terms = "\n".join(wrap(invto_addr,40))
+
+                l1 = stn_cmp[4]
+                Invoice = "\n".join(wrap(l1,40))
+                l2 = stn_cmp[5]
+                Invoice_date = "\n".join(wrap(l2,40))
+                l4 = stn_cmp[7]
+                Terms2 = "\n".join(wrap(l4,40))
+
+                l5 = stn_cmp[8]
+                Invoiceto = "\n".join(wrap(l5,40))
+                l6 = stn_cmp[9]
+                Shipto = "\n".join(wrap(l6,40))
+
+                l7 = stn_cmp[3]
+                invoice = "\n".join(wrap(l7,40))
+
+                l8 = stn_cmp[10]
+                idsku = "\n".join(wrap(l8,40))
+                l9 = stn_cmp[11]
+                product = "\n".join(wrap(l9,40))
+
+                l10 = stn_cmp[12]
+                quantity = "\n".join(wrap(l10,40))
+                l11 = stn_cmp[14]
+                unitprice = "\n".join(wrap(l11,40))
+
+                l12 = stn_cmp[15]
+                price = "\n".join(wrap(l12,40))
+
+                l13 = stn_cmp[23]
+                trm_con = "\n".join(wrap(l13,40))
+
+                l14=stn_cmp[0]
+                inv = "\n".join(wrap(l14,40))
+
+                l15 = stn_cmp[16]
+                subtotal = "\n".join(wrap(l15,40))
+
+                l16 = stn_cmp[19]
+                tax12 = "\n".join(wrap(l16,40))
+
+                l17 = stn_cmp[20]
+                invoicetot = "\n".join(wrap(l17,40))
+
+                l18 = stn_cmp[16]
+                ext_cst = "\n".join(wrap(l18,40))
+
+                l19 = stn_cmp[21]
+                total_paid = "\n".join(wrap(l19,40))
+
+                l20 = stn_cmp[22]
+                balance = "\n".join(wrap(l20,40))
+
+                l21 = stn_cmp[17]
+                discount = "\n".join(wrap(l21,40))
+
+                
+                  
+                invnumber = inv_nmb_rir.get().split('/')[0]
+                rir_pdf = canvas.Canvas("recurring_reports/"+invnumber+".pdf", pagesize=letter)
+                type_temp = tmpl_dt.get()
+                if type_temp == 'Professional 1 (logo on left side)':
+                  rir_pdf.setFont('Helvetica',12)
+                  rir_pdf.drawCentredString(302,770,ttl_inv.get())
+                  rir_pdf.drawCentredString(302,475,hd_inv.get())
+                  rir_pdf.drawImage("images/"+comp_data[13],30,665,width=200,height=90)
+
+                  
+
+                  rir_pdf.drawString(30,635,Invoice)
+                  rir_pdf.drawString(30,620,Invoice_date)
+                  rir_pdf.drawString(30,605,"Due date")
+                  rir_pdf.drawString(30,590,Terms2)
+              
+
+                  rir_pdf.drawString(140,635,inv+inv_nmb_rir.get())
+                  rir_pdf.drawString(140,620,str(inv_dt_rir.get_date()))
+                  rir_pdf.drawString(140,605,str(due_dt_rir.get_date()))
+                  
+                  rir_pdf.drawString(140,590,terms)
+                  
+
+                  rir_pdf.drawString(60,550,Invoiceto)
+                  rir_pdf.line(60,548,112,548)
+                  rir_pdf.drawString(60,535,cust_selction_nm.get())
+                  invto_addr = address_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(invto_addr,40))
+                  a  = wraped_text.split('\n')
+                      
+                  addr = len(a)
+                  if addr > 0:
+                    rir_pdf.drawString(60,520,a[0])
+                    if addr > 1:
+                      rir_pdf.drawString(60,505,a[1])
+                      if addr > 2:
+                        rir_pdf.drawString(60,490,a[2])
+                        if addr > 3:
+                          rir_pdf.drawString(60,475,a[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(300,550,Shipto)
+                  rir_pdf.line(300,548,338,548)
+                  rir_pdf.drawString(300,535,shp_to_rir.get())
+                  shipto_addr = shp_to_adr_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(shipto_addr,40))
+                  a1  = wraped_text.split('\n')
+                      
+                  addr1 = len(a1)
+                  if addr1 > 0:
+                    rir_pdf.drawString(300,520,a1[0])
+                    if addr1 > 1:
+                      rir_pdf.drawString(300,505,a1[1])
+                      if addr1 > 2:
+                        rir_pdf.drawString(300,490,a1[2])
+                        if addr1 > 3:
+                          rir_pdf.drawString(300,475,a1[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+
+                  rir_pdf.setFont('Helvetica-Bold',12)
+                  rir_pdf.drawRightString(580,745, comp_data[1])
+                  rir_pdf.setFont('Helvetica',12)
+                  text=comp_data[2]
+                  wraped_text="\n".join(wrap(text,30))
+                  htg=wraped_text.split('\n')
+                      
+                  vg=len(htg)
+                  if vg>0:
+                    rir_pdf.drawAlignedString(550,730,htg[0])
+                    if vg>1:
+                      rir_pdf.drawAlignedString(550,715,htg[1])
+                      if vg>2:
+                        rir_pdf.drawAlignedString(550,700,htg[2])
+                        if vg>3:
+                          rir_pdf.drawAlignedString(550,685,htg[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawAlignedString(582,660, comp_data[4])
+                  rir_pdf.setFont('Helvetica-Bold',16)
+                  rir_pdf.drawAlignedString(582,620, invoice)
+
+                  rir_pdf.setFont('Helvetica',12)
+                
+
+
+                  rir_pdf.setLineWidth(.3)
+                  rir_pdf.line(30,470,30,450)
+                  rir_pdf.line(580,470,580,450)
+                  rir_pdf.line(130,470,130,450)
+                  rir_pdf.line(310,470,310,450) #vertical lines
+                  rir_pdf.line(400,470,400,450)
+                  rir_pdf.line(490,470,490,450)
+                  #------------------------#
+                  rir_pdf.line(30,450,580,450)
+                  rir_pdf.line(30,470,580,470)
+
+
+                  rir_pdf.drawString(60,455,idsku)
+                  rir_pdf.drawString(175,455,product)
+                  rir_pdf.drawString(332,455,quantity)
+                  rir_pdf.drawString(420,455,unitprice)
+                  rir_pdf.drawString(523,455,price)
+
+                  y1 = 430 
+                  y2 = 430
+                  v1 = 450
+                  v2 = 430
+                  for i in prd_tree.get_children():
+                    if y1 <= 40:
+                      rir_pdf.showPage()
+                      y1 = 730
+                      y2 = 730
+                      v1 = 750
+                      v2 = 730
+                      rir_pdf.line(30,y1,580,y2)
+                      rir_pdf.line(30,y1+20,580,y2+20)
+                    else:
+                      pass
+                    rir_pdf.line(30,y1,580,y2)
+                    if comp_data[12] == "1":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[6])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "2":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[7])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "3":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[8])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                  
+                  calc_y1 = y1
+                  calc_y2 = y2
+                  #--------------------------------------------------------------Summary
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                    
+
+
+
+                  if (calc_y1-170)-115 <= 10 or (calc_y1-190)-115 <= 10 or (calc_y1-210)-115 <= 10:
+                  
+                    rir_pdf.showPage()
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                  else:
+                    print("welcome")
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                elif type_temp == 'Professional 2 (logo on right side)':
+                  
+                  rir_pdf.setFont('Helvetica',12)
+                  rir_pdf.drawCentredString(302,770,ttl_inv.get())
+                  rir_pdf.drawCentredString(302,475,hd_inv.get())
+                  rir_pdf.drawImage("images/"+comp_data[13],380,665,width=200,height=90)
+
+                  rir_pdf.drawString(340,635,Invoice)
+                  rir_pdf.drawString(340,620,Invoice_date)
+                  rir_pdf.drawString(340,605,"Due date")
+                  rir_pdf.drawString(340,590,Terms2)
+                  
+
+                  rir_pdf.drawString(450,635,inv+inv_nmb_rir.get())
+                  rir_pdf.drawString(450,620,str(inv_dt_rir.get_date()))
+                  rir_pdf.drawString(450,605,str(due_dt_rir.get_date()))
+                  rir_pdf.drawString(450,590,terms)
+                  
+
+                  rir_pdf.drawString(60,550,Invoiceto)
+                  rir_pdf.line(60,548,112,548)
+                  rir_pdf.drawString(60,535,cust_selction_nm.get())
+                  invto_addr = address_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(invto_addr,30))
+                  a  = wraped_text.split('\n')
+                      
+                  addr = len(a)
+                  if addr > 0:
+                    rir_pdf.drawString(60,520,a[0])
+                    if addr > 1:
+                      rir_pdf.drawString(60,505,a[1])
+                      if addr > 2:
+                        rir_pdf.drawString(60,490,a[2])
+                        if addr > 3:
+                          rir_pdf.drawString(60,475,a[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(300,550,Shipto)
+                  rir_pdf.line(300,548,338,548)
+                  rir_pdf.drawString(300,535,shp_to_rir.get())
+                  shipto_addr = shp_to_adr_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(shipto_addr,30))
+                  a1  = wraped_text.split('\n')
+                      
+                  addr1 = len(a1)
+                  if addr1 > 0:
+                    rir_pdf.drawString(300,520,a1[0])
+                    if addr1 > 1:
+                      rir_pdf.drawString(300,505,a1[1])
+                      if addr1 > 2:
+                        rir_pdf.drawString(300,490,a1[2])
+                        if addr1 > 3:
+                          rir_pdf.drawString(300,475,a1[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.setFont('Helvetica-Bold',12)
+                  rir_pdf.drawString(30,745, comp_data[1])
+                  rir_pdf.setFont('Helvetica',12)
+                  text=comp_data[2]
+                  wraped_text="\n".join(wrap(text,30))
+                  htg=wraped_text.split('\n')
+                      
+                  vg=len(htg)
+                  if vg>0:
+                    rir_pdf.drawString(30,730,htg[0])
+                    if vg>1:
+                      rir_pdf.drawString(30,715,htg[1])
+                      if vg>2:
+                        rir_pdf.drawString(30,700,htg[2])
+                        if vg>3:
+                          rir_pdf.drawString(30,685,htg[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(30,660, comp_data[4])
+                  rir_pdf.setFont('Helvetica-Bold',16)
+                  rir_pdf.drawString(30,620,invoice)
+
+                  rir_pdf.setFont('Helvetica',12)
+
+
+
+                  rir_pdf.setLineWidth(.3)
+                  rir_pdf.line(30,470,30,450)
+                  rir_pdf.line(580,470,580,450)
+                  rir_pdf.line(130,470,130,450)
+                  rir_pdf.line(310,470,310,450) #vertical lines
+                  rir_pdf.line(400,470,400,450)
+                  rir_pdf.line(490,470,490,450)
+                  #------------------------#
+                  rir_pdf.line(30,450,580,450)
+                  rir_pdf.line(30,470,580,470)
+
+
+                  rir_pdf.drawString(60,455,idsku )
+                  rir_pdf.drawString(175,455,product)
+                  rir_pdf.drawString(332,455,quantity)
+                  rir_pdf.drawString(420,455,unitprice)
+                  rir_pdf.drawString(523,455,price)
+
+                  y1 = 430 
+                  y2 = 430
+                  v1 = 450
+                  v2 = 430
+                  for i in prd_tree.get_children():
+                    if y1 <= 40:
+                      rir_pdf.showPage()
+                      y1 = 730
+                      y2 = 730
+                      v1 = 750
+                      v2 = 730
+                      rir_pdf.line(30,y1,580,y2)
+                      rir_pdf.line(30,y1+20,580,y2+20)
+                    else:
+                      pass
+                    rir_pdf.line(30,y1,580,y2)
+                    if comp_data[12] == "1":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[6])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "2":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[7])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "3":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[0])
+                      rir_pdf.drawString(132,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(355,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[8])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(130,v1,130,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                  
+                  calc_y1 = y1
+                  calc_y2 = y2
+                  
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                  calc_y1 = y1
+                  calc_y2 = y2
+                  #000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  Print Summary
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                  if (calc_y1-170)-115 <= 10 or (calc_y1-190)-115 <= 10 or (calc_y1-210)-115 <= 10:
+                    rir_pdf.showPage()
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                  else:
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                elif type_temp == 'Simplified 1 (logo on left side)':
+                  rir_pdf.setFont('Helvetica',12)
+                  rir_pdf.drawCentredString(302,770,ttl_inv.get())
+                  rir_pdf.drawCentredString(302,475,hd_inv.get())
+                  rir_pdf.drawImage("images/"+comp_data[13],30,665,width=200,height=90)
+
+                  rir_pdf.drawString(30,635,Invoice)
+                  rir_pdf.drawString(30,620,Invoice_date)
+                  rir_pdf.drawString(30,605,"Due date")
+                  rir_pdf.drawString(30,590,Terms2)
+
+
+                  rir_pdf.drawString(140,635,inv+inv_nmb_rir.get())
+                  rir_pdf.drawString(140,620,str(inv_dt_rir.get_date()))
+                  rir_pdf.drawString(140,605,str(due_dt_rir.get_date()))
+                  rir_pdf.drawString(140,590,terms)
+            
+
+                  rir_pdf.drawString(60,550,Invoiceto)
+                  rir_pdf.line(60,548,112,548)
+                  rir_pdf.drawString(60,535,cust_selction_nm.get())
+                  invto_addr = address_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(invto_addr,30))
+                  a  = wraped_text.split('\n')
+                      
+                  addr = len(a)
+                  if addr > 0:
+                    rir_pdf.drawString(60,520,a[0])
+                    if addr > 1:
+                      rir_pdf.drawString(60,505,a[1])
+                      if addr > 2:
+                        rir_pdf.drawString(60,490,a[2])
+                        if addr > 3:
+                          rir_pdf.drawString(60,475,a[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(300,550,Shipto)
+                  rir_pdf.line(300,548,338,548)
+                  rir_pdf.drawString(300,535,shp_to_rir.get())
+                  shipto_addr = shp_to_adr_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(shipto_addr,30))
+                  a1  = wraped_text.split('\n')
+                      
+                  addr1 = len(a1)
+                  if addr1 > 0:
+                    rir_pdf.drawString(300,520,a1[0])
+                    if addr1 > 1:
+                      rir_pdf.drawString(300,505,a1[1])
+                      if addr1 > 2:
+                        rir_pdf.drawString(300,490,a1[2])
+                        if addr1 > 3:
+                          rir_pdf.drawString(300,475,a1[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+
+                  rir_pdf.setFont('Helvetica-Bold',12)
+                  rir_pdf.drawRightString(580,745, comp_data[1])
+                  rir_pdf.setFont('Helvetica',12)
+                  text=comp_data[2]
+                  wraped_text="\n".join(wrap(text,30))
+                  htg=wraped_text.split('\n')
+                      
+                  vg=len(htg)
+                  if vg>0:
+                    rir_pdf.drawAlignedString(550,730,htg[0])
+                    if vg>1:
+                      rir_pdf.drawAlignedString(550,715,htg[1])
+                      if vg>2:
+                        rir_pdf.drawAlignedString(550,700,htg[2])
+                        if vg>3:
+                          rir_pdf.drawAlignedString(550,685,htg[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawAlignedString(582,660, comp_data[4])
+                  rir_pdf.setFont('Helvetica-Bold',16)
+                  rir_pdf.drawAlignedString(582,620, invoice)
+
+                  rir_pdf.setFont('Helvetica',12)
+                
+
+
+                  rir_pdf.setLineWidth(.3)
+                  rir_pdf.line(30,470,30,450)
+                  rir_pdf.line(580,470,580,450)
+                  rir_pdf.line(310,470,310,450) #vertical lines
+                  rir_pdf.line(450,470,450,450)
+                  #------------------------#
+                  rir_pdf.line(30,450,580,450)
+                  rir_pdf.line(30,470,580,470)
+
+
+                  rir_pdf.drawString(130,455,product)
+                  rir_pdf.drawString(357,455,quantity)
+                  rir_pdf.drawString(505,455,price)
+
+                  y1 = 430 
+                  y2 = 430
+                  v1 = 450
+                  v2 = 430
+                  for i in prd_tree.get_children():
+                    if y1 <= 40:
+                      rir_pdf.showPage()
+                      y1 = 730
+                      y2 = 730
+                      v1 = 750
+                      v2 = 730
+                      rir_pdf.line(30,y1,580,y2)
+                      rir_pdf.line(30,y1+20,580,y2+20)
+                    else:
+                      pass
+                    rir_pdf.line(30,y1,580,y2)
+                    if comp_data[12] == "1":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[6])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "2":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_treeprd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[7])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "3":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[8])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                  
+                  calc_y1 = y1
+                  calc_y2 = y2
+
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                  if (calc_y1-170)-115 <= 10 or (calc_y1-190)-115 <= 10 or (calc_y1-210)-115 <= 10:
+                    rir_pdf.showPage()
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                  else:
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                elif type_temp == 'Simplified 2 (logo on right side)':
+                  rir_pdf.setFont('Helvetica',12)
+                  rir_pdf.drawCentredString(302,770,ttl_inv.get())
+                  rir_pdf.drawCentredString(302,475,hd_inv.get())
+                  rir_pdf.drawImage("images/"+comp_data[13],380,665,width=200,height=90)
+
+                  rir_pdf.drawString(340,635,Invoice)
+                  rir_pdf.drawString(340,620,Invoice_date)
+                  rir_pdf.drawString(340,605,"Due date")
+                  rir_pdf.drawString(340,590,Terms2)
+
+
+                  rir_pdf.drawString(450,635,inv+inv_nmb_rir.get())
+                  rir_pdf.drawString(450,620,str(inv_dt_rir.get_date()))
+                  rir_pdf.drawString(450,605,str(due_dt_rir.get_date()))
+                  rir_pdf.drawString(450,590,terms)
+
+
+                  rir_pdf.drawString(60,550,Invoiceto)
+                  rir_pdf.line(60,548,112,548)
+                  rir_pdf.drawString(60,535,cust_selction_nm.get())
+                  invto_addr = address_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(invto_addr,30))
+                  a  = wraped_text.split('\n')
+                      
+                  addr = len(a)
+                  if addr > 0:
+                    rir_pdf.drawString(60,520,a[0])
+                    if addr > 1:
+                      rir_pdf.drawString(60,505,a[1])
+                      if addr > 2:
+                        rir_pdf.drawString(60,490,a[2])
+                        if addr > 3:
+                          rir_pdf.drawString(60,475,a[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(300,550,Shipto)
+                  rir_pdf.line(300,548,338,548)
+                  rir_pdf.drawString(300,535,shp_to_rir.get())
+                  shipto_addr = shp_to_adr_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(shipto_addr,30))
+                  a1  = wraped_text.split('\n')
+                      
+                  addr1 = len(a1)
+                  if addr1 > 0:
+                    rir_pdf.drawString(300,520,a1[0])
+                    if addr1 > 1:
+                      rir_pdf.drawString(300,505,a1[1])
+                      if addr1 > 2:
+                        rir_pdf.drawString(300,490,a1[2])
+                        if addr1 > 3:
+                          rir_pdf.drawString(300,475,a1[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.setFont('Helvetica-Bold',12)
+                  rir_pdf.drawString(30,745, comp_data[1])
+                  rir_pdf.setFont('Helvetica',12)
+                  text=comp_data[2]
+                  wraped_text="\n".join(wrap(text,30))
+                  htg=wraped_text.split('\n')
+                      
+                  vg=len(htg)
+                  if vg>0:
+                    rir_pdf.drawString(30,730,htg[0])
+                    if vg>1:
+                      rir_pdf.drawString(30,715,htg[1])
+                      if vg>2:
+                        rir_pdf.drawString(30,700,htg[2])
+                        if vg>3:
+                          rir_pdf.drawString(30,685,htg[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(30,660, comp_data[4])
+                  rir_pdf.setFont('Helvetica-Bold',16)
+                  rir_pdf.drawString(30,620, invoice)
+
+                  rir_pdf.setFont('Helvetica',12)
+                
+
+
+                  rir_pdf.setLineWidth(.3)
+                  rir_pdf.line(30,470,30,450)
+                  rir_pdf.line(580,470,580,450)
+                  rir_pdf.line(310,470,310,450) #vertical lines
+                  rir_pdf.line(450,470,450,450)
+                  #------------------------#
+                  rir_pdf.line(30,450,580,450)
+                  rir_pdf.line(30,470,580,470)
+
+
+                  rir_pdf.drawString(130,455,product)
+                  rir_pdf.drawString(357,455,quantity)
+                  rir_pdf.drawString(505,455,price)
+
+                  y1 = 430 
+                  y2 = 430
+                  v1 = 450
+                  v2 = 430
+                  for i in prd_tree.get_children():
+                    if y1 <= 40:
+                      rir_pdf.showPage()
+                      y1 = 730
+                      y2 = 730
+                      v1 = 750
+                      v2 = 730
+                      rir_pdf.line(30,y1,580,y2)
+                      rir_pdf.line(30,y1+20,580,y2+20)
+                    else:
+                      pass
+                    rir_pdf.line(30,y1,580,y2)
+                    if comp_data[12] == "1":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[6])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "2":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[7])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "3":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(375,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[8])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(450,v1,450,v2)
+                      v1 -= 20
+                      v2 -= 20
+                  
+                  calc_y1 = y1
+                  calc_y2 = y2
+
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                  if (calc_y1-170)-115 <= 10 or (calc_y1-190)-115 <= 10 or (calc_y1-210)-115 <= 10:
+                    rir_pdf.showPage()
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                  else:
+                    rir_pdf.drawCentredString(302,115,trm_con)
+                    rir_pdf.line(30,110,580,110)
+                    term_text = trms.get("1.0","end-1c")
+                    wraped_text = "\n".join(wrap(term_text,102))
+                    t  = wraped_text.split('\n')
+                        
+                    term = len(t)
+                    if term > 0:
+                      rir_pdf.drawString(32,95,t[0])
+                      if term > 1:
+                        rir_pdf.drawString(32,80,t[1])
+                        if term > 2:
+                          rir_pdf.drawString(32,65,t[2])
+                          if term > 3:
+                            rir_pdf.drawString(32,50,t[3])
+                          else:
+                            pass
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                    
+                    rir_pdf.drawString(32,30,"Sales Person :")
+                    rir_pdf.drawString(115,30,sl_prsn.get())
+                    rir_pdf.drawString(32,15,fd_inv.get())
+                elif type_temp == 'Business Classic':
+                  rir_pdf.setStrokeColorRGB(255,10,0)
+                  rir_pdf.line(30,762,580,762)
+                  rir_pdf.setFont('Helvetica',12)
+                  rir_pdf.drawCentredString(302,770,ttl_inv.get())
+                  rir_pdf.drawCentredString(302,585,hd_inv.get())
+                  rir_pdf.drawImage("images/"+comp_data[13],30,660,width=200,height=90)
+
+                  rir_pdf.setFont('Helvetica-Bold',12)
+                  rir_pdf.drawString(240,735, comp_data[1])
+                  rir_pdf.setFont('Helvetica',12)
+                  text=comp_data[2]
+                  wraped_text="\n".join(wrap(text,30))
+                  htg=wraped_text.split('\n')
+                      
+                  vg=len(htg)
+                  if vg>0:
+                    rir_pdf.drawString(240,720,htg[0])
+                    if vg>1:
+                      rir_pdf.drawString(240,705,htg[1])
+                      if vg>2:
+                        rir_pdf.drawString(240,690,htg[2])
+                        if vg>3:
+                          rir_pdf.drawString(240,675,htg[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.drawString(240,650, comp_data[4])
+
+                  rir_pdf.drawString(390,665,Invoice)
+                  rir_pdf.drawString(390,650,Invoice_date)
+                  rir_pdf.drawString(390,635,"Due date")
+                  rir_pdf.drawString(390,620,Terms2)
+
+
+                  rir_pdf.drawString(480,665,inv+inv_nmb_rir.get())
+                  rir_pdf.drawString(480,650,str(inv_dt_rir.get_date()))
+                  rir_pdf.drawString(480,635,str(due_dt_rir.get_date()))
+                  rir_pdf.drawString(480,620,terms)
+                
+
+                  rir_pdf.drawString(390,735,cust_selction_nm.get())
+                  invto_addr = address_rir.get("1.0","end-1c")
+                  wraped_text = "\n".join(wrap(invto_addr,30))
+                  a  = wraped_text.split('\n')
+                      
+                  addr = len(a)
+                  if addr > 0:
+                    rir_pdf.drawString(390,720,a[0])
+                    if addr > 1:
+                      rir_pdf.drawString(390,705,a[1])
+                      if addr > 2:
+                        rir_pdf.drawString(390,590,a[2])
+                        if addr > 3:
+                          rir_pdf.drawString(390,575,a[3])
+                        else:
+                          pass
+                      else:
+                        pass
+                    else:
+                      pass
+                  else:
+                    pass
+
+                  rir_pdf.setStrokeColorRGB(0,0,0)
+                  rir_pdf.setLineWidth(.3)
+                  rir_pdf.line(30,580,30,560)
+                  rir_pdf.line(580,580,580,560)
+                  rir_pdf.line(310,580,310,560) #vertical lines
+                  rir_pdf.line(400,580,400,560)
+                  rir_pdf.line(490,580,490,560)
+                  #------------------------#
+                  rir_pdf.line(30,560,580,560)
+                  rir_pdf.line(30,580,580,580)
+
+
+                  rir_pdf.drawString(130,565,product)
+                  rir_pdf.drawString(332,565,quantity)
+                  rir_pdf.drawString(420,565,unitprice)
+                  rir_pdf.drawString(523,565,price)
+
+                  y1 = 540 
+                  y2 = 540
+                  v1 = 560
+                  v2 = 540
+                  for i in prd_tree.get_children():
+                    if y1 <= 40:
+                      rir_pdf.showPage()
+                      y1 = 730
+                      y2 = 730
+                      v1 = 750
+                      v2 = 730
+                      rir_pdf.line(30,y1,580,y2)
+                      rir_pdf.line(30,y1+20,580,y2+20)
+                    else:
+                      pass
+                    rir_pdf.line(30,y1,580,y2)
+                    if comp_data[12] == "1":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(357,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[6])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "2":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(357,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[7])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                    elif comp_data[12] == "3":
+                      rir_pdf.drawString(32,y1+5,prd_tree.item(i,'value')[1])
+                      rir_pdf.drawCentredString(357,y1+5,prd_tree.item(i,'value')[4])
+                      rir_pdf.drawRightString(488,y1+5,prd_tree.item(i,'value')[3])
+                      rir_pdf.drawRightString(578,y1+5,prd_tree.item(i,'value')[8])
+                      y1 -= 20
+                      y2 -= 20
+
+                      rir_pdf.line(30,v1,30,v2)
+                      rir_pdf.line(580,v1,580,v2)
+                      rir_pdf.line(310,v1,310,v2) #vertical lines
+                      rir_pdf.line(400,v1,400,v2)
+                      rir_pdf.line(490,v1,490,v2)
+                      v1 -= 20
+                      v2 -= 20
+                  
+                  calc_y1 = y1
+                  calc_y2 = y2
+
+                  if comp_data[12] == "1":
+                      if calc_y1-100 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                        
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-125,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-140,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-155,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-170,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-100,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-100,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-100,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-170 <= 40:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-125,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-140,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-155,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-170,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                  elif comp_data[12] == "2":
+                      if calc_y1-120 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          print(comp_data[6])
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-145,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-160,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-175,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-190,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-120,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-120,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-120,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        if comp_data[7] == "before amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-190 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-145,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-160,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-175,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-190,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+
+                  elif comp_data[12] == "3":
+                      if calc_y1-140 <= 40:
+                        rir_pdf.showPage()
+                        calc_y1 = 730
+                        calc_y2 = 730
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1+20,580,calc_y2+20)
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          comm = len(c)
+                          if comm > 0:
+                            rir_pdf.drawString(32,calc_y1-165,c[0])
+                            if comm > 1:
+                              rir_pdf.drawString(32,calc_y1-180,c[1])
+                              if comm > 2:
+                                rir_pdf.drawString(32,calc_y1-195,c[2])
+                                if comm > 3:
+                                  rir_pdf.drawString(32,calc_y1-210,c[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                      else:
+                        rir_pdf.line(350,calc_y1-140,350,calc_y1+20)
+                        rir_pdf.line(580,calc_y1-140,580,calc_y1+20)
+                        rir_pdf.line(465,calc_y1-140,465,calc_y1+20)
+                        #-----------------------------------
+                        rir_pdf.line(350,calc_y1,580,calc_y2)
+                        rir_pdf.line(350,calc_y1-20,580,calc_y2-20)
+                        rir_pdf.line(350,calc_y1-40,580,calc_y2-40)
+                        rir_pdf.line(350,calc_y1-60,580,calc_y2-60)
+                        rir_pdf.line(350,calc_y1-80,580,calc_y2-80)
+                        rir_pdf.line(350,calc_y1-100,580,calc_y2-100)
+                        rir_pdf.line(350,calc_y1-120,580,calc_y2-120)
+                        rir_pdf.line(350,calc_y1-140,580,calc_y2-140)
+                        if comp_data[7] == "before amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + "" + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + "" + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + "" + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + "" + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + "" + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + "" + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + "" + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + "" + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+
+
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + "" + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + "" + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "before amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,comp_data[6] + " " + str(discount1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,comp_data[6] + " " + str(sub1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,comp_data[6] + " " + str(cost.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,comp_data[6] + " " + str(tax1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,comp_data[6] + " " + str(ta2.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,comp_data[6] + " " + str(order1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,comp_data[6] + " " + str(total1.cget("text")))
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,comp_data[6] + " " + str(balance1.cget("text")))
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                              
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                        elif comp_data[7] == "after amount with space":            
+                          rir_pdf.drawString(352,calc_y1+5,discount)
+                          rir_pdf.drawRightString(578,calc_y1+5,str(discount1.cget("text")) + " " + comp_data[6]) 
+
+                          rir_pdf.drawString(352,(calc_y1-20)+5,subtotal)
+                          rir_pdf.drawRightString(578,(calc_y1-20)+5,str(sub1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-40)+5,ext_dt.get() )
+                          rir_pdf.drawRightString(578,(calc_y1-40)+5,str(cost.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-60)+5,tax12)
+                          rir_pdf.drawRightString(578,(calc_y1-60)+5,str(tax1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-80)+5,"TAX2")
+                          rir_pdf.drawRightString(578,(calc_y1-80)+5,str(ta2.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-100)+5,invoicetot)
+                          rir_pdf.drawRightString(578,(calc_y1-100)+5,str(order1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-120)+5,total_paid)
+                          rir_pdf.drawRightString(578,(calc_y1-120)+5,str(total1.cget("text")) + " " + comp_data[6])
+
+                          rir_pdf.drawString(352,(calc_y1-140)+5,balance)
+                          rir_pdf.drawRightString(578,(calc_y1-140)+5,str(balance1.cget("text")) + " " + comp_data[6])
+
+                          comment_text = cmm.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(comment_text,102))
+                          c  = wraped_text.split('\n')
+                          #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          # #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  
+                          if calc_y1-210 <= 45:
+                            rir_pdf.showPage()
+                            calc_y1 = 730
+                            calc_y2 = 730   
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-15,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-30,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-45,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass 
+                          else:
+                            comm = len(c)
+                            if comm > 0:
+                              rir_pdf.drawString(32,calc_y1-165,c[0])
+                              if comm > 1:
+                                rir_pdf.drawString(32,calc_y1-180,c[1])
+                                if comm > 2:
+                                  rir_pdf.drawString(32,calc_y1-195,c[2])
+                                  if comm > 3:
+                                    rir_pdf.drawString(32,calc_y1-210,c[3])
+                                  else:
+                                    pass
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                      
+                        if (calc_y1-170)-115 <= 10 or (calc_y1-190)-115 <= 10 or (calc_y1-210)-115 <= 10:
+                          rir_pdf.showPage() 
+                          rir_pdf.drawCentredString(302,115,trm_con)
+                          rir_pdf.setStrokeColorRGB(255,10,0)
+                          rir_pdf.line(30,110,580,110)
+                          term_text = trms.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(term_text,102))
+                          t  = wraped_text.split('\n')
+
+                          term = len(t)
+                          if term > 0:
+                            rir_pdf.drawString(32,95,t[0])
+                            if term > 1:
+                              rir_pdf.drawString(32,80,t[1])
+                              if term > 2:
+                                rir_pdf.drawString(32,65,t[2])
+                                if term > 3:
+                                  rir_pdf.drawString(32,50,t[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                          
+                          rir_pdf.drawString(32,30,"Sales Person :")
+                          rir_pdf.drawString(115,30,sl_prsn.get())
+                          rir_pdf.drawString(32,15,fd_inv.get())
+                        else:
+                          rir_pdf.drawCentredString(302,115,trm_con)
+                          rir_pdf.setStrokeColorRGB(255,10,0)
+                          rir_pdf.line(30,110,580,110)
+                          term_text = trms.get("1.0","end-1c")
+                          wraped_text = "\n".join(wrap(term_text,102))
+                          t  = wraped_text.split('\n')
+
+                          term = len(t)
+                          if term > 0:
+                            rir_pdf.drawString(32,95,t[0])
+                            if term > 1:
+                              rir_pdf.drawString(32,80,t[1])
+                              if term > 2:
+                                rir_pdf.drawString(32,65,t[2])
+                                if term > 3:
+                                  rir_pdf.drawString(32,50,t[3])
+                                else:
+                                  pass
+                              else:
+                                pass
+                            else:
+                              pass
+                          else:
+                            pass
+                          
+                          rir_pdf.drawString(32,30,"Sales Person :")
+                          rir_pdf.drawString(115,30,sl_prsn.get())
+                          rir_pdf.drawString(32,15,fd_inv.get())
+
+
+                rir_pdf.save()
+                
+                      
+              except:
+                
+                        pass
+              try:
+              
+
+                rir_lstfrm=StringVar()  
+                rir_htcodeframe=Listbox(rir_attachlbframe, height=13, width=43,listvariable=rir_lstfrm, bg="white")
+                global rir_filenamezrrr
+                rir_filenamezrrr =os.getcwd()+"/recurring_reports/"+invnumber+".pdf"
+                wraped_text="/".join(wrap(rir_filenamezrrr,50))
+                        
+                hrt=wraped_text.split('/')
+              
+                rir_htcodeframe.insert(0,hrt[2])
+                
+
+                rir_htcodeframe.place(x=5, y=5)
+                rir_htcodeframe.bind('<Double-Button-1>' , rir2_file)
+
+                def rir_deslist():
+                            rir_laa=rir_htcodeframe.curselection()
+                            print("hloo",rir_htcodeframe.get(rir_laa))
+                            rir_yawn=rir_htcodeframe.get(rir_laa)        
+                            rir_htcodeframe.delete(ACTIVE)
+
+                rir_lbl_btn_info=Label(rir_attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+                rir_btn17=Button(rir_attachlbframe, width=20, text="Add attachment file...", command=rir2_UploadAction).place(x=60, y=260)
+                rir_btn18=Button(rir_attachlbframe, width=20, text="Remove attachment",command=rir_deslist).place(x=60, y=295)
+                rir_lbl_tt_info=Label(rir_email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+                rir_lbl_tt_info.place(x=740, y=370)
+
+                rir_ready_frame=Frame(rir_mailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+                        
+                rir_sendatalbframe=LabelFrame(rir_account_Frame,text="E-Mail(Sender data)",height=140, width=600)
+                rir_sendatalbframe.place(x=240, y=165 )
+                rir_lbl_sendermail=Label(rir_sendatalbframe, text="Company email address").place(x=5, y=10)
+                rir_sentent=Entry(rir_sendatalbframe, width=40, textvariable=rir_email_from)
+                rir_sentent.place(x=195, y=10)
+
+                rir_lbl_senderirswrd=Label(rir_sendatalbframe, text="Email Password").place(x=5, y=40)
+                rir_pswrdent=Entry(rir_sendatalbframe, width=40, textvariable=rir_email_pswrd,show="*")
+                rir_pswrdent.place(x=195, y=40)
+              except:
+                pass
+    except:
+                messagebox.showwarning("F-Billing Revolution 2022","Please select a line item(s) before Sending")
+                pass
+      #--
+
+      
+  try:
+    firFrame=Frame(pop, bg="#f5f3f2", height=60)
+    firFrame.pack(side="top", fill=X)
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    create = Button(firFrame,compound="top", text="Select\nCustomer",relief=RAISED, image=customer,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=customer_invoice_recurring)
+    create.pack(side="left", pady=3, ipadx=4)
+
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=recurring_New_newline)
+    add.pack(side="left", pady=3, ipadx=4)
+
+    dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
+    dele.pack(side="left", pady=3, ipadx=4)
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=priv_vi_ed)
+    prev.pack(side="left", pady=3, ipadx=4)
+
+    prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_prnt_inv_rir)
+    prin.pack(side="left", pady=3, ipadx=4)
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    mail= Button(firFrame,compound="top", text="Email\nInvoice",relief=RAISED, image=photo6,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir2_addemail_order)
+    mail.pack(side="left", pady=3, ipadx=4)
+
+    sms1= Button(firFrame,compound="top", text="Send SMS\nnotification",relief=RAISED, image=photo10,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sms_recurring)
+    sms1.pack(side="left", pady=3, ipadx=4)
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    mark= Button(firFrame,compound="top", text="Mark invoice\nas 'Paid'",relief=RAISED, image=mark1,bg="#f5f3f2", fg="black", height=55, bd=1, width=57,command=markinvoice_recurring)
+    mark.pack(side="left", pady=3, ipadx=4)
+
+    void= Button(firFrame,compound="top", text="Void\ninvoice",relief=RAISED, image=mark2,bg="#f5f3f2", fg="black", height=55, bd=1, width=56,command=rir_voidinvoice_recurring)
+    void.pack(side="left", pady=3, ipadx=4)
+
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
+    calc.pack(side="left", pady=3, ipadx=4)
+
+    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=5)
+
+    calc= Button(firFrame,compound="top", text="Save",relief=RAISED, image=saves,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sv_edit)
+    calc.pack(side="right", pady=3, ipadx=4)
+
+    fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
+    fir1Frame.pack(side="top", fill=X)
+    #---------------------------------------------------------------------------------------------Customer Selection Functiopn
+    def name_sltd(event):
+      
+    
+      sdrt_qsy='select * from customer where businessname=%s'
+      sdrt_qry_qtr=(cust_selction_nm.get(),)
+      fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
+      dtl_rir_cus=fbcursor.fetchone()
+
+      sdou_qsy='select * from invoice where businessname=%s'
+      sdou_qsy_qry=(cust_selction_nm.get(),)
+      fbcursor.execute(sdou_qsy,sdou_qsy_qry)
+      dtl_inv=fbcursor.fetchone()
+    
+      address_rir.delete(1.0,END)
+      address_rir.insert(1.0,dtl_inv[5])
+      shp_to_rir.delete(0,END)
+      shp_to_rir.insert(0,dtl_inv[6])
+      shp_to_adr_rir.delete(1.0,END)
+      shp_to_adr_rir.insert(1.0,dtl_inv[7])
+      emil_rir.delete(0,END)
+      emil_rir.insert(0,dtl_inv[9])
+      sms_shpto_rir.delete(0,END)
+      sms_shpto_rir.insert(0,dtl_inv[12])
+      # inv_nmb_rir.delete(0,END)
+      # inv_nmb_rir.insert(0,dtl_inv[1])
+      # inv_dt_rir.delete(1,END)
+      # inv_dt_rir.insert(0,dtl_inv[2])
+      # due_dt_rir.delete(0,END)
+      # due_dt_rir.insert(0,dtl_inv[2])
+      # trms_cmb.delete(0,END)
+      # trms_cmb.insert(0,dtl_inv[35])
+
+      cmb_ext_nm.delete(0,END)
+      cmb_ext_nm.insert(0,dtl_inv[11])
+      dsc_rt.delete(0,END)
+      dsc_rt.insert(0,dtl_inv[15])
+      rir_cost3.delete(0,END)
+      rir_cost3.insert(0,dtl_inv[12])
+      sql_yty='select taxtype from company'
+      fbcursor.execute(sql_yty)
+      taxtype=fbcursor.fetchone()
+      if int(taxtype[0])==3:
+        tax1_rir.delete(0,END)
+        tax1_rir.insert(0,dtl_inv[16])
+        tax2_rir.delete(0,END)
+        tax2_rir.insert(0,dtl_inv[36])
+      elif int(taxtype[0])==2:
+        tax1_rir.delete(0,END)
+        tax1_rir.insert(0,dtl_inv[16])
+      else:
+        pass
+      tmp_rir.delete(0,END)
+      tmp_rir.insert(0,dtl_inv[13])
+      sl_prsn.delete(0,END)
+      sl_prsn.insert(0,"Administrator")
+      ct_rir.delete(0,END)
+      ct_rir.insert(0,dtl_inv[17])
+
+      #-------------------------------------------------------------------------------Insert Summary
+      
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      crcy_tp=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      crcy_tp_ps=post_rp[0]
+      
+    
+
+      sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+      sm_qry_val=(inv_nmb_rir.get(),)
+      fbcursor.execute(sm_qry,sm_qry_val)
+      smry_value=fbcursor.fetchone()
+      #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+      in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+      in_tt_qry_val=(inv_nmb_rir.get(),)
+      fbcursor.execute(in_tt_qry,in_tt_qry_val)
+      inv_value=fbcursor.fetchone()
+      if int(taxtype[0])==2:
+        smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+        
+        smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+        
+        smr_ext_cst=rir_cost3.get()
+        smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1))-float(smr_discount)
+
+      elif int(taxtype[0])==3:
+        smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+        
+        smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
+        smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
+        smr_ext_cst=rir_cost3.get()
+        smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
+      else:
+        smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+
+        smr_ext_cst=rir_cost3.get()
+        smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get()))-float(smr_discount)
+      
+      sum1=0.0
+      
+      
+      
+      if int(taxtype[0])==2:
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount")
+        discount.place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+        tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+        if crcy_tp_ps=="before amount":
+
+          discount1=Label(summaryfrme,bg="red", text=str(crcy_tp))
+          discount1.place(x=120 ,y=0)
+
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
+          sub1.place(x=130 ,y=21)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1))
+          tax1.place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="after amount":
+          print("Welcome")
+          disc=Label(summaryfrme,bg="red", text=str(crcy_tp))
+          disc.place(x=120 ,y=0)
+
+          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
+          sub1.place(x=130 ,y=21)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp))
+          tax1.place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="before amount with space":
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
+          sub1.place(x=130 ,y=21)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1))
+          tax1.place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="after amount with space":
+          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
+          sub1.place(x=130 ,y=21)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp))
+          tax1.place(x=130 ,y=42)  
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
+          balance1.place(x=130 ,y=126)
+        else:
+          pass
+      elif int(taxtype[0])==3:
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount")
+        discount.place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+        tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+        tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+        if crcy_tp_ps=="before amount": 
+          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
+          sub1.place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1))
+          tax1.place(x=130 ,y=30)  
+          ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2))
+          ta2.place(x=130 ,y=45) 
+          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="after amount":
+          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
+          sub1.place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp))
+          tax1.place(x=130 ,y=30)
+          ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp))
+          ta2.place(x=130 ,y=45)   
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="before amount with space":
+          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
+          sub1.place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1))
+          tax1.place(x=130 ,y=30) 
+          ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2))
+          ta2.place(x=130 ,y=45)  
+          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
+          balance1.place(x=130 ,y=126)
+        elif crcy_tp_ps=="after amount with space":
+          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
+          discount1.place(x=130 ,y=0)
+          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
+          sub1.place(x=130 ,y=15)
+          tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp))
+          tax1.place(x=130 ,y=30)  
+          ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp))
+          ta2.place(x=130 ,y=45) 
+          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
+          cost.place(x=130 ,y=63) 
+          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
+          order1.place(x=130 ,y=84)
+          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
+          total1.place(x=130 ,y=105)
+          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
+          balance1.place(x=130 ,y=126)
+        else:
+          pass
+      else:
+          fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+          fir4Frame.place(x=740,y=520)
+          summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+          summaryfrme.place(x=0,y=0,width=200,height=170)
+          discount=Label(summaryfrme, text="Discount")
+          discount.place(x=0 ,y=0)
+          sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+          cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+          order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+          total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+          balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
+          if crcy_tp_ps=="before amount": 
+            discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
+            discount1.place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
+            sub1.place(x=130 ,y=21) 
+            cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
+            cost.place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
+            order1.place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
+            total1.place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
+            balance1.place(x=130 ,y=105)
+          elif crcy_tp_ps=="after amount":
+            discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
+            discount1.place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
+            sub1.place(x=130 ,y=21)
+        
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
+            cost.place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
+            order1.place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
+            total1.place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
+            balance1.place(x=130 ,y=105)
+          elif crcy_tp_ps=="before amount with space":
+            discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
+            discount1.place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
+            sub1.place(x=130 ,y=21)
+      
+            cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
+            cost.place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
+            order1.place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
+            total1.place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
+            balance1.place(x=130 ,y=105)
+          elif crcy_tp_ps=="after amount with space":
+            discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
+            discount1.place(x=130 ,y=0)
+            sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
+            sub1.place(x=130 ,y=21)
+      
+            cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
+            cost.place(x=130 ,y=42) 
+            order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
+            order1.place(x=130 ,y=63)
+            total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
+            total1.place(x=130 ,y=84)
+            balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
+            balance1.place(x=130 ,y=105)
+          else:
+            pass
+
+
+      #=---------------------------------------------------------------------------------------Table
+      # sql_yty='select taxtype from company'
+      # fbcursor.execute(sql_yty)
+      # taxtype=fbcursor.fetchone()
+      # if int(taxtype[0])==3:
+      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      #   main_prd_val=fbcursor.fetchall()
+      #   count_prd=0
+      #   for record in prd_tree.get_children():
+      #     prd_tree.delete(record)
+
+      #   for i in main_prd_val:
+      #         if i[11] is not None:
+      #           dgt="Yes"
+      #         else:
+      #           dgt="No"
+      #         if i[12] is not None:
+      #           dlt="Yes"
+      #         else:
+      #           dlt="No"
+      #         if crcy_tp_ps=="before amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="after amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="before amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+      #         elif crcy_tp_ps=="after amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+      #             count_prd +=1
+      #         else:
+      #             pass
+
+      # elif int(taxtype[0])==2:
+        
+      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      #   main_prd_val=fbcursor.fetchall()
+      #   count_prd=0
+      #   for record in prd_tree.get_children():
+      #     prd_tree.delete(record)
+      #   for i in main_prd_val:
+      #         if i[11] is not None:
+      #           dgt="Yes"
+      #         else:
+      #           dgt="No"
+      #         if crcy_tp_ps=="before amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="after amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="before amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+      #         elif crcy_tp_ps=="after amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+      #             count_prd +=1
+      #         else:
+      #             pass
+      # else:
+      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+      #   main_prd_val=fbcursor.fetchall()
+      #   count_prd=0
+      #   for record in prd_tree.get_children():
+      #     prd_tree.delete(record)
+      #   for i in main_prd_val:
+      #         if crcy_tp_ps=="before amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="after amount":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+      #             count_prd +=1
+      #         elif crcy_tp_ps=="before amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+      #         elif crcy_tp_ps=="after amount with space":
+      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+      #             count_prd +=1
+      #         else:
+      #             pass
+      
+      #--------------------------------------------------------------------------------------recurring
+      if dtl_inv[24] is not None:
+        stp_rir.select()
+      else:
+        stp_rir.deselect()
+      if dtl_inv[27] is not None:
+        stp_rir2.select()
+      else:
+        stp_rir2.deselect()
+
+      dt_nxt_inv.delete(0,END)
+      dt_nxt_inv.insert(0,dtl_inv[26])
+      dt_stp_inv.delete(0,END)
+      dt_stp_inv.insert(0,dtl_inv[27])
+
+      #-------------------------------------------------------------------------------------Header Fotter
+      cmp_ttl.delete(0,END)
+      cmp_ttl.insert(0,dtl_inv[39])
+      cmp_ht.delete(0,END)
+      cmp_ht.insert(0,dtl_inv[40])
+      cmp_ft.delete(0,END)
+      cmp_ft.insert(0,dtl_inv[41])
+      #=======================================================================private note
+      prv_nt.delete(1.0,END)
+      prv_nt.insert(1.0,dtl_inv[45])
+      #=======================================================================terms
+      trms.delete(1.0,END)
+      trms.insert(1.0,dtl_inv[35])
+      #=======================================================================comments
+      cmm.delete(1.0,END)
+      cmm.insert(1.0,dtl_inv[44])
+
+
+    cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
+      
+    sdrt_qsy='select businessname from customer'
+    fbcursor.execute(sdrt_qsy)
+    dtl_rir=fbcursor.fetchall()
+
+    sdrts_qsy='select * from customer where businessname=%s'
+    sdrt_qry_qtr=(cusr_selct,)
+    fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
+    dtl_rissr_cus=fbcursor.fetchone()
+
+    sdou_qsy='select * from invoice where businessname=%s'
+    sdou_qsy_qry=(cusr_selct,)
+    fbcursor.execute(sdou_qsy,sdou_qsy_qry)
+    dtl_inv=fbcursor.fetchone()
+    #-----------------------------------------------------------------------------------button >>
+    def cpy_dts():
+      
+      shp_to_rir.delete(0,END)
+      shp_to_rir.insert(0,cust_selction_nm.get())
+      shp_to_adr_rir.delete(1.0,END)
+      shp_to_adr_rir.insert(1.0,address_rir.get(1.0,END))
+      pass
+    labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
+    labelframe1.place(x=10,y=5,width=640,height=160)
+    order = Label(labelframe1, text="Order to").place(x=10,y=5)
+    
+    cust_selction_nm=StringVar()
+    cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
+    cmb_main_bx.insert(0,dtl_inv[18])
+
+    rir_dt_cst=[]
+    for i in dtl_rir:
+      rir_dt_cst.append(i[0])
+      
+    cmb_main_bx['values']=rir_dt_cst
+    
+    cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
+    cmb_main_bx.place(x=80,y=5)
 
     
-    
-
-  firFrame=Frame(pop, bg="#f5f3f2", height=60)
-  firFrame.pack(side="top", fill=X)
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  create = Button(firFrame,compound="top", text="Select\nCustomer",relief=RAISED, image=customer,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=customer_invoice_recurring)
-  create.pack(side="left", pady=3, ipadx=4)
-
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=recurring_New_newline)
-  add.pack(side="left", pady=3, ipadx=4)
-
-  dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
-  dele.pack(side="left", pady=3, ipadx=4)
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=priv_vi_ed)
-  prev.pack(side="left", pady=3, ipadx=4)
-
-  prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_prnt_inv_rir)
-  prin.pack(side="left", pady=3, ipadx=4)
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  mail= Button(firFrame,compound="top", text="Email\nInvoice",relief=RAISED, image=photo6,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=email_invoice_recurring)
-  mail.pack(side="left", pady=3, ipadx=4)
-
-  sms1= Button(firFrame,compound="top", text="Send SMS\nnotification",relief=RAISED, image=photo10,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sms_recurring)
-  sms1.pack(side="left", pady=3, ipadx=4)
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  mark= Button(firFrame,compound="top", text="Mark invoice\nas 'Paid'",relief=RAISED, image=mark1,bg="#f5f3f2", fg="black", height=55, bd=1, width=57,command=markinvoice_recurring)
-  mark.pack(side="left", pady=3, ipadx=4)
-
-  void= Button(firFrame,compound="top", text="Void\ninvoice",relief=RAISED, image=mark2,bg="#f5f3f2", fg="black", height=55, bd=1, width=56,command=voidinvoice_recurring)
-  void.pack(side="left", pady=3, ipadx=4)
-
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
-  calc.pack(side="left", pady=3, ipadx=4)
-
-  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-  w.pack(side="left", padx=5)
-
-  calc= Button(firFrame,compound="top", text="Save",relief=RAISED, image=saves,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sv_edit)
-  calc.pack(side="right", pady=3, ipadx=4)
-
-  fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
-  fir1Frame.pack(side="top", fill=X)
-  #---------------------------------------------------------------------------------------------Customer Selection Functiopn
-  def name_sltd(event):
-    
-   
     sdrt_qsy='select * from customer where businessname=%s'
-    sdrt_qry_qtr=(cust_selction_nm.get(),)
+    sdrt_qry_qtr=(cusr_selct,)
     fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
     dtl_rir_cus=fbcursor.fetchone()
 
-    sdou_qsy='select * from invoice where businessname=%s'
-    sdou_qsy_qry=(cust_selction_nm.get(),)
-    fbcursor.execute(sdou_qsy,sdou_qsy_qry)
-    dtl_inv=fbcursor.fetchone()
-  
-    address_rir.delete(1.0,END)
-    address_rir.insert(1.0,dtl_inv[5])
-    shp_to_rir.delete(0,END)
-    shp_to_rir.insert(0,dtl_inv[6])
-    shp_to_adr_rir.delete(1.0,END)
-    shp_to_adr_rir.insert(1.0,dtl_inv[7])
-    emil_rir.delete(0,END)
-    emil_rir.insert(0,dtl_inv[9])
-    sms_shpto_rir.delete(0,END)
-    sms_shpto_rir.insert(0,dtl_inv[12])
-    # inv_nmb_rir.delete(0,END)
-    # inv_nmb_rir.insert(0,dtl_inv[1])
-    # inv_dt_rir.delete(1,END)
-    # inv_dt_rir.insert(0,dtl_inv[2])
-    # due_dt_rir.delete(0,END)
-    # due_dt_rir.insert(0,dtl_inv[2])
-    # trms_cmb.delete(0,END)
-    # trms_cmb.insert(0,dtl_inv[35])
+      
 
-    cmb_ext_nm.delete(0,END)
-    cmb_ext_nm.insert(0,dtl_inv[11])
-    dsc_rt.delete(0,END)
-    dsc_rt.insert(0,dtl_inv[15])
-    rir_cost3.delete(0,END)
-    rir_cost3.insert(0,dtl_inv[12])
+    
+
+    
+
+    sdous_qsy='select distinct term_of_payment from invoice'
+    fbcursor.execute(sdous_qsy)
+    dtl_inv_all=fbcursor.fetchall()
+
+
+    address=Label(labelframe1,text="Address").place(x=10,y=30)
+    address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
+    address_rir.delete(1.0,END)
+    address_rir.insert(1.0,dtl_inv[19])
+    address_rir.place(x=80,y=30,height=70)
+
+    ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
+    shp_to_rir=Entry(labelframe1,width=30)
+    shp_to_rir.delete(0,END)
+    shp_to_rir.insert(0,dtl_inv[20])
+    shp_to_rir.place(x=402,y=3)
+    address1=Label(labelframe1,text="Address").place(x=340,y=30)
+    shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
+    shp_to_adr_rir.delete(1.0,END)
+    shp_to_adr_rir.insert(1.0,dtl_inv[21])
+    shp_to_adr_rir.place(x=402,y=30,height=70)
+
+    btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
+      
+    labelframe2 = LabelFrame(fir1Frame,text="")
+    labelframe2.place(x=10,y=130,width=640,height=42)
+    email=Label(labelframe2,text="Email").place(x=10,y=5)
+    emil_rir=Entry(labelframe2,width=30)
+    emil_rir.delete(0,END)
+    emil_rir.insert(0,dtl_inv[22])
+
+    emil_rir.place(x=80,y=5)
+    sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
+    sms_shpto_rir=Entry(labelframe2,width=30)
+    sms_shpto_rir.delete(0,END)
+    sms_shpto_rir.insert(0,dtl_inv[23])
+    sms_shpto_rir.place(x=402,y=5)
+    
+    global inv_nmb_rir
+    labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
+    labelframe.place(x=652,y=5,width=290,height=170)
+    order=Label(labelframe,text="Invoice#").place(x=5,y=5)
+    inv_nmb_rir=Entry(labelframe,width=25)
+    inv_nmb_rir.delete(0,END)
+    inv_nmb_rir.insert(0,dtl_inv[1])
+    inv_nmb_rir.place(x=100,y=5,)
+    orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
+    inv_dt_rir=DateEntry(labelframe,width=20)
+    inv_dt_rir.delete(1,END)
+    inv_dt_rir.insert(0,dtl_inv[2])
+    inv_dt_rir.place(x=150,y=33)
+    chk_dur=IntVar()
+    duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
+    due_dt_rir=DateEntry(labelframe,width=20)
+    due_dt_rir.delete(0,END)
+    due_dt_rir.insert(0,dtl_inv[2])
+    due_dt_rir.place(x=150,y=62)
+    terms=Label(labelframe,text="Terms").place(x=5,y=92)
+    cmb_trms=StringVar()
+    trms_cmb=ttk.Combobox(labelframe,width=25,textvariable=cmb_trms)
+
+    dtl_trm=[]
+    for i in dtl_inv_all:
+      dtl_trm.append(i[0])
+
+    trms_cmb['values']=dtl_trm
+    trms_cmb.delete(0,END)
+    trms_cmb.insert(0,dtl_inv[35])
+    trms_cmb.place(x=100,y=92)
+
+    ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
+    refhash=Entry(labelframe,width=27)
+    refhash.insert(0,dtl_inv[43])
+    refhash.place(x=100,y=118)
+
+      
+    #----------------------------------------------------------------------------------------------product Table
     sql_yty='select taxtype from company'
     fbcursor.execute(sql_yty)
     taxtype=fbcursor.fetchone()
-    if int(taxtype[0])==3:
-      tax1_rir.delete(0,END)
-      tax1_rir.insert(0,dtl_inv[16])
-      tax2_rir.delete(0,END)
-      tax2_rir.insert(0,dtl_inv[36])
-    elif int(taxtype[0])==2:
-      tax1_rir.delete(0,END)
-      tax1_rir.insert(0,dtl_inv[16])
-    else:
-      pass
-    tmp_rir.delete(0,END)
-    tmp_rir.insert(0,dtl_inv[13])
-    sl_prsn.delete(0,END)
-    sl_prsn.insert(0,"Administrator")
-    ct_rir.delete(0,END)
-    ct_rir.insert(0,dtl_inv[17])
-
-    #-------------------------------------------------------------------------------Insert Summary
-    
-
     sqlr= 'select currencysign from company'
     fbcursor.execute(sqlr)
     crncy=fbcursor.fetchone()
@@ -39720,7 +50504,399 @@ def view_invs_rir():
     post_rp=fbcursor.fetchone()
     crcy_tp_ps=post_rp[0]
     
+    global prd_tree
+    if int(taxtype[0])==2:
+        fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
+        fir2Frame.pack(side="top", fill=X)
+        listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
+        prd_tree=ttk.Treeview(listFrame)
+        prd_tree["columns"]=["1","2","3","4","5","6","7","8"]
+
+        prd_tree.column("#0", width=40)
+        prd_tree.column("1", width=80)
+        prd_tree.column("2", width=190)
+        prd_tree.column("3", width=190)
+        prd_tree.column("4", width=80)
+        prd_tree.column("5", width=60)
+        prd_tree.column("6", width=60)
+        prd_tree.column("7", width=60)
+        prd_tree.column("8", width=80)
+        
+        prd_tree.heading("#0")
+        prd_tree.heading("1",text="ID/SKU")
+        prd_tree.heading("2",text="Product/Service")
+        prd_tree.heading("3",text="Description")
+        prd_tree.heading("4",text="Unit Price")
+        prd_tree.heading("5",text="Quality")
+        prd_tree.heading("6",text="Pcs/Weight")
+        prd_tree.heading("7",text="Tax1")
+        prd_tree.heading("8",text="Price")
+        
+        
+      
+        rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+        rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+        fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+        main_prd_val=fbcursor.fetchall()
+      
+        count_prd=0
+        for record in prd_tree.get_children():
+          prd_tree.delete(record)
+        for i in main_prd_val:
+              if i[11] is not None:
+                dgt="Yes"
+              else:
+                dgt="No"
+              if crcy_tp_ps=="before amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
+                  count_prd +=1
+              elif crcy_tp_ps=="after amount":
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+                    count_prd +=1
+              elif crcy_tp_ps=="before amount with space":
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
+                    count_prd +=1
+              elif crcy_tp_ps=="after amount with space":
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
+                    count_prd +=1
+              else:
+                    pass
+              
+        
+        prd_tree.pack(fill="both", expand=1)
+
+    elif int(taxtype[0])==3:
+        
+        fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
+        fir2Frame.pack(side="top", fill=X)
+        listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
+        prd_tree=ttk.Treeview(listFrame)
+        prd_tree["columns"]=["1","2","3","4","5","6","7","8","9"]
+
+        prd_tree.column("#0", width=20)
+        prd_tree.column("1", width=80)
+        prd_tree.column("2", width=170)
+        prd_tree.column("3", width=170)
+        prd_tree.column("4", width=80)
+        prd_tree.column("5", width=60)
+        prd_tree.column("6", width=60)
+        prd_tree.column("7", width=60)
+        prd_tree.column("8", width=60)
+        prd_tree.column("9", width=80)
+        
+        prd_tree.heading("#0")
+        prd_tree.heading("1",text="ID/SKU")
+        prd_tree.heading("2",text="Product/Service")
+        prd_tree.heading("3",text="Description")
+        prd_tree.heading("4",text="Unit Price")
+        prd_tree.heading("5",text="Quality")
+        prd_tree.heading("6",text="Pcs/Weight")
+        prd_tree.heading("7",text="Tax1")
+        prd_tree.heading("8",text="Tax2")
+        prd_tree.heading("9",text="Price")
+        rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+        rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+        fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+        main_prd_val=fbcursor.fetchall()
+        count_prd=0
+        for record in prd_tree.get_children():
+          prd_tree.delete(record)
+
+        for i in main_prd_val:
+              if i[11] is not None:
+                dgt="Yes"
+              else:
+                dgt="No"
+              if i[12] is not None:
+                dlt="Yes"
+              else:
+                dlt="No"
+              if crcy_tp_ps=="before amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
+                  count_prd +=1
+              elif crcy_tp_ps=="after amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
+                  count_prd +=1
+              elif crcy_tp_ps=="before amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
+                  count_prd +=1
+              elif crcy_tp_ps=="after amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
+                  count_prd +=1
+              else:
+                  pass
+
+        prd_tree.pack(fill="both", expand=1)
+        
+
+    else:
+        fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
+        fir2Frame.pack(side="top", fill=X)
+        listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
+        prd_tree=ttk.Treeview(listFrame)
+        prd_tree["columns"]=["1","2","3","4","5","6","7","8"]
+
+        prd_tree.column("#0", width=40)
+        prd_tree.column("1", width=110)
+        prd_tree.column("2", width=220)
+        prd_tree.column("3", width=220)
+        prd_tree.column("4", width=80)
+        prd_tree.column("5", width=80)
+        prd_tree.column("6", width=80)
+        prd_tree.column("7", width=100)
+        
+        prd_tree.heading("#0")
+        prd_tree.heading("1",text="ID/SKU")
+        prd_tree.heading("2",text="Product/Service")
+        prd_tree.heading("3",text="Description")
+        prd_tree.heading("4",text="Unit Price")
+        prd_tree.heading("5",text="Quality")
+        prd_tree.heading("6",text="Pcs/Weight")
+        prd_tree.heading("7",text="Price")
+
+
+        rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
+        rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
+        fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
+        main_prd_val=fbcursor.fetchall()
+        count_prd=0
+        for record in prd_tree.get_children():
+          prd_tree.delete(record)
+        for i in main_prd_val:
+                if crcy_tp_ps=="before amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
+                  count_prd +=1
+                elif crcy_tp_ps=="after amount":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
+                  count_prd +=1
+                elif crcy_tp_ps=="before amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
+                  count_prd +=1
+                elif crcy_tp_ps=="after amount with space":
+                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
+                  count_prd +=1
+                else:
+                  pass
+        
+        prd_tree.pack(fill="both", expand=1)
+      
+
+    listFrame.pack(side="top", fill="both", padx=5, pady=3, expand=1)
+
+    fir3Frame=Frame(pop,height=200,width=700,bg="#f5f3f2")
+    fir3Frame.place(x=0,y=490)
+
+    tabStyle = ttk.Style()
+    tabStyle.theme_use('default')
+    tabStyle.configure('TNotebook.Tab', background="#999999", width=12, padding=5)
+    myNotebook=ttk.Notebook(fir3Frame)
+    invoiceFrame = Frame(myNotebook, height=200, width=800)
+    recurFrame = Frame(myNotebook, height=200, width=800)
+    payementFrame = Frame(myNotebook, height=200, width=800)
+    headerFrame = Frame(myNotebook, height=200, width=800)
+    commentFrame = Frame(myNotebook, height=200, width=800)
+    termsFrame = Frame(myNotebook, height=200, width=800)
+    noteFrame = Frame(myNotebook, height=200, width=800)
+    documentFrame = Frame(myNotebook, height=200, width=800)
+      
+    myNotebook.add(invoiceFrame,compound="left", text="Invoice")
+    myNotebook.add(recurFrame,compound="left", text="Recurring")
+    myNotebook.add(payementFrame,compound="left", text="Payements")
+    myNotebook.add(headerFrame,compound="left",  text="Header/Footer")
+    myNotebook.add(commentFrame,compound="left",  text="Comments")
+    myNotebook.add(termsFrame,compound="left", text="Terms")
+    myNotebook.add(noteFrame,compound="left",  text="Private notes")
+    myNotebook.add(documentFrame,compound="left",  text="Documents")
+    myNotebook.pack(expand = 1, fill ="both")  
+    # --------------------------------------------------------------------------------------Invoice in edit
+
+
+
+    labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
+    labelframe1.place(x=1,y=1,width=800,height=170)
+    cost=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
+    sql_ytyf='select distinct extracostname,template from invoice'
+    fbcursor.execute(sql_ytyf)
+    dt_tmp=fbcursor.fetchall()
+    dtl_nm_ext=[]
+    for i in dt_tmp:
+      dtl_nm_ext.append(i[0])
+    ext_dt=StringVar()
+    cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20, textvariable=ext_dt)
+    cmb_ext_nm.delete(0,END)
+    cmb_ext_nm.insert(0,dtl_inv[11])
+    cmb_ext_nm.place(x=115,y=5)
+
+    rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
+    dsc_rt=Entry(labelframe1,width=6)
+    dsc_rt.delete(0,END)
+    dsc_rt.insert(0,dtl_inv[15])
+    dsc_rt.place(x=460,y=5)
+
+    cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
+    global rir_cost3
+    rir_cost3=Entry(labelframe1,width=10)
+    rir_cost3.delete(0,END)
+    rir_cost3.insert(0,dtl_inv[12])
+    rir_cost3.place(x=115,y=35)
+
+    if int(taxtype[0])==3:
+      tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
+      tax1_rir=Entry(labelframe1,width=7)
+      tax1_rir.delete(0,END)
+      tax1_rir.insert(0,dtl_inv[16])
+      tax1_rir.place(x=460,y=35)
+
+      tax=Label(labelframe1,text="Tax2").place(x=420,y=60)
+      tax2_rir=Entry(labelframe1,width=7)
+      tax2_rir.delete(0,END)
+      tax2_rir.insert(0,dtl_inv[36])
+      tax2_rir.place(x=460,y=60)
+    elif int(taxtype[0])==2:
+      tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
+      tax1_rir=Entry(labelframe1,width=7)
+      tax1_rir.delete(0,END)
+      tax1_rir.insert(0,dtl_inv[16])
+      tax1_rir.place(x=460,y=35)
+    else:
+      pass
+
+    template=Label(labelframe1,text="Template").place(x=37,y=70)
+    dtl_tmpl=[]
+    for i in dt_tmp:
+      dtl_tmpl.append(i[1])
+    tmpl_dt=StringVar()
+    tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=30, textvariable=tmpl_dt)
+    tmp_rir.delete(0,END)
+    tmp_rir.insert(0,dtl_inv[13])
+    tmp_rir['value']=("Professional 1 (logo on left side)","Professional 2 (logo on right side)","Simplified 1 (logo on left side)","Simplified 2 (logo on right side)","Business Classic")
+    tmp_rir.place(x=115,y=70)
+
+    sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
+    sl_prsn=Entry(labelframe1,width=18)
+    sl_prsn.delete(0,END)
+    sl_prsn.insert(0,"Administrator")
+    sl_prsn.place(x=115,y=100)
+    category=Label(labelframe1,text="Category").place(x=300,y=100)
+    ct_rir=Entry(labelframe1,width=22)
+    ct_rir.delete(0,END)
+    ct_rir.insert(0,dtl_inv[17])
+    ct_rir.place(x=370,y=100)
   
+      
+    statusfrme = LabelFrame(labelframe1,text="Status",font=("arial",15))
+    statusfrme.place(x=540,y=0,width=160,height=160)
+    rir_draft=Label(statusfrme, text="Draft",font=("arial", 15, "bold"), fg="grey")
+    rir_draft.place(x=50, y=3)
+    emon=StringVar()
+    pron=StringVar()
+    
+    global nav1, nav2
+    on1=Label(statusfrme, text="Emailed on:").place( y=50)
+    nev1=Label(statusfrme, text="Never")
+    if dtl_inv[5] is not None:
+      nev1.config(text=dtl_inv[5])
+    else:
+      nev1.config(text="Never")
+
+    nev1.place(x=80,y=50)
+    on2=Label(statusfrme, text="Printed on:").place( y=90)
+    nev2=Label(statusfrme, text="Never")
+    if dtl_inv[6] is not None:
+      nev2.config(text=dtl_inv[6])
+    else:
+      nev2.config(text="Never")
+    nev2.place(x=80,y=90)
+
+    text1=Label(headerFrame,text="Title text").place(x=50,y=5)
+
+    sdous_qsy='select distinct title_text from invoice'
+    fbcursor.execute(sdous_qsy)
+    inf_ttl=fbcursor.fetchall()
+
+    sdous_qsy='select distinct header_text from invoice'
+    fbcursor.execute(sdous_qsy)
+    inv_ht=fbcursor.fetchall()
+
+    sdous_qsy='select distinct footer_text from invoice'
+    fbcursor.execute(sdous_qsy)
+    inv_ft=fbcursor.fetchall()
+    ttl_inv=StringVar()
+    hd_inv=StringVar()
+    fd_inv=StringVar()
+    cmp_ttl=ttk.Combobox(headerFrame,width=60, textvariable=ttl_inv)
+    cmp_ttl.delete(0,END)
+    cmp_ttl.insert(0,dtl_inv[39])
+    dtl_hd=[]
+    for i in inf_ttl:
+      dtl_hd.append(i[0])
+    cmp_ttl['value']=dtl_hd
+    
+    cmp_ttl.place(x=125,y=5)
+    text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
+    cmp_ht=ttk.Combobox(headerFrame,width=60,textvariable=hd_inv)
+    cmp_ht.delete(0,END)
+    cmp_ht.insert(0,dtl_inv[40])
+    dtl_ht=[]
+    for i in inv_ht:
+        dtl_ht.append(i[0])
+    cmp_ht['value']=dtl_ht
+    cmp_ht.place(x=125,y=45)
+    text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
+    cmp_ft=ttk.Combobox(headerFrame,width=60,textvariable=fd_inv)
+    cmp_ft.delete(0,END)
+    cmp_ft.insert(0,dtl_inv[41])
+    dtl_ft=[]
+    for i in inv_ft:
+      dtl_ft.append(i[0])
+    cmp_ft['value']=dtl_ft
+    cmp_ft.place(x=125,y=85)
+
+    
+
+    text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)")
+    text.place(x=10,y=10)
+    prv_nt=Text(noteFrame,width=100,height=7)
+    prv_nt.delete(1.0,END)
+    prv_nt.insert(1.0,dtl_inv[45])
+    prv_nt.place(x=10,y=32)
+
+    trms=Text(termsFrame,width=100,height=9)
+    trms.delete(1.0,END)
+    trms.insert(1.0,dtl_inv[35])
+    trms.place(x=10,y=10)
+
+    cmm=Text(commentFrame,width=100,height=9)
+    cmm.delete(1.0,END)
+    cmm.insert(1.0,dtl_inv[44])
+    cmm.place(x=10,y=10)
+
+    btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
+    btn2=Button(documentFrame,height=2,width=3,text="-").place(x=5,y=50)
+    text=Label(documentFrame,text="Attached documents or image files.If you attach large email then email taken long time to send").place(x=50,y=10)
+    cusventtree=ttk.Treeview(documentFrame, height=5)
+    cusventtree["columns"]=["1","2","3"]
+    cusventtree.column("#0", width=20)
+    cusventtree.column("1", width=250)
+    cusventtree.column("2", width=250)
+    cusventtree.column("2", width=200)
+    cusventtree.heading("#0",text="", anchor=W)
+    cusventtree.heading("1",text="Attach to Email")
+    cusventtree.heading("2",text="Filename")
+    cusventtree.heading("3",text="Filesize")  
+    cusventtree.place(x=50, y=45)
+      
+    
+    sqlr= 'select currencysign from company'
+    fbcursor.execute(sqlr)
+    crncy=fbcursor.fetchone()
+    crcy_tp=crncy[0]
+    sqlrt= 'select currsignplace from company'
+    fbcursor.execute(sqlrt)
+    post_rp=fbcursor.fetchone()
+    crcy_tp_ps=post_rp[0]
+    
+    
 
     sm_qry="select sum(price) from storingproduct where invoice_number=%s"
     sm_qry_val=(inv_nmb_rir.get(),)
@@ -39732,7 +50908,7 @@ def view_invs_rir():
     fbcursor.execute(in_tt_qry,in_tt_qry_val)
     inv_value=fbcursor.fetchone()
     if int(taxtype[0])==2:
-      smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+      smr_discount=dsc_rt.get()
       
       smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
       
@@ -39740,14 +50916,14 @@ def view_invs_rir():
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1))-float(smr_discount)
 
     elif int(taxtype[0])==3:
-      smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+      smr_discount=dsc_rt.get()
       
       smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
       smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
       smr_ext_cst=rir_cost3.get()
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
     else:
-      smr_discount=float(smry_value[0])*float(dsc_rt.get())/100
+      smr_discount=dsc_rt.get()
 
       smr_ext_cst=rir_cost3.get()
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get()))-float(smr_discount)
@@ -39769,921 +50945,7 @@ def view_invs_rir():
       order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
       total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
       balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-      if crcy_tp_ps=="before amount":
-
-        discount1=Label(summaryfrme,bg="red", text=str(crcy_tp))
-        discount1.place(x=120 ,y=0)
-
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
-        sub1.place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1))
-        tax1.place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="after amount":
-        print("Welcome")
-        disc=Label(summaryfrme,bg="red", text=str(crcy_tp))
-        disc.place(x=120 ,y=0)
-
-        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
-        sub1.place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp))
-        tax1.place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
-        sub1.place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1))
-        tax1.place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="after amount with space":
-        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
-        sub1.place(x=130 ,y=21)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp))
-        tax1.place(x=130 ,y=42)  
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
-        balance1.place(x=130 ,y=126)
-      else:
-        pass
-    elif int(taxtype[0])==3:
-      fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-      fir4Frame.place(x=740,y=520)
-      summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-      summaryfrme.place(x=0,y=0,width=200,height=170)
-      discount=Label(summaryfrme, text="Discount")
-      discount.place(x=0 ,y=0)
-      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
-      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
-      tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
-      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
-      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-      if crcy_tp_ps=="before amount": 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
-        sub1.place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax1))
-        tax1.place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(crcy_tp)+str(smr_tax2))
-        ta2.place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="after amount":
-        discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
-        sub1.place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+str(crcy_tp))
-        tax1.place(x=130 ,y=30)
-        ta2=Label(summaryfrme, text=str(smr_tax2)+str(crcy_tp))
-        ta2.place(x=130 ,y=45)   
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="before amount with space":
-        discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
-        sub1.place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_tax1))
-        tax1.place(x=130 ,y=30) 
-        ta2=Label(summaryfrme, text=str(crcy_tp)+" "+str(smr_tax2))
-        ta2.place(x=130 ,y=45)  
-        cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
-        balance1.place(x=130 ,y=126)
-      elif crcy_tp_ps=="after amount with space":
-        discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
-        sub1.place(x=130 ,y=15)
-        tax1=Label(summaryfrme, text=str(smr_tax1)+" "+str(crcy_tp))
-        tax1.place(x=130 ,y=30)  
-        ta2=Label(summaryfrme, text=str(smr_tax2)+" "+str(crcy_tp))
-        ta2.place(x=130 ,y=45) 
-        cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
-        cost.place(x=130 ,y=63) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
-        order1.place(x=130 ,y=84)
-        total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
-        total1.place(x=130 ,y=105)
-        balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
-        balance1.place(x=130 ,y=126)
-      else:
-        pass
-    else:
-        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-        fir4Frame.place(x=740,y=520)
-        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-        summaryfrme.place(x=0,y=0,width=200,height=170)
-        discount=Label(summaryfrme, text="Discount")
-        discount.place(x=0 ,y=0)
-        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
-        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
-        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
-        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
-        if crcy_tp_ps=="before amount": 
-          discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
-          discount1.place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
-          sub1.place(x=130 ,y=21) 
-          cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
-          cost.place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
-          order1.place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
-          total1.place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
-          balance1.place(x=130 ,y=105)
-        elif crcy_tp_ps=="after amount":
-          discount1=Label(summaryfrme, text=str(smr_discount)+str(crcy_tp))
-          discount1.place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(smry_value[0])+str(crcy_tp))
-          sub1.place(x=130 ,y=21)
       
-          cost=Label(summaryfrme, text=str(smr_ext_cst)+str(crcy_tp))
-          cost.place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(smr_iv_ttl)+str(crcy_tp))
-          order1.place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(inv_value[0])+str(crcy_tp))
-          total1.place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
-          balance1.place(x=130 ,y=105)
-        elif crcy_tp_ps=="before amount with space":
-          discount1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_discount))
-          discount1.place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(crcy_tp)+""+str(smry_value[0]))
-          sub1.place(x=130 ,y=21)
-    
-          cost=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_ext_cst))
-          cost.place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(crcy_tp)+""+str(smr_iv_ttl))
-          order1.place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[0]))
-          total1.place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(crcy_tp)+""+str(inv_value[1]))
-          balance1.place(x=130 ,y=105)
-        elif crcy_tp_ps=="after amount with space":
-          discount1=Label(summaryfrme, text=str(smr_discount)+" "+str(crcy_tp))
-          discount1.place(x=130 ,y=0)
-          sub1=Label(summaryfrme, text=str(smry_value[0])+" "+str(crcy_tp))
-          sub1.place(x=130 ,y=21)
-    
-          cost=Label(summaryfrme, text=str(smr_ext_cst)+" "+str(crcy_tp))
-          cost.place(x=130 ,y=42) 
-          order1=Label(summaryfrme, text=str(smr_iv_ttl)+" "+str(crcy_tp))
-          order1.place(x=130 ,y=63)
-          total1=Label(summaryfrme, text=str(inv_value[0])+" "+str(crcy_tp))
-          total1.place(x=130 ,y=84)
-          balance1=Label(summaryfrme, text=str(inv_value[1])+" "+str(crcy_tp))
-          balance1.place(x=130 ,y=105)
-        else:
-          pass
-
-
-    #=---------------------------------------------------------------------------------------Table
-    # sql_yty='select taxtype from company'
-    # fbcursor.execute(sql_yty)
-    # taxtype=fbcursor.fetchone()
-    # if int(taxtype[0])==3:
-    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-    #   main_prd_val=fbcursor.fetchall()
-    #   count_prd=0
-    #   for record in prd_tree.get_children():
-    #     prd_tree.delete(record)
-
-    #   for i in main_prd_val:
-    #         if i[11] is not None:
-    #           dgt="Yes"
-    #         else:
-    #           dgt="No"
-    #         if i[12] is not None:
-    #           dlt="Yes"
-    #         else:
-    #           dlt="No"
-    #         if crcy_tp_ps=="before amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="after amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="before amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
-    #         elif crcy_tp_ps=="after amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-    #             count_prd +=1
-    #         else:
-    #             pass
-
-    # elif int(taxtype[0])==2:
-      
-    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-    #   main_prd_val=fbcursor.fetchall()
-    #   count_prd=0
-    #   for record in prd_tree.get_children():
-    #     prd_tree.delete(record)
-    #   for i in main_prd_val:
-    #         if i[11] is not None:
-    #           dgt="Yes"
-    #         else:
-    #           dgt="No"
-    #         if crcy_tp_ps=="before amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="after amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="before amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-    #         elif crcy_tp_ps=="after amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-    #             count_prd +=1
-    #         else:
-    #             pass
-    # else:
-    #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-    #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-    #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-    #   main_prd_val=fbcursor.fetchall()
-    #   count_prd=0
-    #   for record in prd_tree.get_children():
-    #     prd_tree.delete(record)
-    #   for i in main_prd_val:
-    #         if crcy_tp_ps=="before amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="after amount":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-    #             count_prd +=1
-    #         elif crcy_tp_ps=="before amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-    #         elif crcy_tp_ps=="after amount with space":
-    #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-    #             count_prd +=1
-    #         else:
-    #             pass
-    
-    #--------------------------------------------------------------------------------------recurring
-    if dtl_inv[24] is not None:
-      stp_rir.select()
-    else:
-      stp_rir.deselect()
-    if dtl_inv[27] is not None:
-      stp_rir2.select()
-    else:
-      stp_rir2.deselect()
-
-    dt_nxt_inv.delete(0,END)
-    dt_nxt_inv.insert(0,dtl_inv[26])
-    dt_stp_inv.delete(0,END)
-    dt_stp_inv.insert(0,dtl_inv[27])
-
-    #-------------------------------------------------------------------------------------Header Fotter
-    cmp_ttl.delete(0,END)
-    cmp_ttl.insert(0,dtl_inv[39])
-    cmp_ht.delete(0,END)
-    cmp_ht.insert(0,dtl_inv[40])
-    cmp_ft.delete(0,END)
-    cmp_ft.insert(0,dtl_inv[41])
-    #=======================================================================private note
-    prv_nt.delete(1.0,END)
-    prv_nt.insert(1.0,dtl_inv[45])
-    #=======================================================================terms
-    trms.delete(1.0,END)
-    trms.insert(1.0,dtl_inv[35])
-    #=======================================================================comments
-    cmm.delete(1.0,END)
-    cmm.insert(1.0,dtl_inv[44])
-
-
-  cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
-    
-  sdrt_qsy='select businessname from customer'
-  fbcursor.execute(sdrt_qsy)
-  dtl_rir=fbcursor.fetchall()
-
-  sdrts_qsy='select * from customer where businessname=%s'
-  sdrt_qry_qtr=(cusr_selct,)
-  fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
-  dtl_rissr_cus=fbcursor.fetchone()
-
-  sdou_qsy='select * from invoice where businessname=%s'
-  sdou_qsy_qry=(cusr_selct,)
-  fbcursor.execute(sdou_qsy,sdou_qsy_qry)
-  dtl_inv=fbcursor.fetchone()
-  #-----------------------------------------------------------------------------------button >>
-  def cpy_dts():
-    
-    shp_to_rir.delete(0,END)
-    shp_to_rir.insert(0,cust_selction_nm.get())
-    shp_to_adr_rir.delete(1.0,END)
-    shp_to_adr_rir.insert(1.0,address_rir.get(1.0,END))
-    pass
-  labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
-  labelframe1.place(x=10,y=5,width=640,height=160)
-  order = Label(labelframe1, text="Order to").place(x=10,y=5)
-  
-  cust_selction_nm=StringVar()
-  cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
-  cmb_main_bx.insert(0,dtl_inv[18])
-
-  rir_dt_cst=[]
-  for i in dtl_rir:
-    rir_dt_cst.append(i[0])
-    
-  cmb_main_bx['values']=rir_dt_cst
-  
-  cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
-  cmb_main_bx.place(x=80,y=5)
-
-  
-  sdrt_qsy='select * from customer where businessname=%s'
-  sdrt_qry_qtr=(cusr_selct,)
-  fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
-  dtl_rir_cus=fbcursor.fetchone()
-
-    
-
-  
-
-  
-
-  sdous_qsy='select distinct term_of_payment from invoice'
-  fbcursor.execute(sdous_qsy)
-  dtl_inv_all=fbcursor.fetchall()
-
-
-  address=Label(labelframe1,text="Address").place(x=10,y=30)
-  address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
-  address_rir.delete(1.0,END)
-  address_rir.insert(1.0,dtl_inv[19])
-  address_rir.place(x=80,y=30,height=70)
-
-  ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
-  shp_to_rir=Entry(labelframe1,width=30)
-  shp_to_rir.delete(0,END)
-  shp_to_rir.insert(0,dtl_inv[20])
-  shp_to_rir.place(x=402,y=3)
-  address1=Label(labelframe1,text="Address").place(x=340,y=30)
-  shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
-  shp_to_adr_rir.delete(1.0,END)
-  shp_to_adr_rir.insert(1.0,dtl_inv[21])
-  shp_to_adr_rir.place(x=402,y=30,height=70)
-
-  btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
-    
-  labelframe2 = LabelFrame(fir1Frame,text="")
-  labelframe2.place(x=10,y=130,width=640,height=42)
-  email=Label(labelframe2,text="Email").place(x=10,y=5)
-  emil_rir=Entry(labelframe2,width=30)
-  emil_rir.delete(0,END)
-  emil_rir.insert(0,dtl_inv[22])
-
-  emil_rir.place(x=80,y=5)
-  sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
-  sms_shpto_rir=Entry(labelframe2,width=30)
-  sms_shpto_rir.delete(0,END)
-  sms_shpto_rir.insert(0,dtl_inv[23])
-  sms_shpto_rir.place(x=402,y=5)
-  
-  global inv_nmb_rir
-  labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
-  labelframe.place(x=652,y=5,width=290,height=170)
-  order=Label(labelframe,text="Invoice#").place(x=5,y=5)
-  inv_nmb_rir=Entry(labelframe,width=25)
-  inv_nmb_rir.delete(0,END)
-  inv_nmb_rir.insert(0,dtl_inv[1])
-  inv_nmb_rir.place(x=100,y=5,)
-  orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
-  inv_dt_rir=DateEntry(labelframe,width=20)
-  inv_dt_rir.delete(1,END)
-  inv_dt_rir.insert(0,dtl_inv[2])
-  inv_dt_rir.place(x=150,y=33)
-  chk_dur=IntVar()
-  duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
-  due_dt_rir=DateEntry(labelframe,width=20)
-  due_dt_rir.delete(0,END)
-  due_dt_rir.insert(0,dtl_inv[2])
-  due_dt_rir.place(x=150,y=62)
-  terms=Label(labelframe,text="Terms").place(x=5,y=92)
-  cmb_trms=StringVar()
-  trms_cmb=ttk.Combobox(labelframe,width=25,textvariable=cmb_trms)
-
-  dtl_trm=[]
-  for i in dtl_inv_all:
-    dtl_trm.append(i[0])
-
-  trms_cmb['values']=dtl_trm
-  trms_cmb.delete(0,END)
-  trms_cmb.insert(0,dtl_inv[35])
-  trms_cmb.place(x=100,y=92)
-
-  ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
-  refhash=Entry(labelframe,width=27)
-  refhash.insert(0,dtl_inv[35])
-  refhash.place(x=100,y=118)
-
-    
-  #----------------------------------------------------------------------------------------------product Table
-  sql_yty='select taxtype from company'
-  fbcursor.execute(sql_yty)
-  taxtype=fbcursor.fetchone()
-  sqlr= 'select currencysign from company'
-  fbcursor.execute(sqlr)
-  crncy=fbcursor.fetchone()
-  crcy_tp=crncy[0]
-  sqlrt= 'select currsignplace from company'
-  fbcursor.execute(sqlrt)
-  post_rp=fbcursor.fetchone()
-  crcy_tp_ps=post_rp[0]
-  
-  global prd_tree
-  if int(taxtype[0])==2:
-      fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
-      fir2Frame.pack(side="top", fill=X)
-      listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
-      prd_tree=ttk.Treeview(listFrame)
-      prd_tree["columns"]=["1","2","3","4","5","6","7","8"]
-
-      prd_tree.column("#0", width=40)
-      prd_tree.column("1", width=80)
-      prd_tree.column("2", width=190)
-      prd_tree.column("3", width=190)
-      prd_tree.column("4", width=80)
-      prd_tree.column("5", width=60)
-      prd_tree.column("6", width=60)
-      prd_tree.column("7", width=60)
-      prd_tree.column("8", width=80)
-      
-      prd_tree.heading("#0")
-      prd_tree.heading("1",text="ID/SKU")
-      prd_tree.heading("2",text="Product/Service")
-      prd_tree.heading("3",text="Description")
-      prd_tree.heading("4",text="Unit Price")
-      prd_tree.heading("5",text="Quality")
-      prd_tree.heading("6",text="Pcs/Weight")
-      prd_tree.heading("7",text="Tax1")
-      prd_tree.heading("8",text="Price")
-      
-      
-    
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-     
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
-      for i in main_prd_val:
-            if i[11] is not None:
-              dgt="Yes"
-            else:
-              dgt="No"
-            if crcy_tp_ps=="before amount":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-                count_prd +=1
-            elif crcy_tp_ps=="after amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                  count_prd +=1
-            elif crcy_tp_ps=="before amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                  count_prd +=1
-            elif crcy_tp_ps=="after amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-                  count_prd +=1
-            else:
-                  pass
-            
-      
-      prd_tree.pack(fill="both", expand=1)
-
-  elif int(taxtype[0])==3:
-      
-      fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
-      fir2Frame.pack(side="top", fill=X)
-      listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
-      prd_tree=ttk.Treeview(listFrame)
-      prd_tree["columns"]=["1","2","3","4","5","6","7","8","9"]
-
-      prd_tree.column("#0", width=20)
-      prd_tree.column("1", width=80)
-      prd_tree.column("2", width=170)
-      prd_tree.column("3", width=170)
-      prd_tree.column("4", width=80)
-      prd_tree.column("5", width=60)
-      prd_tree.column("6", width=60)
-      prd_tree.column("7", width=60)
-      prd_tree.column("8", width=60)
-      prd_tree.column("9", width=80)
-      
-      prd_tree.heading("#0")
-      prd_tree.heading("1",text="ID/SKU")
-      prd_tree.heading("2",text="Product/Service")
-      prd_tree.heading("3",text="Description")
-      prd_tree.heading("4",text="Unit Price")
-      prd_tree.heading("5",text="Quality")
-      prd_tree.heading("6",text="Pcs/Weight")
-      prd_tree.heading("7",text="Tax1")
-      prd_tree.heading("8",text="Tax2")
-      prd_tree.heading("9",text="Price")
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
-
-      for i in main_prd_val:
-            if i[11] is not None:
-              dgt="Yes"
-            else:
-              dgt="No"
-            if i[12] is not None:
-              dlt="Yes"
-            else:
-              dlt="No"
-            if crcy_tp_ps=="before amount":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-                count_prd +=1
-            elif crcy_tp_ps=="after amount":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-                count_prd +=1
-            elif crcy_tp_ps=="before amount with space":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
-                count_prd +=1
-            elif crcy_tp_ps=="after amount with space":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-                count_prd +=1
-            else:
-                pass
-
-      prd_tree.pack(fill="both", expand=1)
-      
-
-  else:
-      fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
-      fir2Frame.pack(side="top", fill=X)
-      listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
-      prd_tree=ttk.Treeview(listFrame)
-      prd_tree["columns"]=["1","2","3","4","5","6","7","8"]
-
-      prd_tree.column("#0", width=40)
-      prd_tree.column("1", width=110)
-      prd_tree.column("2", width=220)
-      prd_tree.column("3", width=220)
-      prd_tree.column("4", width=80)
-      prd_tree.column("5", width=80)
-      prd_tree.column("6", width=80)
-      prd_tree.column("7", width=100)
-      
-      prd_tree.heading("#0")
-      prd_tree.heading("1",text="ID/SKU")
-      prd_tree.heading("2",text="Product/Service")
-      prd_tree.heading("3",text="Description")
-      prd_tree.heading("4",text="Unit Price")
-      prd_tree.heading("5",text="Quality")
-      prd_tree.heading("6",text="Pcs/Weight")
-      prd_tree.heading("7",text="Price")
-
-
-      rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      main_prd_val=fbcursor.fetchall()
-      count_prd=0
-      for record in prd_tree.get_children():
-        prd_tree.delete(record)
-      for i in main_prd_val:
-              if crcy_tp_ps=="before amount":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-                count_prd +=1
-              elif crcy_tp_ps=="after amount":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-                count_prd +=1
-              elif crcy_tp_ps=="before amount with space":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-                count_prd +=1
-              elif crcy_tp_ps=="after amount with space":
-                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-                count_prd +=1
-              else:
-                pass
-      
-      prd_tree.pack(fill="both", expand=1)
-    
-
-  listFrame.pack(side="top", fill="both", padx=5, pady=3, expand=1)
-
-  fir3Frame=Frame(pop,height=200,width=700,bg="#f5f3f2")
-  fir3Frame.place(x=0,y=490)
-
-  tabStyle = ttk.Style()
-  tabStyle.theme_use('default')
-  tabStyle.configure('TNotebook.Tab', background="#999999", width=12, padding=5)
-  myNotebook=ttk.Notebook(fir3Frame)
-  invoiceFrame = Frame(myNotebook, height=200, width=800)
-  recurFrame = Frame(myNotebook, height=200, width=800)
-  payementFrame = Frame(myNotebook, height=200, width=800)
-  headerFrame = Frame(myNotebook, height=200, width=800)
-  commentFrame = Frame(myNotebook, height=200, width=800)
-  termsFrame = Frame(myNotebook, height=200, width=800)
-  noteFrame = Frame(myNotebook, height=200, width=800)
-  documentFrame = Frame(myNotebook, height=200, width=800)
-    
-  myNotebook.add(invoiceFrame,compound="left", text="Invoice")
-  myNotebook.add(recurFrame,compound="left", text="Recurring")
-  myNotebook.add(payementFrame,compound="left", text="Payements")
-  myNotebook.add(headerFrame,compound="left",  text="Header/Footer")
-  myNotebook.add(commentFrame,compound="left",  text="Comments")
-  myNotebook.add(termsFrame,compound="left", text="Terms")
-  myNotebook.add(noteFrame,compound="left",  text="Private notes")
-  myNotebook.add(documentFrame,compound="left",  text="Documents")
-  myNotebook.pack(expand = 1, fill ="both")  
-  # --------------------------------------------------------------------------------------Invoice in edit
-
-
-
-  labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
-  labelframe1.place(x=1,y=1,width=800,height=170)
-  cost=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
-  sql_ytyf='select distinct extracostname,template from invoice'
-  fbcursor.execute(sql_ytyf)
-  dt_tmp=fbcursor.fetchall()
-  dtl_nm_ext=[]
-  for i in dt_tmp:
-    dtl_nm_ext.append(i[0])
-  ext_dt=StringVar()
-  cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20, textvariable=ext_dt)
-  cmb_ext_nm.delete(0,END)
-  cmb_ext_nm.insert(0,dtl_inv[11])
-  cmb_ext_nm.place(x=115,y=5)
-
-  rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
-  dsc_rt=Entry(labelframe1,width=6)
-  dsc_rt.delete(0,END)
-  dsc_rt.insert(0,dtl_inv[15])
-  dsc_rt.place(x=460,y=5)
-
-  cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
-  global rir_cost3
-  rir_cost3=Entry(labelframe1,width=10)
-  rir_cost3.delete(0,END)
-  rir_cost3.insert(0,dtl_inv[12])
-  rir_cost3.place(x=115,y=35)
-
-  if int(taxtype[0])==3:
-    tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
-    tax1_rir=Entry(labelframe1,width=7)
-    tax1_rir.delete(0,END)
-    tax1_rir.insert(0,dtl_inv[16])
-    tax1_rir.place(x=460,y=35)
-
-    tax=Label(labelframe1,text="Tax2").place(x=420,y=60)
-    tax2_rir=Entry(labelframe1,width=7)
-    tax2_rir.delete(0,END)
-    tax2_rir.insert(0,dtl_inv[36])
-    tax2_rir.place(x=460,y=60)
-  elif int(taxtype[0])==2:
-    tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
-    tax1_rir=Entry(labelframe1,width=7)
-    tax1_rir.delete(0,END)
-    tax1_rir.insert(0,dtl_inv[16])
-    tax1_rir.place(x=460,y=35)
-  else:
-    pass
-
-  template=Label(labelframe1,text="Template").place(x=37,y=70)
-  dtl_tmpl=[]
-  for i in dt_tmp:
-    dtl_tmpl.append(i[1])
-  tmpl_dt=StringVar()
-  tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=30, textvariable=tmpl_dt)
-  tmp_rir.delete(0,END)
-  tmp_rir.insert(0,dtl_inv[13])
-  tmp_rir['value']=("Professional 1 (logo on left side)","Professional 2 (logo on right side)","Simplified 1 (logo on left side)","Simplified 2 (logo on right side)","Business Classic")
-  tmp_rir.place(x=115,y=70)
-
-  sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
-  sl_prsn=Entry(labelframe1,width=18)
-  sl_prsn.delete(0,END)
-  sl_prsn.insert(0,"Administrator")
-  sl_prsn.place(x=115,y=100)
-  category=Label(labelframe1,text="Category").place(x=300,y=100)
-  ct_rir=Entry(labelframe1,width=22)
-  ct_rir.delete(0,END)
-  ct_rir.insert(0,dtl_inv[17])
-  ct_rir.place(x=370,y=100)
- 
-    
-  statusfrme = LabelFrame(labelframe1,text="Status",font=("arial",15))
-  statusfrme.place(x=540,y=0,width=160,height=160)
-  draft=Label(statusfrme, text="Draft",font=("arial", 15, "bold"), fg="grey").place(x=50, y=3)
-  emon=StringVar()
-  pron=StringVar()
-  on1=Label(statusfrme, text="Emailed on:").place( y=50)
-  nev1=Label(statusfrme, text="Never")
-  nev1.place(x=100,y=50)
-  on2=Label(statusfrme, text="Printed on:").place( y=90)
-  nev2=Label(statusfrme, text="Never")
-  nev2.place(x=100,y=90)
-
-  text1=Label(headerFrame,text="Title text").place(x=50,y=5)
-
-  sdous_qsy='select distinct title_text from invoice'
-  fbcursor.execute(sdous_qsy)
-  inf_ttl=fbcursor.fetchall()
-
-  sdous_qsy='select distinct header_text from invoice'
-  fbcursor.execute(sdous_qsy)
-  inv_ht=fbcursor.fetchall()
-
-  sdous_qsy='select distinct footer_text from invoice'
-  fbcursor.execute(sdous_qsy)
-  inv_ft=fbcursor.fetchall()
-  ttl_inv=StringVar()
-  hd_inv=StringVar()
-  fd_inv=StringVar()
-  cmp_ttl=ttk.Combobox(headerFrame,width=60, textvariable=ttl_inv)
-  cmp_ttl.delete(0,END)
-  cmp_ttl.insert(0,dtl_inv[39])
-  dtl_hd=[]
-  for i in inf_ttl:
-    dtl_hd.append(i[0])
-  cmp_ttl['value']=dtl_hd
-  
-  cmp_ttl.place(x=125,y=5)
-  text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
-  cmp_ht=ttk.Combobox(headerFrame,width=60,textvariable=hd_inv)
-  cmp_ht.delete(0,END)
-  cmp_ht.insert(0,dtl_inv[40])
-  dtl_ht=[]
-  for i in inv_ht:
-      dtl_ht.append(i[0])
-  cmp_ht['value']=dtl_ht
-  cmp_ht.place(x=125,y=45)
-  text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
-  cmp_ft=ttk.Combobox(headerFrame,width=60,textvariable=fd_inv)
-  cmp_ft.delete(0,END)
-  cmp_ft.insert(0,dtl_inv[41])
-  dtl_ft=[]
-  for i in inv_ft:
-    dtl_ft.append(i[0])
-  cmp_ft['value']=dtl_ft
-  cmp_ft.place(x=125,y=85)
-
-  
-
-  text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)")
-  text.place(x=10,y=10)
-  prv_nt=Text(noteFrame,width=100,height=7)
-  prv_nt.delete(1.0,END)
-  prv_nt.insert(1.0,dtl_inv[45])
-  prv_nt.place(x=10,y=32)
-
-  trms=Text(termsFrame,width=100,height=9)
-  trms.delete(1.0,END)
-  trms.insert(1.0,dtl_inv[35])
-  trms.place(x=10,y=10)
-
-  cmm=Text(commentFrame,width=100,height=9)
-  cmm.delete(1.0,END)
-  cmm.insert(1.0,dtl_inv[44])
-  cmm.place(x=10,y=10)
-
-  btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
-  btn2=Button(documentFrame,height=2,width=3,text="-").place(x=5,y=50)
-  text=Label(documentFrame,text="Attached documents or image files.If you attach large email then email taken long time to send").place(x=50,y=10)
-  cusventtree=ttk.Treeview(documentFrame, height=5)
-  cusventtree["columns"]=["1","2","3"]
-  cusventtree.column("#0", width=20)
-  cusventtree.column("1", width=250)
-  cusventtree.column("2", width=250)
-  cusventtree.column("2", width=200)
-  cusventtree.heading("#0",text="", anchor=W)
-  cusventtree.heading("1",text="Attach to Email")
-  cusventtree.heading("2",text="Filename")
-  cusventtree.heading("3",text="Filesize")  
-  cusventtree.place(x=50, y=45)
-    
-  
-  sqlr= 'select currencysign from company'
-  fbcursor.execute(sqlr)
-  crncy=fbcursor.fetchone()
-  crcy_tp=crncy[0]
-  sqlrt= 'select currsignplace from company'
-  fbcursor.execute(sqlrt)
-  post_rp=fbcursor.fetchone()
-  crcy_tp_ps=post_rp[0]
-  
-  
-
-  sm_qry="select sum(price) from storingproduct where invoice_number=%s"
-  sm_qry_val=(inv_nmb_rir.get(),)
-  fbcursor.execute(sm_qry,sm_qry_val)
-  smry_value=fbcursor.fetchone()
-  #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
-  in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
-  in_tt_qry_val=(inv_nmb_rir.get(),)
-  fbcursor.execute(in_tt_qry,in_tt_qry_val)
-  inv_value=fbcursor.fetchone()
-  if int(taxtype[0])==2:
-    smr_discount=dsc_rt.get()
-    
-    smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
-    
-    smr_ext_cst=rir_cost3.get()
-    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1))-float(smr_discount)
-
-  elif int(taxtype[0])==3:
-    smr_discount=dsc_rt.get()
-    
-    smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
-    smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
-    smr_ext_cst=rir_cost3.get()
-    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
-  else:
-    smr_discount=dsc_rt.get()
-
-    smr_ext_cst=rir_cost3.get()
-    smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get()))-float(smr_discount)
-  
-  sum1=0.0
-  
-  
-  
-  if int(taxtype[0])==2:
-    fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-    fir4Frame.place(x=740,y=520)
-    summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-    summaryfrme.place(x=0,y=0,width=200,height=170)
-    discount=Label(summaryfrme, text="Discount")
-    discount.place(x=0 ,y=0)
-    sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-    tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=42)
-    cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-    order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
-    total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-    balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-    if crcy_tp_ps=="before amount": 
       disc=Label(summaryfrme, text=str(crcy_tp))
       disc.place(x=120 ,y=0)
       disc=Label(summaryfrme, text=str(crcy_tp))
@@ -40707,665 +50969,424 @@ def view_invs_rir():
       tax1.place(x=130 ,y=42)  
       cost=Label(summaryfrme, text=str(smr_ext_cst))
       cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
+      order1=Label(summaryfrme, text=str(round(smr_iv_ttl,2)))
       order1.place(x=130 ,y=84)
       total1=Label(summaryfrme, text=str(inv_value[0]))
       total1.place(x=130 ,y=105)
       balance1=Label(summaryfrme, text=str(inv_value[1]))
       balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="after amount":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=21)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=42)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=126)
-      discount1=Label(summaryfrme,bg="green", text=str(smr_discount), justify=LEFT)
-      discount1.place(x=130 ,y=0)
       
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="before amount with space":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=21)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=42)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="after amount with space":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=21)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=42)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=21)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=42)  
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    else:
-      pass
-  elif int(taxtype[0])==3:
-    fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
-    fir4Frame.place(x=740,y=520)
-    summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
-    summaryfrme.place(x=0,y=0,width=200,height=170)
-    discount=Label(summaryfrme, text="Discount")
-    discount.place(x=0 ,y=0)
-    sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
-    tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
-    tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
-    cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
-    order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
-    total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
-    balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
-    if crcy_tp_ps=="before amount": 
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=15)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=30)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=45)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=30)  
-      ta2=Label(summaryfrme, text=str(smr_tax2))
-      ta2.place(x=130 ,y=45) 
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="after amount":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=15)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=30)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=45)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=30)
-      ta2=Label(summaryfrme, text=str(smr_tax2))
-      ta2.place(x=130 ,y=45)   
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1])+str(crcy_tp))
-      balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="before amount with space":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=15)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=30)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=45)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=120 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=30) 
-      ta2=Label(summaryfrme, text=str(smr_tax2))
-      ta2.place(x=130 ,y=45)  
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    elif crcy_tp_ps=="after amount with space":
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=0)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=15)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=30)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=45)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=63)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=84)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=105)
-      disc=Label(summaryfrme, text=str(crcy_tp))
-      disc.place(x=165 ,y=126)
-
-      discount1=Label(summaryfrme, text=str(smr_discount))
-      discount1.place(x=130 ,y=0)
-      sub1=Label(summaryfrme, text=str(smry_value[0]))
-      sub1.place(x=130 ,y=15)
-      tax1=Label(summaryfrme, text=str(smr_tax1))
-      tax1.place(x=130 ,y=30)  
-      ta2=Label(summaryfrme, text=str(smr_tax2))
-      ta2.place(x=130 ,y=45) 
-      cost=Label(summaryfrme, text=str(smr_ext_cst))
-      cost.place(x=130 ,y=63) 
-      order1=Label(summaryfrme, text=str(smr_iv_ttl))
-      order1.place(x=130 ,y=84)
-      total1=Label(summaryfrme, text=str(inv_value[0]))
-      total1.place(x=130 ,y=105)
-      balance1=Label(summaryfrme, text=str(inv_value[1]))
-      balance1.place(x=130 ,y=126)
-    else:
-      pass
-  else:
+     
+    elif int(taxtype[0])==3:
       fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
       fir4Frame.place(x=740,y=520)
       summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
       summaryfrme.place(x=0,y=0,width=200,height=170)
       discount=Label(summaryfrme, text="Discount")
       discount.place(x=0 ,y=0)
-      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
-      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
-      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
-      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
-      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
-      if crcy_tp_ps=="before amount":
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=0)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=21)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=42)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=63)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=84)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=105)
-        
+      sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=15)
+      tax=Label(summaryfrme, text="Tax1").place(x=0 ,y=30)
+      tax=Label(summaryfrme, text="Tax2").place(x=0 ,y=45)
+      cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=63)
+      order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=84)
+      total=Label(summaryfrme, text="Total paid").place(x=0 ,y=105)
+      balance=Label(summaryfrme, text="Balance").place(x=0 ,y=126)
+       
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=0)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=15)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=30)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=45)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=63)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=84)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=105)
+      disc=Label(summaryfrme, text=str(crcy_tp))
+      disc.place(x=120 ,y=126)
 
-        discount1=Label(summaryfrme, text=str(crcy_tp)+str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(crcy_tp)+str(smry_value[0]))
-        sub1.place(x=130 ,y=21) 
-        cost=Label(summaryfrme, text=str(crcy_tp)+str(smr_ext_cst))
-        cost.place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(crcy_tp)+str(smr_iv_ttl))
-        order1.place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[0]))
-        total1.place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(crcy_tp)+str(inv_value[1]))
-        balance1.place(x=130 ,y=105)
-      elif crcy_tp_ps=="after amount":
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=0)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=21)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=42)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=63)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=84)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=105)
-        
-        discount1=Label(summaryfrme, text=str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0]))
-        sub1.place(x=130 ,y=21)
-     
-        cost=Label(summaryfrme, text=str(smr_ext_cst))
-        cost.place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl))
-        order1.place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(inv_value[0]))
-        total1.place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(inv_value[1]))
-        balance1.place(x=130 ,y=105)
-      elif crcy_tp_ps=="before amount with space":
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=0)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=21)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=42)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=63)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=84)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=120 ,y=105)
-        
-        discount1=Label(summaryfrme, text=str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0]))
-        sub1.place(x=130 ,y=21)
-  
-        cost=Label(summaryfrme, text=str(smr_ext_cst))
-        cost.place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl))
-        order1.place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(inv_value[0]))
-        total1.place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(inv_value[1]))
-        balance1.place(x=130 ,y=105)
-      elif crcy_tp_ps=="after amount with space":
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=0)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=21)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=42)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=63)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=84)
-        disc=Label(summaryfrme, text=str(crcy_tp))
-        disc.place(x=165 ,y=105)
-
-        discount1=Label(summaryfrme, text=str(smr_discount))
-        discount1.place(x=130 ,y=0)
-        sub1=Label(summaryfrme, text=str(smry_value[0]))
-        sub1.place(x=130 ,y=21)
-  
-        cost=Label(summaryfrme, text=str(smr_ext_cst))
-        cost.place(x=130 ,y=42) 
-        order1=Label(summaryfrme, text=str(smr_iv_ttl))
-        order1.place(x=130 ,y=63)
-        total1=Label(summaryfrme, text=str(inv_value[0]))
-        total1.place(x=130 ,y=84)
-        balance1=Label(summaryfrme, text=str(inv_value[1]))
-        balance1.place(x=130 ,y=105)
-      else:
-        pass
-
-  #---------------------------------------------------------------------------------------recuring frame
-  def reir_chk():
-      if chk_sts.get() == 0:
-        rir_spn_bx['state'] = DISABLED
-        e1['state'] = DISABLED
-        dt_nxt_inv['state'] = DISABLED
-        stp_rir2['state'] = DISABLED
-        dt_stp_inv['state'] = DISABLED
-        rir_recalc_1['state'] = DISABLED
-        
-      else:
-        rir_spn_bx['state'] = NORMAL
-        e1['state'] = NORMAL
-        dt_nxt_inv['state'] = NORMAL
-        stp_rir2['state'] = NORMAL
-        dt_stp_inv['state'] = NORMAL
-        rir_recalc_1['state'] = NORMAL
-  def recalc_rir():
-      sql_rec='select * from company '
-      fbcursor.execute(sql_rec)
-      cmp_dtl=fbcursor.fetchone()
-      rir_spn_val = rir_spn_bx.get()
-      recur_stop = dt_nxt_inv.get_date()
-      print(type(recur_stop))
-      print(recur_stop)
-      if main_cus_rir.get() == "month(s)":
-        if cmp_dtl[10] == "mm-dd-yyyy":
-          stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
-          stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%m-%d-%Y")
-
-        elif cmp_dtl[10] == "dd-mm-yyyy":
-          stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
-          print(stop_date)
-          stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
-          print(stop_d)
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%d-%m-%Y")
-          print(nxt_inv)
-        elif cmp_dtl[10] == "yyyy.mm.dd":
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(months=+int(rir_spn_valrir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
-        elif cmp_dtl[10] == "mm/dd/yyyy":
-          stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
-          stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%m/%d/%Y")
-        elif cmp_dtl[10] == "dd/mm/yyyy":
-          stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
-          stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%d/%m/%Y")
-        elif cmp_dtl[10] == "dd.mm.yyyy":
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
-        elif cmp_dtl[10] == "yyyy/mm/dd":
-          stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
-          stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%Y/%m/%d")
-        else:
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(months=+int(rir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
-        dt_nxt_inv.delete(0,END)
-        dt_nxt_inv.insert(0,nxt_inv)
-      else:
-        if cmp_dtl[10] == "mm-dd-yyyy":
-          stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
-          stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%m-%d-%Y")
-        elif cmp_dtl[10] == "dd-mm-yyyy":
-          stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
-          stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%d-%m-%Y")
-        elif cmp_dtl[10] == "yyyy.mm.dd":
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
-        elif cmp_dtl[10] == "mm/dd/yyyy":
-          stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
-          stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%m/%d/%Y")
-        elif cmp_dtl[10] == "dd/mm/yyyy":
-          stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
-          stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%d/%m/%Y")
-        elif cmp_dtl[10] == "dd.mm.yyyy":
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
-        elif cmp_dtl[10] == "yyyy/mm/dd":
-          stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
-          stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt_inv = datetime.strftime(n,"%Y/%m/%d")
-        else:
-          stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
-          stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
-          n = stop_d + relativedelta(days=+int(rir_spn_val))
-          nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
-          nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
-        dt_nxt_inv.delete(0,END)
-        dt_nxt_inv.insert(0,nxt_inv)
-
-  labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
-  labelframe2.place(x=1,y=1,width=730,height=170)
-
-  chk_sts=IntVar()
-
-  stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
-  if int(dtl_inv[47])==1:
-    stp_rir.select()
-  else:
-    stp_rir.deselect()
-  
-  
-
-  stp_rir.place(x=40,y=5)
-
-  text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
-  rir_spn_bx = Spinbox(labelframe2,from_=1,to=10,width=15,justify=RIGHT)
-  rir_spn_bx.delete(0,END)
-  rir_spn_bx.insert(0,dtl_inv[24])
-  rir_spn_bx.place(x=270,y=30)
-
-  main_cus_rir=StringVar()
-  e1 = ttk.Combobox(labelframe2,width=15, textvariable=main_cus_rir)
-  e1['values']=('month(s)',"day(s)")
-  e1.insert(0,dtl_inv[25])
-  e1.place(x=380,y=30)
-  e1.current(0)
-
-  por_sql_st='select * from company'
-  fbcursor.execute(por_sql_st)
-  cmpy_dtl=fbcursor.fetchone()
-
-  sql='select dateformat from company'
-  fbcursor.execute(sql)
-  date_frmat=fbcursor.fetchone()
-
-  stop = datetime.today().date()
-  if date_frmat[0] == "mm-dd-yyyy":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
-      stop_date = datetime.strftime(stop,"%m-%d-%Y")
-      nxt_inv = datetime.strftime(stop,"%m-%d-%Y")
-  elif date_frmat[0] == "dd-mm-yyyy":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
-      stop_date = datetime.strftime(stop,"%d-%m-%Y")
-      nxt_inv = datetime.strftime(stop,"%d-%m-%Y")
-  elif date_frmat[0] == "yyyy.mm.dd":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
-      s = datetime.strftime(stop,"%Y-%m-%d")
-      stop_d = datetime.strptime(s,"%Y-%m-%d")
-      stop_date = '{0}.{1:02}.{2:02}'.format(stop_d.year,stop_d.month,stop_d.day)
-      nxt = datetime.strptime(s,"%Y-%m-%d")
-      nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
-  elif date_frmat[0] == "mm/dd/yyyy":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
-      stop_date = datetime.strftime(stop,"%m/%d/%Y")
-      nxt_inv = datetime.strftime(stop,"%m/%d/%Y")
-  elif date_frmat[0] == "dd/mm/yyyy":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
-      stop_date = datetime.strftime(stop,"%d/%m/%Y")
-      nxt_inv = datetime.strftime(stop,"%d/%m/%Y")
-  elif date_frmat[0] == "dd.mm.yyyy":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
-      s = datetime.strftime(stop,"%Y-%m-%d")
-      stop_d = datetime.strptime(s,"%Y-%m-%d")
-      stop_date = '{0:02}.{1:02}.{2:02}'.format(stop_d.day,stop_d.month,stop_d.year)
-      nxt = datetime.strptime(s,"%Y-%m-%d")
-      nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
-  elif date_frmat[0] == "yyyy/mm/dd":
-      dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
-      stop_date = datetime.strftime(stop,"%Y/%m/%d")
-      nxt_inv = datetime.strftime(stop,"%Y/%m/%d")
-  else:
-      dt_nxt_inv = DateEntry(labelframe2,width=20,state=NORMAL)
-      dt_stp_inv = DateEntry(labelframe2,width=20,state=NORMAL)
-      s = datetime.strftime(stop,"%Y-%m-%d")
-      stop_d = datetime.strptime(s,"%Y-%m-%d")
-      stop_date = '{0}/{1}/{2:02}'.format(stop_d.month,stop_d.day,stop_d.year % 100)
-      nxt = datetime.strptime(s,"%Y-%m-%d")
-      nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
-
-  if int(dtl_inv[50])==1:
-      dt_stp_inv["state"]=NORMAL
-  else:
-      dt_stp_inv["state"]=DISABLED
-  dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
-  dt_nxt_inv.place(x=380,y=60)
-
-  def stp_dt():
-    if stp_chk.get()==0:
-      dt_stp_inv["state"] =DISABLED
+      discount1=Label(summaryfrme, text=str(smr_discount))
+      discount1.place(x=130 ,y=0)
+      sub1=Label(summaryfrme, text=str(smry_value[0]))
+      sub1.place(x=130 ,y=15)
+      tax1=Label(summaryfrme, text=str(smr_tax1))
+      tax1.place(x=130 ,y=30)  
+      ta2=Label(summaryfrme, text=str(smr_tax2))
+      ta2.place(x=130 ,y=45) 
+      cost=Label(summaryfrme, text=str(smr_ext_cst))
+      cost.place(x=130 ,y=63) 
+      order1=Label(summaryfrme, text=str(round(smr_iv_ttl,2)))
+      order1.place(x=130 ,y=84)
+      total1=Label(summaryfrme, text=str(inv_value[0]))
+      total1.place(x=130 ,y=105)
+      balance1=Label(summaryfrme, text=str(inv_value[1]))
+      balance1.place(x=130 ,y=126)
+      
+      
     else:
-      dt_stp_inv["state"] =NORMAL
-
-  stp_chk=IntVar()
-  stp_rir2=Checkbutton(labelframe2,variable = stp_chk,text="Stop Recurring After",onvalue =1 ,state=NORMAL,offvalue = 0, command=stp_dt)
-
-
-  if int(dtl_inv[50])==1:
-    stp_rir2.select() 
-  else:
-
-    stp_rir2.deselect() 
-
+        fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
+        fir4Frame.place(x=740,y=520)
+        summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
+        summaryfrme.place(x=0,y=0,width=200,height=170)
+        discount=Label(summaryfrme, text="Discount")
+        discount.place(x=0 ,y=0)
+        sub=Label(summaryfrme, text="Subtotal").place(x=0 ,y=21)
+        cost=Label(summaryfrme, text="Extra cost").place(x=0 ,y=42)
+        order=Label(summaryfrme, text="Invoice total").place(x=0 ,y=63)
+        total=Label(summaryfrme, text="Total paid").place(x=0 ,y=84)
+        balance=Label(summaryfrme, text="Balance").place(x=0 ,y=105)
         
-  stp_rir2.place(x=240,y=85)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=0)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=21)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=42)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=63)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=84)
+        disc=Label(summaryfrme, text=str(crcy_tp))
+        disc.place(x=120 ,y=105)
+          
 
-  # 
-  dt_stp_inv.place(x=380,y=90)
+        discount1=Label(summaryfrme, text=str(smr_discount))
+        discount1.place(x=130 ,y=0)
+        sub1=Label(summaryfrme, text=str(smry_value[0]))
+        sub1.place(x=130 ,y=21) 
+        cost=Label(summaryfrme, text=str(smr_ext_cst))
+        cost.place(x=130 ,y=42) 
+        order1=Label(summaryfrme, text=str(round(smr_iv_ttl,2)))
+        order1.place(x=130 ,y=63)
+        total1=Label(summaryfrme, text=str(inv_value[0]),)
+        total1.place(x=130 ,y=84)
+        balance1=Label(summaryfrme, text=str(inv_value[1]))
+        balance1.place(x=130 ,y=105)
+        
+
+    #---------------------------------------------------------------------------------------recuring frame
+    def reir_chk():
+        if chk_sts.get() == 0:
+          rir_spn_bx['state'] = DISABLED
+          e1['state'] = DISABLED
+          dt_nxt_inv['state'] = DISABLED
+          stp_rir2['state'] = DISABLED
+          dt_stp_inv['state'] = DISABLED
+          rir_recalc_1['state'] = DISABLED
+          
+        else:
+          rir_spn_bx['state'] = NORMAL
+          e1['state'] = NORMAL
+          dt_nxt_inv['state'] = NORMAL
+          stp_rir2['state'] = NORMAL
+          dt_stp_inv['state'] = NORMAL
+          rir_recalc_1['state'] = NORMAL
+    def recalc_rir():
+        sql_rec='select * from company '
+        fbcursor.execute(sql_rec)
+        cmp_dtl=fbcursor.fetchone()
+        rir_spn_val = rir_spn_bx.get()
+        recur_stop = dt_nxt_inv.get_date()
+        print(type(recur_stop))
+        print(recur_stop)
+        if main_cus_rir.get() == "month(s)":
+          if cmp_dtl[10] == "mm-dd-yyyy":
+            stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
+            stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%m-%d-%Y")
+
+          elif cmp_dtl[10] == "dd-mm-yyyy":
+            stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
+            print(stop_date)
+            stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
+            print(stop_d)
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%d-%m-%Y")
+            print(nxt_inv)
+          elif cmp_dtl[10] == "yyyy.mm.dd":
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(months=+int(rir_spn_valrir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+          elif cmp_dtl[10] == "mm/dd/yyyy":
+            stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
+            stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%m/%d/%Y")
+          elif cmp_dtl[10] == "dd/mm/yyyy":
+            stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
+            stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%d/%m/%Y")
+          elif cmp_dtl[10] == "dd.mm.yyyy":
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+          elif cmp_dtl[10] == "yyyy/mm/dd":
+            stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
+            stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%Y/%m/%d")
+          else:
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(months=+int(rir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+          dt_nxt_inv.delete(0,END)
+          dt_nxt_inv.insert(0,nxt_inv)
+        else:
+          if cmp_dtl[10] == "mm-dd-yyyy":
+            stop_date = datetime.strftime(recur_stop,"%m-%d-%Y")
+            stop_d = datetime.strptime(stop_date,"%m-%d-%Y")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%m-%d-%Y")
+          elif cmp_dtl[10] == "dd-mm-yyyy":
+            stop_date = datetime.strftime(recur_stop,"%d-%m-%Y")
+            stop_d = datetime.strptime(stop_date,"%d-%m-%Y")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%d-%m-%Y")
+          elif cmp_dtl[10] == "yyyy.mm.dd":
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_date = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+          elif cmp_dtl[10] == "mm/dd/yyyy":
+            stop_date = datetime.strftime(recur_stop,"%m/%d/%Y")
+            stop_d = datetime.strptime(stop_date,"%m/%d/%Y")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%m/%d/%Y")
+          elif cmp_dtl[10] == "dd/mm/yyyy":
+            stop_date = datetime.strftime(recur_stop,"%d/%m/%Y")
+            stop_d = datetime.strptime(stop_date,"%d/%m/%Y")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%d/%m/%Y")
+          elif cmp_dtl[10] == "dd.mm.yyyy":
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+          elif cmp_dtl[10] == "yyyy/mm/dd":
+            stop_date = datetime.strftime(recur_stop,"%Y/%m/%d")
+            stop_d = datetime.strptime(stop_date,"%Y/%m/%d")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt_inv = datetime.strftime(n,"%Y/%m/%d")
+          else:
+            stop_date = datetime.strftime(recur_stop,"%Y-%m-%d")
+            stop_d = datetime.strptime(stop_date,"%Y-%m-%d")
+            n = stop_d + relativedelta(days=+int(rir_spn_val))
+            nxt = datetime.strptime(str(n.date()),"%Y-%m-%d")
+            nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+          dt_nxt_inv.delete(0,END)
+          dt_nxt_inv.insert(0,nxt_inv)
+
+    labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
+    labelframe2.place(x=1,y=1,width=730,height=170)
+
+    chk_sts=IntVar()
+
+    stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
+    if int(dtl_inv[47])==1:
+      stp_rir.select()
+    else:
+      stp_rir.deselect()
+    
+    
+
+    stp_rir.place(x=40,y=5)
+
+    text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
+    rir_spn_bx = Spinbox(labelframe2,from_=1,to=10,width=15,justify=RIGHT)
+    rir_spn_bx.delete(0,END)
+    rir_spn_bx.insert(0,dtl_inv[24])
+    rir_spn_bx.place(x=270,y=30)
+
+    main_cus_rir=StringVar()
+    e1 = ttk.Combobox(labelframe2,width=15, textvariable=main_cus_rir)
+    e1['values']=('month(s)',"day(s)")
+    e1.insert(0,dtl_inv[25])
+    e1.place(x=380,y=30)
+    e1.current(0)
+
+    por_sql_st='select * from company'
+    fbcursor.execute(por_sql_st)
+    cmpy_dtl=fbcursor.fetchone()
+
+    sql='select dateformat from company'
+    fbcursor.execute(sql)
+    date_frmat=fbcursor.fetchone()
+
+    stop = datetime.today().date()
+    if date_frmat[0] == "mm-dd-yyyy":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
+        stop_date = datetime.strftime(stop,"%m-%d-%Y")
+        nxt_inv = datetime.strftime(stop,"%m-%d-%Y")
+    elif date_frmat[0] == "dd-mm-yyyy":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
+        stop_date = datetime.strftime(stop,"%d-%m-%Y")
+        nxt_inv = datetime.strftime(stop,"%d-%m-%Y")
+    elif date_frmat[0] == "yyyy.mm.dd":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
+        s = datetime.strftime(stop,"%Y-%m-%d")
+        stop_d = datetime.strptime(s,"%Y-%m-%d")
+        stop_date = '{0}.{1:02}.{2:02}'.format(stop_d.year,stop_d.month,stop_d.day)
+        nxt = datetime.strptime(s,"%Y-%m-%d")
+        nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
+    elif date_frmat[0] == "mm/dd/yyyy":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
+        stop_date = datetime.strftime(stop,"%m/%d/%Y")
+        nxt_inv = datetime.strftime(stop,"%m/%d/%Y")
+    elif date_frmat[0] == "dd/mm/yyyy":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
+        stop_date = datetime.strftime(stop,"%d/%m/%Y")
+        nxt_inv = datetime.strftime(stop,"%d/%m/%Y")
+    elif date_frmat[0] == "dd.mm.yyyy":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
+        s = datetime.strftime(stop,"%Y-%m-%d")
+        stop_d = datetime.strptime(s,"%Y-%m-%d")
+        stop_date = '{0:02}.{1:02}.{2:02}'.format(stop_d.day,stop_d.month,stop_d.year)
+        nxt = datetime.strptime(s,"%Y-%m-%d")
+        nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
+    elif date_frmat[0] == "yyyy/mm/dd":
+        dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
+        stop_date = datetime.strftime(stop,"%Y/%m/%d")
+        nxt_inv = datetime.strftime(stop,"%Y/%m/%d")
+    else:
+        dt_nxt_inv = DateEntry(labelframe2,width=20,state=NORMAL)
+        dt_stp_inv = DateEntry(labelframe2,width=20,state=NORMAL)
+        s = datetime.strftime(stop,"%Y-%m-%d")
+        stop_d = datetime.strptime(s,"%Y-%m-%d")
+        stop_date = '{0}/{1}/{2:02}'.format(stop_d.month,stop_d.day,stop_d.year % 100)
+        nxt = datetime.strptime(s,"%Y-%m-%d")
+        nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
+
+    if int(dtl_inv[50])==1:
+        dt_stp_inv["state"]=NORMAL
+    else:
+        dt_stp_inv["state"]=DISABLED
+    dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
+    dt_nxt_inv.place(x=380,y=60)
+
+    def stp_dt():
+      if stp_chk.get()==0:
+        dt_stp_inv["state"] =DISABLED
+      else:
+        dt_stp_inv["state"] =NORMAL
+
+    stp_chk=IntVar()
+    stp_rir2=Checkbutton(labelframe2,variable = stp_chk,text="Stop Recurring After",onvalue =1 ,state=NORMAL,offvalue = 0, command=stp_dt)
 
 
-  rir_recalc_1 = Button(labelframe2,compound=LEFT,image=recalc,text="Recalculate",width=80,height=12,state=NORMAL,command=recalc_rir)
-  rir_recalc_1.place(x=550,y=70)
+    if int(dtl_inv[50])==1:
+      stp_rir2.select() 
+    else:
+
+      stp_rir2.deselect() 
+
+          
+    stp_rir2.place(x=240,y=85)
+
+    # 
+    dt_stp_inv.place(x=380,y=90)
 
 
-  if chk_sts.get() == 0:
-        rir_spn_bx['state'] = DISABLED
-        e1['state'] = DISABLED
-        dt_nxt_inv['state'] = DISABLED
-        stp_rir2['state'] = DISABLED
-        dt_stp_inv['state'] = DISABLED
-        rir_recalc_1['state'] = DISABLED
-  else:
-        rir_spn_bx['state'] = NORMAL
-        e1['state'] = NORMAL
-        dt_nxt_inv['state'] = NORMAL
-        stp_rir2['state'] = NORMAL
-        dt_stp_inv['state'] = NORMAL
-        rir_recalc_1['state'] = NORMAL
+    rir_recalc_1 = Button(labelframe2,compound=LEFT,image=recalc,text="Recalculate",width=80,height=12,state=NORMAL,command=recalc_rir)
+    rir_recalc_1.place(x=550,y=70)
 
-  
-  #-------------------------------------------------------------------------------------------payment frame
-  labelframe3 = LabelFrame(payementFrame,text="",font=("arial",15))
-  labelframe3.place(x=1,y=1,width=730,height=170)
 
-  pym_rir_tr=ttk.Treeview(labelframe3, height=7)
-  pym_rir_tr["columns"]=["1","2","3","4","5"]
-  pym_rir_tr.column("#0", width=20)
-  pym_rir_tr.column("1", width=200)
-  pym_rir_tr.column("2", width=100)
-  pym_rir_tr.column("3", width=100)
-  pym_rir_tr.column("4", width=200)
-  pym_rir_tr.column("5", width=100)
-  pym_rir_tr.heading("#0",text="", anchor=W)
-  pym_rir_tr.heading("1",text="Payment ID")
-  pym_rir_tr.heading("2",text="Payement Date")
-  pym_rir_tr.heading("3",text="Paid By")  
-  pym_rir_tr.heading("4",text="Description")
-  pym_rir_tr.heading("5",text="Amount")
+    if chk_sts.get() == 0:
+          rir_spn_bx['state'] = DISABLED
+          e1['state'] = DISABLED
+          dt_nxt_inv['state'] = DISABLED
+          stp_rir2['state'] = DISABLED
+          dt_stp_inv['state'] = DISABLED
+          rir_recalc_1['state'] = DISABLED
+    else:
+          rir_spn_bx['state'] = NORMAL
+          e1['state'] = NORMAL
+          dt_nxt_inv['state'] = NORMAL
+          stp_rir2['state'] = NORMAL
+          dt_stp_inv['state'] = NORMAL
+          rir_recalc_1['state'] = NORMAL
 
-  pym_rir_tr.place(x=0, y=0)
-  
+    
+    #-------------------------------------------------------------------------------------------payment frame
+    labelframe3 = LabelFrame(payementFrame,text="",font=("arial",15))
+    labelframe3.place(x=1,y=1,width=730,height=170)
 
-  fir5Frame=Frame(pop,height=38,width=210)
-  fir5Frame.place(x=735,y=485)
-  btndown=Button(fir5Frame, compound="left", text="Line Down").place(x=75, y=0)
-  btnup=Button(fir5Frame, compound="left", text="Line Up").place(x=150, y=0)
+    pym_rir_tr=ttk.Treeview(labelframe3, height=7)
+    pym_rir_tr["columns"]=["1","2","3","4","5"]
+    pym_rir_tr.column("#0", width=20)
+    pym_rir_tr.column("1", width=200)
+    pym_rir_tr.column("2", width=100)
+    pym_rir_tr.column("3", width=100)
+    pym_rir_tr.column("4", width=200)
+    pym_rir_tr.column("5", width=100)
+    pym_rir_tr.heading("#0",text="", anchor=W)
+    pym_rir_tr.heading("1",text="Payment ID")
+    pym_rir_tr.heading("2",text="Payement Date")
+    pym_rir_tr.heading("3",text="Paid By")  
+    pym_rir_tr.heading("4",text="Description")
+    pym_rir_tr.heading("5",text="Amount")
 
+    rir_main_table_sql="select * from markinvoice where invoice_number=%s"
+    rir_main_table_sql_val=(inv_nmb_rir.get(),)
+    fbcursor.execute(rir_main_table_sql,rir_main_table_sql_val)
+    main_rir_val=fbcursor.fetchall()
+    count_rir=0
+
+    for i in main_rir_val:
+        sqlr= 'select currencysign from company'
+        fbcursor.execute(sqlr)
+        crncy=fbcursor.fetchone()
+        crcy_tp=crncy[0]
+        sqlrt= 'select currsignplace from company'
+        fbcursor.execute(sqlrt)
+        post_rp=fbcursor.fetchone()
+        crcy_tp_ps=post_rp[0]
+        
+        if crcy_tp_ps=="before amount":
+          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(crncy_tp)+str(i[4])))
+          count_rir +=1
+        elif crcy_tp_ps=="after amount":
+          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(i[4])+str(crncy_tp)))
+          count_rir +=1
+        elif crcy_tp_ps=="before amount with space":
+          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(crncy_tp)+" "+str(i[4])))
+          count_rir +=1
+        elif crcy_tp_ps=="after amount with space":
+          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(i[4])+" "+str(crncy_tp)))
+          count_rir +=1
+        else:
+          pass
+        
+
+    pym_rir_tr.place(x=0, y=0)
+    
+
+    fir5Frame=Frame(pop,height=38,width=210)
+    fir5Frame.place(x=735,y=485)
+    btndown=Button(fir5Frame, compound="left", text="Line Down").place(x=75, y=0)
+    btnup=Button(fir5Frame, compound="left", text="Line Up").place(x=150, y=0)
+  except:
+    pass
 
 
 #--------------------------------------------------------------------------------------Top Buttons
@@ -41404,7 +51425,7 @@ rir_pr_label.pack(side="left")
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
 
-rir_email_label = Button(rirmidFrame,compound="top", text=" E-mail \nInvoice",relief=RAISED, image=photo6,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=cus_addemail_order)
+rir_email_label = Button(rirmidFrame,compound="top", text=" E-mail \nInvoice",relief=RAISED, image=photo6,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=rir_addemail_order)
 rir_email_label.pack(side="left")
 
 
@@ -41422,12 +51443,37 @@ rir_refresh_lbl.pack(side="left")
 
 w = Canvas(rirmidFrame, width=1, height=55, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=5)
+# ----------------------------------------------------------------------------------------sum calculations
 def sum_lbl():
-  labessl = Label(left_frame,bg="red",text = "$500")
+  global labessl
+  rir_main_table_sql="select sum(invoicetot) from invoice where recurring_check='1'"
+    
+  fbcursor.execute(rir_main_table_sql)
+  dtl_sum=fbcursor.fetchone()
+  sqlr= 'select currencysign from company'
+  fbcursor.execute(sqlr)
+  crncy=fbcursor.fetchone()
+  crcy_tp=crncy[0]
+  sqlrt= 'select currsignplace from company'
+  fbcursor.execute(sqlrt)
+  post_rp=fbcursor.fetchone()
+  crcy_tp_ps=post_rp[0]
+        
+  if crcy_tp_ps=="before amount":
+
+    labessl = Label(tab4,bg="white",text = str(crcy_tp)+str(dtl_sum[0]))
+  elif crcy_tp_ps=="after amount":
+    labessl = Label(tab4,bg="white",text = str(dtl_sum[0])+str(crcy_tp))
+  elif crcy_tp_ps=="before amount with space":
+    labessl = Label(tab4,bg="white",text = str(crcy_tp)+" "+str(dtl_sum[0]))
+  elif crcy_tp_ps=="after amount with space":
+    labessl = Label(tab4,bg="white",text = str(dtl_sum[0])+" "+str(crcy_tp))
+  labessl.place(x=1250, y=405)
+
 show_ttl_sum = Button(rirmidFrame,compound="top", text="Show totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=sum_lbl)
 show_ttl_sum.pack(side="left")
 
-rir_hd_lbl = Button(rirmidFrame,compound="top", text="Hide totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=lambda: labessl.place_forget())
+rir_hd_lbl = Button(rirmidFrame,compound="top", text="Hide totals\nSUM",relief=RAISED, image=photo9,bg="#f8f8f2", fg="black", height=55, bd=1, width=75,command=lambda:labessl.destroy())
 rir_hd_lbl.pack(side="left")
 
 
@@ -41537,8 +51583,30 @@ class RirMyApp1:
     count_rir=0
 
     for i in main_rir_val:
-        rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],i[8]))
-        count_rir +=1
+        sqlr= 'select currencysign from company'
+        fbcursor.execute(sqlr)
+        crncy=fbcursor.fetchone()
+        crcy_tp=crncy[0]
+        sqlrt= 'select currsignplace from company'
+        fbcursor.execute(sqlrt)
+        post_rp=fbcursor.fetchone()
+        crcy_tp_ps=post_rp[0]
+        
+        if crcy_tp_ps=="before amount":
+          rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+str(i[8])))
+          count_rir +=1
+        elif crcy_tp_ps=="after amount":
+          rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+str(crcy_tp)))
+          count_rir +=1
+        elif crcy_tp_ps=="before amount with space":
+          rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(crcy_tp)+" "+str(i[8])))
+          count_rir +=1
+        elif crcy_tp_ps=="after amount with space":
+          rir_tree.insert(parent='', index='end', iid=count_rir, text='hello', values=("",i[1],i[26],i[24],i[27],i[18],str(i[8])+" "+str(crcy_tp)))
+          count_rir +=1
+        else:
+          pass
+        
 
 
     tabControl = ttk.Notebook(self.left_frame,width=1)
