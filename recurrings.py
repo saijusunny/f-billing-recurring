@@ -202,6 +202,15 @@ def rfh_rir():
 #----------------------------------------------------------------------------------------------------print invoice
   
 def rir_prnt_main_rir():
+    try:
+        rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
+    except:
+        messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before printing") 
+    sql_mrk_void="update invoice set printon=%s where invoice_number=%s"
+    sql_mrk_voi_val=(date.today(),rir_inv_nbs)
+    fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
+    fbilldb.commit()
+
     inv_numb=rir_tree.item(rir_tree.focus())["values"][1]
     
 
@@ -8320,6 +8329,15 @@ def rir_prnt_main_rir():
 #----------------------------------------------------------------------------------------------------------email
 def rir_send_mails():
       # try:
+        try:
+          rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
+        except:
+            messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before printing") 
+        sql_mrk_void="update invoice set 	emailon=%s where invoice_number=%s"
+        sql_mrk_voi_val=(date.today(),rir_inv_nbs)
+        fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
+        fbilldb.commit()
+
         rir_sender_email = "saijuinfox@gmail.com"    
         rir_sender_password = "eywcinveepcwchnn" 
 
@@ -24465,51 +24483,18 @@ def view_invs_rir():
         
         if not create_maintree_insert:
            
-          if estcurrsymb[1]=="before amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+str(prosele[7]*1)))
-          elif estcurrsymb[1]=="after amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+str(estcurrsymb[1])))
-          elif estcurrsymb[1]=="before amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+" "+str(prosele[7]*1)))
-
-          elif estcurrsymb[1]=="after amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
+            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],prosele[7]*1))
 
         elif create_maintree_insert[12] == "1":
           
-          if estcurrsymb[1]=="before amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+str(prosele[7]*1)))
-          elif estcurrsymb[1]=="after amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+str(estcurrsymb[1])))
-          elif estcurrsymb[1]=="before amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],str(estcurrsymb[1])+" "+str(prosele[7]*1)))
-
-          elif estcurrsymb[1]=="after amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],prosele[7]*1))
         
           
         elif create_maintree_insert[12] == "2":
-          if estcurrsymb[1]=="before amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],tax1,str(estcurrsymb[1])+str(prosele[7]*1)))
-          elif estcurrsymb[1]=="after amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],tax1,str(prosele[7]*1)+str(estcurrsymb[1])))
-          elif estcurrsymb[1]=="before amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],tax1,str(estcurrsymb[1])+" "+str(prosele[7]*1)))
-
-          elif estcurrsymb[1]=="after amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],tax1,str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
-          
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,prosele[7]*1))
             
         elif create_maintree_insert[12] == "3":
-          if estcurrsymb[1]=="before amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+str(prosele[7]),1,prosele[8],tax1,tax2,str(estcurrsymb[1])+str(prosele[7]*1)))
-          elif estcurrsymb[1]=="after amount": 
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+str(estcurrsymb[1]),1,prosele[8],tax1,tax2,str(prosele[7]*1)+str(estcurrsymb[1])))
-          elif estcurrsymb[1]=="before amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(estcurrsymb[1])+" "+str(prosele[7]),1,prosele[8],tax1,tax2,str(estcurrsymb[1])+" "+str(prosele[7]*1)))
-
-          elif estcurrsymb[1]=="after amount with space":
-            prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],str(prosele[7])+" "+str(estcurrsymb[1]),1,prosele[8],tax1,tax2,str(prosele[7]*1)+" "+str(estcurrsymb[1]))) 
+          prd_tree.insert(parent='', index='end',text='', values=(prosele[2],prosele[4],prosele[5],prosele[7],1,prosele[8],tax1,tax2,prosele[7]*1))
         else:
           pass
           
@@ -24795,46 +24780,1114 @@ def view_invs_rir():
     checkvar1=IntVar()
     chkbtn1=Checkbutton(tiplbf,text="I have read and agree to the terms of service above",variable=checkvar1,onvalue=1,offvalue=0).place(x=70, y=200) 
 
-  #mark invoice
-  def markinvoice_recurring():
-    mark_inv=Toplevel()
-    mark_inv.geometry("700x480+240+150")
-    mark_inv.title("Record Payement for Invoice")
-    checkvar=IntVar()
-    checkvar1=IntVar()
-    checkvar2=IntVar()
+ 
+  def record_newpay():
+      inv_as_paid.destroy()
+      newpay_inv=Toplevel()
+      newpay_inv.geometry("700x480+240+150")
+      newpay_inv.title("Record Payement for Invoice") 
 
-    style = ttk.Style()
-    style.theme_use('default')
-    style.configure('TNotebook.Tab', background="#999999", padding=5)
-    mark_Notebook = ttk.Notebook(mark_inv)
-    Mark_Invoice = Frame(mark_Notebook, height=470, width=750)
-    mark_Notebook.add(Mark_Invoice, text="Mark Invoice")
-    mark_Notebook.place(x=0, y=0)
+      global get_pay_data,discount_rate,total_cost,dis_rate,exc,tax1_rate
+      pri_sql = "SELECT * FROM company"
+      fbcursor.execute(pri_sql)
+      comp_data = fbcursor.fetchone()
 
-    involbel=Label(Mark_Invoice, text="Invoice Balance")
-    involbel.place(x=10, y=10)
-    numentry=Entry(Mark_Invoice, width=45).place(x=130, y=10)
+      if comp_data[12] == "1":
+        price = 0.0
+        total_cost = 0.0
+        exc = float(rir_cost3.get())
+        dis_rate = float(dsc_rt.get())
+        for i in prd_tree.get_children():
+          price += float(prd_tree.item(i,'values')[6])
+        discount_rate = (price*dis_rate)/100
+        total_cost += (price - discount_rate) + exc
+        discount.config(text= str(dis_rate) + "" +"% Discount")
+        discount1.config(text=round(discount_rate,2))
+        sub_tot = round((price - discount_rate),2)
+        sub1.config(text=sub_tot)
+        cost.config(text=round(exc,2))
+        order1.config(text=round(total_cost,2))
+        tot_paid = 0.0
+        for tp in pym_rir_tr.get_children():
+          tot_paid += float(pym_rir_tr.item(tp,'values')[4])
+        total1.config(text=round(tot_paid,2))
+        bal = round((total_cost - tot_paid),2)
+        balance1.config(text=bal)
+      elif comp_data[12] == "2":
+        price = 0.0
+        p = 0.0
+        total_cost = 0.0
+        exc = float(rir_cost3.get())
+        dis_rate = float(dsc_rt.get())
+        tx1 = float(tax1_rir.get())
+        for i in prd_tree.get_children():
+          if prd_tree.item(i,'values')[6] == "No":
+            p += float(prd_tree.item(i,'values')[3])
+          else:
+            price += float(prd_tree.item(i,'values')[7])
+        discount_rate = ((price + p) * dis_rate)/100
+        dis_price = (price * dis_rate)/100
+        dis_p = (p * dis_rate)/100
+        tax1_rate = ((price - dis_price)*tx1)/100
+        tx_calc = (price - dis_price) + tax1_rate
+        tx_calc1 = p - dis_p
+        total_cost += (tx_calc + tx_calc1) + exc 
+        discount.config(text= str(dis_rate) + "" +"% Discount")
+        discount1.config(text=round(discount_rate,2))
+        sub_tot = round(((price + p) - discount_rate),2)
+        sub1.config(text=sub_tot)
+        tax1.config(text=round(tax1_rate,2))
+        cost.config(text=round(exc,2))
+        order1.config(text=round(total_cost,2))
+        tot_paid = 0.0
+        for tp in pym_rir_tr.get_children():
+          tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+        total1.config(text=round(tot_paid,2))
+        bal = round((total_cost - tot_paid),2)
+        balance1.config(text=bal)
+      elif comp_data[12] == "3":
+        price = 0.0
+        p1 = 0.0
+        p2 = 0.0
+        p3 = 0.0
+        total_cost = 0.0
+        tx1 = float(tax1_rir.get())
+        tx2 = float(tax2_rir.get())
+        exc = float(rir_cost3.get())
+        dis_rate = float(dsc_rt.get())
+        for i in prd_tree.get_children():
+          if prd_tree.item(i,'values')[6] == "No" and prd_tree.item(i,'values')[7] == "No":
+            p1 += float(prd_tree.item(i,'values')[3])
+          elif prd_tree.item(i,'values')[6] == "Yes" and prd_tree.item(i,'values')[7] == "No":
+            p2 += float(prd_tree.item(i,'values')[3])
+          elif prd_tree.item(i,'values')[6] == "No" and prd_tree.item(i,'values')[7] == "Yes":
+            p3 += float(prd_tree.item(i,'values')[3])
+          else:
+            price += float(prd_tree.item(i,'values')[8])
+        discount_rate = ((p1 + p2 + p3 + price) * dis_rate)/100
+        dis_p2 = (p2 * dis_rate)/100
+        tax1_rate = ((p2 - dis_p2) * tx1)/100
+        dis_price = (price * dis_rate)/100
+        tax2_rate = ((price - dis_price) * tx1)/100
+        tax3_rate = ((price - dis_price) * tx2)/100
+        dis_p3= (p3 * dis_rate)/100
+        tax4_rate = ((p3 - dis_p3) * tx2)/100
+        dis_p4 = (p1 * dis_rate)/100
+        tx_calc1 = (p2 - dis_p2) + tax1_rate
+        tx_calc2 = (price - dis_price) + tax2_rate + tax3_rate
+        tx_calc3 = (p3 - dis_p3) + tax4_rate
+        tx_calc4 = (p1 - dis_p4)
+        total_cost += (tx_calc1 + tx_calc2 + tx_calc3 + tx_calc4) + exc
+        discount.config(text= str(dis_rate) + "" +"% Discount")
+        discount1.config(text=round(discount_rate,2))
+        sub_tot = round(((price + p1 + p2 + p3) - discount_rate),2)
+        sub1.config(text=sub_tot)
+        tax1.config(text=round((tax1_rate + tax2_rate),2))
+        ta2.config(text=round((tax3_rate + tax4_rate),2))
+        cost.config(text=round(exc,2))
+        order1.config(text=round(total_cost,2))
+        tot_paid = 0.0
+        for tp in pym_rir_tr.get_children():
+          tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+        total1.config(text=round(tot_paid,2))
+        bal = round((total_cost - tot_paid),2)
+        balance1.config(text=bal)         
+  
+      def add_newline_pay():
+        if inv_pby_combo.get() == '':
+          messagebox.showinfo("F-Billing Revolution 2022sdfdsd",'Please fill out "Paid by" field!')
+        else:
+          pay_amnt = inv_amnt_entry.get()
+          pay_date = inv_pdate_entry.get_date()
+          pay_by = inv_pby_combo.get()
+          pay_desc = inv_des_entry.get()
+          pay_inv_number = inv_nmb_rir.get()
+          pay_full = checkvar.get()
+          pay_recp = checkvar1.get()
+          pay_att_up = checkvar2.get()
+          pay_sql ="INSERT INTO markinvoice(payment_date,paid_by,description,amount,invoice_number,fully_paid,payment_reciept,attach_invoice) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
+          pay_val = (pay_date,pay_by,pay_desc,pay_amnt,pay_inv_number,pay_full,pay_recp,pay_att_up,)
+          fbcursor.execute(pay_sql,pay_val,pay_val)
+          fbilldb.commit()
 
-    labelframe5 = LabelFrame(Mark_Invoice,text="Payement Record Details",bg="#f5f3f2")
-    labelframe5.place(x=10,y=60,width=670,height=250)
-    e1 = Entry(labelframe5,width=28).place(x=30,y=45)
-    pdate = Label(labelframe5, text="Payement Date:",bg="#f5f3f2").place(x=250,y=20)
-    e2 = Entry(labelframe5,width=28).place(x=220,y=45)
-    payd = Label(labelframe5, text="Paid By:",bg="#f5f3f2").place(x=450,y=20)
-    drop = ttk.Combobox(labelframe5, value="Hello")
-    drop.place(x=450,y=45)
-    involbel=Label(labelframe5, text="Description")
-    involbel.place(x=30, y=80)
-    numentry=Entry(labelframe5, width=100).place(x=30, y=120)
-    Checkbutton(labelframe5,text="Paid in full and close invoice",variable=checkvar,onvalue=1,offvalue=0,bg="#f5f3f2").place(x=30 ,y=150)
-    pl = Label(labelframe5,text="Payement Reciepts",bg="#f5f3f2")
-    pl.place(x=300,y=145)
-    Checkbutton(labelframe5,text="Send Payement Reciept",variable=checkvar1,onvalue=1,offvalue=0,bg="#f5f3f2").place(x=320 ,y=170)
-    Checkbutton(labelframe5,text="Attach updated invoice",variable=checkvar2,onvalue=1,offvalue=0,bg="#f5f3f2").place(x=320 ,y=200)
+          pay_get_sql = "SELECT * FROM markinvoice ORDER BY paymentid DESC LIMIT 1"
+          fbcursor.execute(pay_get_sql)
+          pay_data = fbcursor.fetchone()
+          for record in pym_rir_tr.get_children():
+            pym_rir_tr.delete(record)
 
-    okbtn=Button(Mark_Invoice,compound = LEFT,image=tick , text="Save payement", width=100).place(x=10, y=350)
-    canbtn=Button(Mark_Invoice,compound = LEFT,image=cancel, text="Cancel", width=100).place(x=500, y=350)
+          pym_rir_tr.insert(parent='',index='end',iid=pay_data[0],text='',values=(pay_data[0],pay_data[1],pay_data[2],pay_data[3],pay_data[4]))
+
+          tot_paid = 0.0
+          for tp in pym_rir_tr.get_children():
+            tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+          total1.config(text=round(tot_paid,2))
+          bal = round((total_cost - tot_paid),2)
+          balance1.config(text=bal)
+          newpay_inv.destroy()
+
+
+          def inv_send_mail(file=None):
+            # sender_mail = your_cemail_entry.get()
+            sender_mail = "saijuinfox@gmail.com"
+            # sender_password = your_cpass_entry.get()
+            sender_password = "eywcinveepcwchnn"
+
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            
+            server.starttls()
+            
+            server.login(sender_mail,sender_password)
+        
+
+            carbon_info = email_carbon.get()
+            msg = MIMEMultipart()
+            msg['Subject'] = email_subject.get()
+            mail_content = email_ltr_scroll.get("1.0",'end-1c')
+            msg['From'] = email_from.get()
+            msg['To'] = email_to.get()
+
+            gettingimg = lstfrm.get()
+            lst_data = gettingimg[1:-1].split(',')
+            
+            msg.attach(MIMEText(mail_content, 'plain'))
+            
+            for i in lst_data:
+              if len(i.strip()[1:-1])>1:
+                with open('images/'+ i.strip()[1:-1], "rb") as attachment:
+                    # MIME attachment is a binary file for that content type "application/octet-stream" is used
+                  part = MIMEBase("application", "octet-stream")
+                  part.set_payload(attachment.read())
+                # encode into base64 
+                  encoders.encode_base64(part) 
+            
+                  part.add_header('Content-Disposition', "attachment; filename= %s" % 'images/'+ i.strip()[1:-1]) 
+
+                # attach the instance 'part' to instance 'message' 
+                  msg.attach(part)
+              # message_body = email_body.get()
+
+            server.sendmail(email_from.get(),email_to.get(),msg.as_string())
+            server.sendmail(email_from.get(), carbon_info,msg.as_string())
+
+            date = dt.datetime.now().date()
+            never1_label.config(text=date)
+            
+
+            
+
+
+
+          if checkvar1.get() == 1:
+            send_precp = Toplevel()
+            p2 = PhotoImage(file = "images/fbicon.png")
+            send_precp.iconphoto(False, p2)
+            send_precp.geometry("1030x490+150+120")
+            send_precp.title("Payment reciept E-mail")
+
+          
+
+            def inv_empsfile_image(event):
+              global yawn
+              for i in  attach_list.curselection():
+                print("hloo", attach_list.get(i))
+                yawn= attach_list.get(i)        
+                edit_window_img = Toplevel()
+                edit_window_img.title("View Image")
+                edit_window_img.geometry("700x500")
+                image = Image.open("images/"+yawn)
+                resize_image = image.resize((700, 500))
+                image = ImageTk.PhotoImage(resize_image)
+                psimage = Label(edit_window_img,image=image)
+                psimage.photo = image
+                psimage.pack()
+            
+            def inv_UploadAction(event=None):
+              global filenamez
+
+              filenamez = askopenfilename(filetypes=(("png file ",'.png'),("jpg file", ".jpg"), ('PDF', '.pdf',), ("All files", ".*"),))
+              shutil.copyfile(filenamez, os.getcwd()+'/images/'+filenamez.split('/')[-1])
+              attach_list.insert(0, filenamez.split('/')[-1])
+
+
+            def inv_deletefile():
+              inv_remove=attach_list.curselection()
+              yawn=attach_list.get(inv_remove) 
+              print(yawn)       
+              attach_list.delete(ACTIVE)
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(send_precp)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=450, width=730)
+            messagelbframe.place(x=5, y=5)
+            global email_to,email_subject,email_from,email_paasw,email_carbon,email_ltr_scroll,email_html_scroll,attach_list,lstfrm
+            email_to = StringVar()
+            email_subject = StringVar()
+            email_from = StringVar()
+            email_passw = StringVar()
+            email_carbon = StringVar()
+            email_to_addr_label=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            email_to_addr_entry=Entry(messagelbframe, width=50,textvariable=email_to)
+            email_to_addr_entry.place(x=120, y=5)
+            email_addr = emil_rir.get()
+            email_to_addr_entry.delete(0,END)
+            email_to_addr_entry.insert(0,email_addr)
+            send_email_btn=Button(messagelbframe, text="Send Email", width=10, height=1,command=inv_send_mail)
+            send_email_btn.place(x=600, y=10)
+            carbon_label=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carbon_entry=Entry(messagelbframe, width=50,textvariable=email_carbon)
+            carbon_entry.place(x=120, y=32)
+            subject_label=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subject_entry=Entry(messagelbframe, width=50,textvariable=email_subject)
+            subject_entry.place(x=120, y=59)
+            subject = inv_nmb_rir.get()
+            subject_entry.delete(0,END)
+            subject_entry.insert(0,"Payment reciept for Invoice" + " " + "(" + subject + ")")
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook,height=305, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=305, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            email_ltr_scroll= scrolledtext.ScrolledText(emailmessage_Frame, height=17, width=86, bg="white",undo=True,exportselection=False)
+            email_ltr_scroll.config(inactiveselectbackground=email_ltr_scroll.cget("selectbackground"))
+            email_ltr_scroll.place(x=0, y=28)
+            pay_name = cust_selction_nm.get()
+            email_ltr_scroll.delete("1.0",END)
+            email_ltr_scroll.insert("1.0","\n\n  Dear" + " " + pay_name + "," + "\n\n  This message is to inform you that your payment of" + " " + str(pay_amnt) + " " + "for Invoice#" + " " + pay_inv_number + " " + "\n  has been received \n\n  Payment ID: RCPT" + "" + str(pay_data[0]) + "" + "\n  Invoice ID: " + "" + pay_inv_number + "" + "\n  Payment Date: " + "" + str(pay_date) + "" + "\n  Amount: " + "" + str(pay_amnt) + "" + "\n  Paid by: " + "" + pay_by + "" + "\n  Description: " + "" + pay_desc + "" + "\n\n  Thank you for your business.\n  Your Company Name")
+
+            sel_all_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall,command=lambda:email_ltr_scroll.event_generate('<Control a>'))
+            sel_all_btn.place(x=0, y=1)  
+            cut_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :email_ltr_scroll.event_generate('<Control x>'))
+            cut_btn.place(x=36, y=1)
+            copy_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :email_ltr_scroll.event_generate('<Control c>'))
+            copy_btn.place(x=73, y=1)
+            paste_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :email_ltr_scroll.event_generate('<Control v>'))
+            paste_btn.place(x=105, y=1)
+            undo_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo,command=email_ltr_scroll.edit_undo)
+            undo_btn.place(x=140, y=1)
+            redo_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo,command=email_ltr_scroll.edit_redo)
+            redo_btn.place(x=175, y=1)
+
+            def bold_text():
+              bold_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+              bold_font.configure(weight="bold")
+
+              email_ltr_scroll.tag_configure("bold", font=bold_font)
+
+              current_tags = email_ltr_scroll.tag_names("sel.first")
+
+              if "bold" in current_tags:
+                email_ltr_scroll.tag_remove("bold", "sel.first", "sel.last")
+              else:
+                email_ltr_scroll.tag_add("bold", "sel.first", "sel.last")
+            bold_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=bold_text)
+            bold_btn.place(x=210, y=1)
+
+            def italic_text():
+              italic_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+              italic_font.configure(slant="italic")
+
+              email_ltr_scroll.tag_configure("italic", font=italic_font)
+
+              current_tags = email_ltr_scroll.tag_names("sel.first")
+
+              if "italic" in current_tags:
+                email_ltr_scroll.tag_remove("italic", "sel.first", "sel.last")
+              else:
+                email_ltr_scroll.tag_add("italic", "sel.first", "sel.last")
+            italic_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=italic_text)
+            italic_btn.place(x=245, y=1)
+
+            def underline_text():
+              try:
+                if email_ltr_scroll.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
+                    email_ltr_scroll.tag_remove('underline_selection', 'sel.first', 'sel.last')
+                else:
+                    email_ltr_scroll.tag_add('underline_selection', 'sel.first', 'sel.last')
+                    email_ltr_scroll.tag_configure('underline_selection', underline=True)
+              except TclError:
+                  pass
+            underline_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=underline_text)
+            underline_btn.place(x=280, y=1)
+
+            def align_left():
+              data = email_ltr_scroll.get(0.0,END)
+              email_ltr_scroll.tag_config('left',justify=LEFT)
+              email_ltr_scroll.delete(0.0,END)
+              email_ltr_scroll.insert(INSERT,data,'left')
+            align_lbtn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=align_left)
+            align_lbtn.place(x=315, y=1)
+
+            def align_right():
+              data = email_ltr_scroll.get(0.0,END)
+              email_ltr_scroll.tag_config('right',justify=RIGHT)
+              email_ltr_scroll.delete(0.0,END)
+              email_ltr_scroll.insert(INSERT,data,'right')
+            align_rbtn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=align_right)
+            align_rbtn.place(x=350, y=1)
+
+            def align_center():
+              data = email_ltr_scroll.get(0.0,END)
+              email_ltr_scroll.tag_config('center',justify=CENTER)
+              email_ltr_scroll.delete(0.0,END)
+              email_ltr_scroll.insert(INSERT,data,'center')
+            align_cbtn= Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=align_center)
+            align_cbtn.place(x=385, y=1)
+            hyper_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink)
+            hyper_btn.place(x=420, y=1)
+            remove_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :email_ltr_scroll.delete(0.0,END))
+            remove_btn.place(x=455, y=1)
+
+            def color_text():
+              color = colorchooser.askcolor()[1]
+              if color:
+                color_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+
+                email_ltr_scroll.tag_configure("colored", font=color_font, foreground=color)
+
+                current_tags = email_ltr_scroll.tag_names("sel.first")
+
+                if "colored" in current_tags:
+                  email_ltr_scroll.tag_remove("colored", "sel.first", "sel.last")
+                else:
+                  email_ltr_scroll.tag_add("colored", "sel.first", "sel.last")
+            color_btn = Button(emailmessage_Frame, width=31, height=23,compound = LEFT,image=color,command=color_text)
+            color_btn.place(x=490,y=1)
+
+            def fontsize_chooser(event):
+              font_size = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+              font_size.configure(size=int(fontsize_combo.get())*7)
+
+              email_ltr_scroll.tag_configure("size", font=font_size)
+              current_tags = email_ltr_scroll.tag_names("sel.first")
+
+              email_ltr_scroll.tag_add("size", "sel.first", "sel.last")
+
+            
+            fontsize_combo = ttk.Combobox(emailmessage_Frame, width=6, height=10)
+            fontsize_combo.place(x=600, y=5)
+            fontsize_combo['values'] = ("1","2","3","4","5","6","7")
+            fontsize_combo.current(0)
+            fontsize_combo.bind("<<ComboboxSelected>>",fontsize_chooser)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            email_html_scroll=scrolledtext.ScrolledText(htmlsourse_Frame,undo=True, height=350, width=710, bg="white")
+            email_html_scroll.place(x=0, y=28)
+            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=283)
+            attachlbframe.place(x=740, y=5)
+            lstfrm = StringVar()
+            attach_list=Listbox(attachlbframe, height=13, width=44,listvariable=lstfrm, bg="white")
+            attach_list.place(x=5, y=5)
+            attach_list.bind('<Double-Button-1>',inv_empsfile_image)
+            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(attachlbframe, width=20, text="Add attacment file...",command=inv_UploadAction)
+            btn17.place(x=60, y=260)
+            btn18=Button(attachlbframe, width=20, text="Remove attacment",command=inv_deletefile)
+            btn18.place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(send_precp, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe = LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            your_cemail_label = Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            your_cemail_entry = Entry(sendatalbframe, width=40)
+            your_cemail_entry.place(x=195, y=30)
+
+            your_cpass_label = Label(sendatalbframe, text="Your Password").place(x=5, y=60)
+            your_cpass_entry = Entry(sendatalbframe, width=40,show='*')
+            your_cpass_entry.place(x=195, y=60)
+          else:
+            pass
+
+      def cancel_newline_pay():
+        newpay_inv.destroy()
+
+      style = ttk.Style()
+      style.theme_use('default')
+      style.configure('TNotebook.Tab', background="#999999", padding=5)
+      mark_Notebook = ttk.Notebook(newpay_inv)
+      Mark_Invoice = Frame(mark_Notebook, height=470, width=750)
+      mark_Notebook.add(Mark_Invoice, text="Mark Invoice")
+      mark_Notebook.place(x=0, y=0)
+
+      inv_bal_label=Label(Mark_Invoice, text="Invoice Balance").place(x=10, y=10)
+      inv_bal_entry=Label(Mark_Invoice, width=25,fg="red",bg="white",text=bal,font=("Arial",10,"bold"))
+      inv_bal_entry.place(x=130, y=10)
+      labelframe5 = LabelFrame(Mark_Invoice,text="Payement Record Details",bg="#f5f3f2")
+      labelframe5.place(x=10,y=60,width=670,height=250)
+      inv_amnt_entry = Entry(labelframe5,width=28)
+      inv_amnt_entry.place(x=30,y=45)
+      inv_amnt_entry.delete(0, END)
+      inv_amnt_entry.insert(0, bal)
+      inv_pdate_label = Label(labelframe5, text="Payement Date:",bg="#f5f3f2").place(x=250,y=20)
+      inv_pdate_entry = DateEntry(labelframe5,width=28)
+      inv_pdate_entry.place(x=220,y=45)
+      inv_pby_label = Label(labelframe5, text="Paid By:",bg="#f5f3f2").place(x=450,y=20)
+      term_sql = "SELECT terms_of_payment FROM terms_of_payment"
+      fbcursor.execute(term_sql,)
+      term_data = fbcursor.fetchall()
+      tdata = []
+      for i in term_data:
+        tdata.append(i[0])
+      inv_pby_combo = ttk.Combobox(labelframe5, value=tdata)
+      inv_pby_combo.place(x=450,y=45)
+      inv_pby_combo.bind("<<ComboboxSelected>>")
+      inv_des_label=Label(labelframe5, text="Description").place(x=30, y=80)
+      inv_des_entry =Entry(labelframe5, width=100)
+      inv_des_entry.place(x=30, y=120)
+      checkvar=IntVar()
+      inv_pfull_check = Checkbutton(labelframe5,text="Paid in full and close invoice",variable=checkvar,onvalue=1,offvalue=0,bg="#f5f3f2")
+      inv_pfull_check.place(x=30 ,y=150)
+      inv_precp_label = Label(labelframe5,text="Payement Reciepts",bg="#f5f3f2").place(x=300,y=145)
+      checkvar1=IntVar()
+      inv_send_precp = Checkbutton(labelframe5,text="Send Payement Reciept",variable=checkvar1,onvalue=1,offvalue=0,bg="#f5f3f2")
+      inv_send_precp.place(x=320 ,y=170)
+      checkvar2=IntVar()
+      inv_att_upinv = Checkbutton(labelframe5,text="Attach updated invoice",variable=checkvar2,onvalue=1,offvalue=0,bg="#f5f3f2")
+      inv_att_upinv.place(x=320 ,y=200)
+
+      inv_pok_btn =Button(Mark_Invoice,compound = LEFT,image=tick , text="Save payement", width=100,command=add_newline_pay)
+      inv_pok_btn.place(x=10, y=350)
+      inv_pcan_btn =Button(Mark_Invoice,compound = LEFT,image=cancel, text="Cancel", width=100,command=cancel_newline_pay)
+      inv_pcan_btn.place(x=500, y=350)
+        
+
+  def rir_mrk_inv():
+      invoice_number = inv_nmb_rir.get()
+      pay_sel_sql = "SELECT * FROM markinvoice WHERE invoice_number=%s"
+      pay_sel_val = (invoice_number,)
+      fbcursor.execute(pay_sel_sql,pay_sel_val)
+      pay_sel_data = fbcursor.fetchall()
+      if pay_sel_data:
+        pay_list = []
+        for p in pay_sel_data:
+          pay_list.append(p)
+        pd = pay_list[-1]
+      else:
+        pd = 0
+      check_newline = prd_tree.get_children()
+      pri_sql = "SELECT * FROM company"
+      fbcursor.execute(pri_sql)
+      comp_data = fbcursor.fetchone()
+
+      def markas_paid():
+        rir_draft.config(text="Paid")
+        invodate = inv_dt_rir.get_date()
+        if chk_dur.get() == 0:
+          duedate = NULL
+        else:
+          duedate = due_dt_rir.get_date()
+        term_of_payment = cmb_trms.get()
+        ref = refhash.get()
+        status = rir_draft.cget("text")
+        emailon = nev1.cget("text")
+        printon = nev2.cget("text")
+        # smson = 
+        subtotal = sub1.cget("text")
+        invoicetot = order1.cget("text")
+        totpaid = total1.cget("text")
+        balance = balance1.cget("text")
+        extracostname = ex_costn_combo.get()
+        extracost = cost.cget("text")
+        template = tmpl_dt.get()
+        salesper = sl_prsn.get()
+        discourate = dsc_rt.get()
+        discount = discount1.cget("text")
+        tax1 = tax1.cget("text")
+        category = ct_rir.get()
+        businessname = cust_selction_nm.get()
+        businessaddress = address_rir.get("1.0",END)
+        shipname = shp_to_rir.get()
+        shipaddress = shp_to_adr_rir.get("1.0",END)
+        cpemail = emil_rir.get()
+        cpmobileforsms = sms_shpto_rir.get()
+        if chk_sts.get() == 0 :
+          next_invoice = NULL
+          stop_recurring = NULL
+          recurring_period = NULL
+          recurring_period_month = NULL
+          recurring_check = chk_sts.get()
+        else:
+          next_invoice = dt_nxt_inv.get_date()
+          stop_recurring = dt_stp_inv.get_date()
+          recurring_period = rir_spn_bx.get()
+          recurring_period_month = main_cus_rir.get()
+          recurring_check = chk_sts.get()
+        title_text = cmp_ttl.get()
+        header_text = cmp_ht.get()
+        footer_text = cmp_ft.get()
+        tax2 = ta2.cget("text")
+        comments = cmm.get("1.0",END)
+        privatenotes = prv_nt.get("1.0",END)
+        terms = trms.get("1.0",END)
+        paid_n_closed = 1
+
+        prod_trees = prd_tree.item(prd_tree.focus())["values"][0]
+        sql = "SELECT * FROM Productservice WHERE Productserviceid=%s"
+        val = (prod_trees,)
+        fbcursor.execute(sql,val)
+        sel_prds = fbcursor.fetchone()
+
+        # doc_get = doc_tree.get_children()
+        quantity = sel_prds[18]
+        comp_sql = "SELECT * FROM company"
+        fbcursor.execute(comp_sql,)
+        comp_data = fbcursor.fetchone()
+        for record in prd_tree.get_children():
+          storingproduct = prd_tree.item(record)["values"]
+          if not comp_data:
+            storepro_sql = "INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
+            storepro_val = (invoice_number,storingproduct[0],storingproduct[1],storingproduct[2],storingproduct[3],storingproduct[4],storingproduct[5],storingproduct[6])
+            fbcursor.execute(storepro_sql,storepro_val)
+            fbilldb.commit()
+          elif comp_data[12] == "1":
+            storepro_sql = "INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
+            storepro_val = (invoice_number,storingproduct[0],storingproduct[1],storingproduct[2],storingproduct[3],storingproduct[4],storingproduct[5],storingproduct[6])
+            fbcursor.execute(storepro_sql,storepro_val)
+            fbilldb.commit()
+          elif comp_data[12] == "2":
+            storepro_sql = "INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,tax1,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            storepro_val = (invoice_number,storingproduct[0],storingproduct[1],storingproduct[2],storingproduct[3],storingproduct[4],storingproduct[5],storingproduct[6],storingproduct[7])
+            fbcursor.execute(storepro_sql,storepro_val)
+            fbilldb.commit()
+          elif comp_data[12] == "3":
+            storepro_sql = "INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,tax1,tax2,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            storepro_val = (invoice_number,storingproduct[0],storingproduct[1],storingproduct[2],storingproduct[3],storingproduct[4],storingproduct[5],storingproduct[6],storingproduct[7],storingproduct[8])
+            fbcursor.execute(storepro_sql,storepro_val)
+            fbilldb.commit()
+
+
+        # for files in doc_get:
+        #   file_sql = "INSERT INTO documents(invoice_number,documents) VALUES(%s,%s)"
+        #   file_val = (invoice_number,files)
+        #   fbcursor.execute(file_sql,file_val)
+        #   fbilldb.commit()
+
+        
+        inv_sql='INSERT INTO Invoice (invoice_number,invodate,duedate,status,emailon,printon,subtotal,invoicetot,totpaid,balance,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_period,recurring_period_month,next_invoice,stop_recurring,discount,terms,tax2,quantity,title_text,header_text,footer_text,term_of_payment,ref,comments,privatenotes,recurring_check,paid_n_closed) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)' #adding values into db
+        inv_val=(invoice_number,invodate,duedate,status,emailon,printon,subtotal,invoicetot,totpaid,balance,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_period,recurring_period_month,next_invoice,stop_recurring,discount,terms,tax2,quantity,title_text,header_text,footer_text,term_of_payment,ref,comments,privatenotes,recurring_check,paid_n_closed,)
+        fbcursor.execute(inv_sql,inv_val)
+        fbilldb.commit()
+
+        
+        inv_as_paid.destroy()
+      if cust_selction_nm.get() == '':
+        messagebox.showwarning("F-Billing Revolution","Customer required, please select customer first.")
+      elif len(check_newline) == 0:
+        messagebox.showwarning("F-Billing Revolution","This invoice has no line items. \nPlease add line item(s) first.")
+      elif pd != 0 and pd[6] == 1:
+        global inv_as_paid
+        inv_as_paid =Toplevel()
+        inv_as_paid.geometry("350x200+450+200")
+        inv_as_paid.title("Record Payement")
+        inv_as_paid.configure(bg="white")
+        
+        what_label = Label(inv_as_paid,text="What would like to do?",bg="white",fg="#1a3365",font=("sans-serif",12)).place(x=50,y=10)
+        fully_label = Label(inv_as_paid,text="This invoice looks like fully paid.",bg="white").place(x=50,y=40)
+        qstn_label = Label(inv_as_paid,borderwidth=0,bg="white").place(x=10,y=10)
+        mark_as_paid_btn = Button(inv_as_paid,text='🡢 Marked as "Paid" and close invoice',fg="#0077b3",bg="white",border=0,font=("sans-serif",12),command=markas_paid)
+        mark_as_paid_btn.place(x=50,y=80)
+        rec_new_btn = Button(inv_as_paid,text='🡢 Record new payment',fg="#0077b3",bg="white",border=0,font=("sans-serif",12),command=record_newpay)
+        rec_new_btn.place(x=50,y=120)
+        cancel_as_paid = Button(inv_as_paid,text="Cancel",bg="white",borderwidth=1,width=8,command=lambda:inv_as_paid.destroy())
+        cancel_as_paid.place(x=270,y=168)
+      else:
+        mark_inv=Toplevel()
+        mark_inv.geometry("700x480+240+150")
+        mark_inv.title("Record Payement for Invoice") 
+
+        global get_pay_data,discount_rate,total_cost,dis_rate,exc,tax1_rate
+
+        if comp_data[12] == "1":
+          price = 0.0
+          total_cost = 0.0
+          exc = float(rir_cost3.get())
+          dis_rate = float(dsc_rt.get())
+          for i in prd_tree.get_children():
+            price += float(prd_tree.item(i,'values')[6])
+          discount_rate = (price*dis_rate)/100
+          total_cost += (price - discount_rate) + exc
+          discount.config(text= str(dis_rate) + "" +"% Discount")
+          discount1.config(text=round(discount_rate,2))
+          sub_tot = round((price - discount_rate),2)
+          sub1.config(text=sub_tot)
+          cost.config(text=round(exc,2))
+          order1.config(text=round(total_cost,2))
+          tot_paid = 0.0
+          for tp in pym_rir_tr.get_children():
+            tot_paid += float(pym_rir_tr.item(tp,'values')[4])
+          total1.config(text=round(tot_paid,2))
+          bal = round((total_cost - tot_paid),2)
+          balance1.config(text=bal)
+        elif comp_data[12] == "2":
+          price = 0.0
+          p = 0.0
+          total_cost = 0.0
+          exc = float(rir_cost3.get())
+          dis_rate = float(dsc_rt.get())
+          tx1 = float(tax1_rir.get())
+          for i in prd_tree.get_children():
+            if prd_tree.item(i,'values')[6] == "No":
+              p += float(prd_tree.item(i,'values')[3])
+            else:
+              price += float(prd_tree.item(i,'values')[7])
+          discount_rate = ((price + p) * dis_rate)/100
+          dis_price = (price * dis_rate)/100
+          dis_p = (p * dis_rate)/100
+          tax1_rate = ((price - dis_price)*tx1)/100
+          tx_calc = (price - dis_price) + tax1_rate
+          tx_calc1 = p - dis_p
+          total_cost += (tx_calc + tx_calc1) + exc 
+          discount.config(text= str(dis_rate) + "" +"% Discount")
+          discount1.config(text=round(discount_rate,2))
+          sub_tot = round(((price + p) - discount_rate),2)
+          sub1.config(text=sub_tot)
+          tax1.config(text=round(tax1_rate,2))
+          cost.config(text=round(exc,2))
+          order1.config(text=round(total_cost,2))
+          tot_paid = 0.0
+          for tp in pym_rir_tr.get_children():
+            tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+          total1.config(text=round(tot_paid,2))
+          bal = round((total_cost - tot_paid),2)
+          balance1.config(text=bal)
+        elif comp_data[12] == "3":
+          price = 0.0
+          p1 = 0.0
+          p2 = 0.0
+          p3 = 0.0
+          total_cost = 0.0
+          tx1 = float(tax1_rir.get())
+          tx2 = float(tax2_rir.get())
+          exc = float(rir_cost3.get())
+          dis_rate = float(dsc_rt.get())
+          for i in prd_tree.get_children():
+            if prd_tree.item(i,'values')[6] == "No" and prd_tree.item(i,'values')[7] == "No":
+              p1 += float(prd_tree.item(i,'values')[3])
+            elif prd_tree.item(i,'values')[6] == "Yes" and prd_tree.item(i,'values')[7] == "No":
+              p2 += float(prd_tree.item(i,'values')[3])
+            elif prd_tree.item(i,'values')[6] == "No" and prd_tree.item(i,'values')[7] == "Yes":
+              p3 += float(prd_tree.item(i,'values')[3])
+            else:
+              price += float(prd_tree.item(i,'values')[8])
+          discount_rate = ((p1 + p2 + p3 + price) * dis_rate)/100
+          dis_p2 = (p2 * dis_rate)/100
+          tax1_rate = ((p2 - dis_p2) * tx1)/100
+          dis_price = (price * dis_rate)/100
+          tax2_rate = ((price - dis_price) * tx1)/100
+          tax3_rate = ((price - dis_price) * tx2)/100
+          dis_p3= (p3 * dis_rate)/100
+          tax4_rate = ((p3 - dis_p3) * tx2)/100
+          dis_p4 = (p1 * dis_rate)/100
+          tx_calc1 = (p2 - dis_p2) + tax1_rate
+          tx_calc2 = (price - dis_price) + tax2_rate + tax3_rate
+          tx_calc3 = (p3 - dis_p3) + tax4_rate
+          tx_calc4 = (p1 - dis_p4)
+          total_cost += (tx_calc1 + tx_calc2 + tx_calc3 + tx_calc4) + exc
+          discount.config(text= str(dis_rate) + "" +"% Discount")
+          discount1.config(text=round(discount_rate,2))
+          sub_tot = round(((price + p1 + p2 + p3) - discount_rate),2)
+          sub1.config(text=sub_tot)
+          tax1.config(text=round((tax1_rate + tax2_rate),2))
+          ta2.config(text=round((tax3_rate + tax4_rate),2))
+          cost.config(text=round(exc,2))
+          order1.config(text=round(total_cost,2))
+          tot_paid = 0.0
+          for tp in pym_rir_tr.get_children():
+            tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+          total1.config(text=round(tot_paid,2))
+          bal = round((total_cost - tot_paid),2)
+          balance1.config(text=bal)         
+   
+        def add_newline_pay():
+          if inv_pby_combo.get() == '':
+            messagebox.showinfo("F-Billing Revolution 2022",'Please fill out "Paid by" field!')
+          else:
+            pay_amnt = inv_amnt_entry.get()
+            pay_date = inv_pdate_entry.get_date()
+            pay_by = inv_pby_combo.get()
+            pay_desc = inv_des_entry.get()
+            pay_inv_number = inv_nmb_rir.get()
+            pay_full = checkvar.get()
+            pay_recp = checkvar1.get()
+            pay_att_up = checkvar2.get()
+            pay_sql = "INSERT INTO markinvoice(payment_date,paid_by,description,amount,invoice_number,fully_paid,payment_reciept,attach_invoice) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
+            pay_val = (pay_date,pay_by,pay_desc,pay_amnt,pay_inv_number,pay_full,pay_recp,pay_att_up,)
+            fbcursor.execute(pay_sql,pay_val)
+            fbilldb.commit()
+
+            pay_get_sql = "SELECT * FROM markinvoice ORDER BY paymentid DESC LIMIT 1"
+            fbcursor.execute(pay_get_sql)
+            pay_data = fbcursor.fetchone()
+            pym_rir_tr.insert(parent='',index='end',iid=pay_data[0],text='',values=(pay_data[0],pay_data[1],pay_data[2],pay_data[3],pay_data[4]))
+
+            tot_paid = 0.0
+            for tp in pym_rir_tr.get_children():
+              tot_paid += float(pym_rir_tr.item(tp,'values')[4]) 
+            total1.config(text=round(tot_paid,2))
+            bal = round((total_cost - tot_paid),2)
+            balance1.config(text=bal)
+            mark_inv.destroy()
+
+
+            def inv_send_mail(file=None):
+              # sender_mail = your_cemail_entry.get()
+              sender_mail = "saijuinfox@gmail.com"
+              # sender_password = your_cpass_entry.get()
+              sender_password = "eywcinveepcwchnn"
+
+              server = smtplib.SMTP('smtp.gmail.com', 587)
+              
+              server.starttls()
+          
+              server.login(sender_mail,sender_password)
+          
+
+              carbon_info = email_carbon.get()
+              msg = MIMEMultipart()
+              msg['Subject'] = email_subject.get()
+              mail_content = email_ltr_scroll.get("1.0",'end-1c')
+              msg['From'] = email_from.get()
+              msg['To'] = email_to.get()
+
+              gettingimg = lstfrm.get()
+              lst_data = gettingimg[1:-1].split(',')
+              
+              msg.attach(MIMEText(mail_content, 'plain'))
+              
+              for i in lst_data:
+                if len(i.strip()[1:-1])>1:
+                  with open('images/'+ i.strip()[1:-1], "rb") as attachment:
+                      # MIME attachment is a binary file for that content type "application/octet-stream" is used
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(attachment.read())
+                  # encode into base64 
+                    encoders.encode_base64(part) 
+              
+                    part.add_header('Content-Disposition', "attachment; filename= %s" % 'images/'+ i.strip()[1:-1]) 
+
+                  # attach the instance 'part' to instance 'message' 
+                    msg.attach(part)
+                # message_body = email_body.get()
+
+              server.sendmail(emil_rir.get(),email_to.get(),msg.as_string())
+              server.sendmail(emil_rir.get(), carbon_info,msg.as_string())
+
+              date = dt.datetime.now().date()
+              never1_label.config(text=date)
+
+
+            if checkvar1.get() == 1:
+              send_precp = Toplevel()
+              p2 = PhotoImage(file = "images/fbicon.png")
+              send_precp.iconphoto(False, p2)
+              send_precp.geometry("1030x490+150+120")
+              send_precp.title("Payment reciept E-mail")
+
+              
+
+
+              def inv_empsfile_image(event):
+                global yawn
+                for i in  attach_list.curselection():
+                  print("hloo", attach_list.get(i))
+                  yawn= attach_list.get(i)        
+                  edit_window_img = Toplevel()
+                  edit_window_img.title("View Image")
+                  edit_window_img.geometry("700x500")
+                  image = Image.open("images/"+yawn)
+                  resize_image = image.resize((700, 500))
+                  image = ImageTk.PhotoImage(resize_image)
+                  psimage = Label(edit_window_img,image=image)
+                  psimage.photo = image
+                  psimage.pack()
+              
+              def inv_UploadAction(event=None):
+                global filenamez
+
+                filenamez = askopenfilename(filetypes=(("png file ",'.png'),("jpg file", ".jpg"), ('PDF', '.pdf',), ("All files", ".*"),))
+                shutil.copyfile(filenamez, os.getcwd()+'/images/'+filenamez.split('/')[-1])
+                attach_list.insert(0, filenamez.split('/')[-1])
+
+
+              def inv_deletefile():
+                inv_remove=attach_list.curselection()
+                yawn=attach_list.get(inv_remove) 
+                print(yawn)       
+                attach_list.delete(ACTIVE)
+
+              style = ttk.Style()
+              style.theme_use('default')
+              style.configure('TNotebook.Tab', background="#999999", padding=5)
+              email_Notebook = ttk.Notebook(send_precp)
+              email_Frame = Frame(email_Notebook, height=500, width=1080)
+              account_Frame = Frame(email_Notebook, height=550, width=1080)
+              email_Notebook.add(email_Frame, text="E-mail")
+              email_Notebook.add(account_Frame, text="Account")
+              email_Notebook.place(x=0, y=0)
+              messagelbframe=LabelFrame(email_Frame,text="Message", height=450, width=730)
+              messagelbframe.place(x=5, y=5)
+              global email_to,email_subject,email_from,email_paasw,email_carbon,email_ltr_scroll,email_html_scroll,attach_list,lstfrm
+              email_to = StringVar()
+              email_subject = StringVar()
+              email_from = StringVar()
+              email_passw = StringVar()
+              email_carbon = StringVar()
+              email_to_addr_label=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+              email_to_addr_entry=Entry(messagelbframe, width=50,textvariable=email_to)
+              email_to_addr_entry.place(x=120, y=5)
+              email_addr = emil_rir.get()
+              email_to_addr_entry.delete(0,END)
+              email_to_addr_entry.insert(0,email_addr)
+              send_email_btn=Button(messagelbframe, text="Send Email", width=10, height=1,command=inv_send_mail)
+              send_email_btn.place(x=600, y=10)
+              carbon_label=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+              carbon_entry=Entry(messagelbframe, width=50,textvariable=email_carbon)
+              carbon_entry.place(x=120, y=32)
+              subject_label=Label(messagelbframe, text="Subject").place(x=5, y=59)
+              subject_entry=Entry(messagelbframe, width=50,textvariable=email_subject)
+              subject_entry.place(x=120, y=59)
+              subject = inv_nmb_rir.get()
+              subject_entry.delete(0,END)
+              subject_entry.insert(0,"Payment reciept for Invoice" + " " + "(" + subject + ")")
+
+              style = ttk.Style()
+              style.theme_use('default')
+              style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+              mess_Notebook = ttk.Notebook(messagelbframe)
+              emailmessage_Frame = Frame(mess_Notebook,height=305, width=710)
+              htmlsourse_Frame = Frame(mess_Notebook, height=305, width=710)
+              mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+              mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+              mess_Notebook.place(x=5, y=90)
+
+              email_ltr_scroll=scrolledtext.ScrolledText(emailmessage_Frame, height=17, width=86, bg="white",undo=True,exportselection=False)
+              email_ltr_scroll.config(inactiveselectbackground=email_ltr_scroll.cget("selectbackground"))
+              email_ltr_scroll.place(x=0, y=28)
+              pay_name = cust_selction_nm.get()
+              email_ltr_scroll.delete("1.0",END)
+              email_ltr_scroll.insert("1.0","\n\n  Dear" + " " + pay_name + "," + "\n\n  This message is to inform you that your payment of" + " " + str(pay_amnt) + " " + "for Invoice#" + " " + pay_inv_number + " " + "\n  has been received \n\n  Payment ID: RCPT" + "" + str(pay_data[0]) + "" + "\n  Invoice ID: " + "" + pay_inv_number + "" + "\n  Payment Date: " + "" + str(pay_date) + "" + "\n  Amount: " + "" + str(pay_amnt) + "" + "\n  Paid by: " + "" + pay_by + "" + "\n  Description: " + "" + pay_desc + "" + "\n\n  Thank you for your business.\n  Your Company Name")
+
+              sel_all_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall,command=lambda:email_ltr_scroll.event_generate('<Control a>'))
+              sel_all_btn.place(x=0, y=1)  
+              cut_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :email_ltr_scroll.event_generate('<Control x>'))
+              cut_btn.place(x=36, y=1)
+              copy_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :email_ltr_scroll.event_generate('<Control c>'))
+              copy_btn.place(x=73, y=1)
+              paste_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :email_ltr_scroll.event_generate('<Control v>'))
+              paste_btn.place(x=105, y=1)
+              undo_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo,command=email_ltr_scroll.edit_undo)
+              undo_btn.place(x=140, y=1)
+              redo_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo,command=email_ltr_scroll.edit_redo)
+              redo_btn.place(x=175, y=1)
+
+              def bold_text():
+                bold_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+                bold_font.configure(weight="bold")
+
+                email_ltr_scroll.tag_configure("bold", font=bold_font)
+
+                current_tags = email_ltr_scroll.tag_names("sel.first")
+
+                if "bold" in current_tags:
+                  email_ltr_scroll.tag_remove("bold", "sel.first", "sel.last")
+                else:
+                  email_ltr_scroll.tag_add("bold", "sel.first", "sel.last")
+              bold_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=bold_text)
+              bold_btn.place(x=210, y=1)
+
+              def italic_text():
+                italic_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+                italic_font.configure(slant="italic")
+
+                email_ltr_scroll.tag_configure("italic", font=italic_font)
+
+                current_tags = email_ltr_scroll.tag_names("sel.first")
+
+                if "italic" in current_tags:
+                  email_ltr_scroll.tag_remove("italic", "sel.first", "sel.last")
+                else:
+                  email_ltr_scroll.tag_add("italic", "sel.first", "sel.last")
+              italic_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=italic_text)
+              italic_btn.place(x=245, y=1)
+
+              def underline_text():
+                try:
+                  if email_ltr_scroll.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
+                      email_ltr_scroll.tag_remove('underline_selection', 'sel.first', 'sel.last')
+                  else:
+                      email_ltr_scroll.tag_add('underline_selection', 'sel.first', 'sel.last')
+                      email_ltr_scroll.tag_configure('underline_selection', underline=True)
+                except TclError:
+                    pass
+              underline_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=underline_text)
+              underline_btn.place(x=280, y=1)
+
+              def align_left():
+                data = email_ltr_scroll.get(0.0,END)
+                email_ltr_scroll.tag_config('left',justify=LEFT)
+                email_ltr_scroll.delete(0.0,END)
+                email_ltr_scroll.insert(INSERT,data,'left')
+              align_lbtn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=align_left)
+              align_lbtn.place(x=315, y=1)
+
+              def align_right():
+                data = email_ltr_scroll.get(0.0,END)
+                email_ltr_scroll.tag_config('right',justify=RIGHT)
+                email_ltr_scroll.delete(0.0,END)
+                email_ltr_scroll.insert(INSERT,data,'right')
+              align_rbtn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=align_right)
+              align_rbtn.place(x=350, y=1)
+
+              def align_center():
+                data = email_ltr_scroll.get(0.0,END)
+                email_ltr_scroll.tag_config('center',justify=CENTER)
+                email_ltr_scroll.delete(0.0,END)
+                email_ltr_scroll.insert(INSERT,data,'center')
+              align_cbtn= Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=align_center)
+              align_cbtn.place(x=385, y=1)
+              hyper_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink)
+              hyper_btn.place(x=420, y=1)
+              remove_btn = Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :email_ltr_scroll.delete(0.0,END))
+              remove_btn.place(x=455, y=1)
+
+              def color_text():
+                color = colorchooser.askcolor()[1]
+                if color:
+                  color_font = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+
+                  email_ltr_scroll.tag_configure("colored", font=color_font, foreground=color)
+
+                  current_tags = email_ltr_scroll.tag_names("sel.first")
+
+                  if "colored" in current_tags:
+                    email_ltr_scroll.tag_remove("colored", "sel.first", "sel.last")
+                  else:
+                    email_ltr_scroll.tag_add("colored", "sel.first", "sel.last")
+              color_btn = Button(emailmessage_Frame, width=31, height=23,compound = LEFT,image=color,command=color_text)
+              color_btn.place(x=490,y=1)
+
+              def fontsize_chooser(event):
+                font_size = font.Font(email_ltr_scroll, email_ltr_scroll.cget("font"))
+                font_size.configure(size=int(fontsize_combo.get())*7)
+
+                email_ltr_scroll.tag_configure("size", font=font_size)
+                current_tags = email_ltr_scroll.tag_names("sel.first")
+
+                email_ltr_scroll.tag_add("size", "sel.first", "sel.last")
+
+              
+              fontsize_combo = ttk.Combobox(emailmessage_Frame, width=6, height=10)
+              fontsize_combo.place(x=600, y=5)
+              fontsize_combo['values'] = ("1","2","3","4","5","6","7")
+              fontsize_combo.current(0)
+              fontsize_combo.bind("<<ComboboxSelected>>",fontsize_chooser)
+              btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+              btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+              btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+              btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+              email_html_scroll=scrolledtext.ScrolledText(htmlsourse_Frame,undo=True, height=350, width=710, bg="white")
+              email_html_scroll.place(x=0, y=28)
+              attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=283)
+              attachlbframe.place(x=740, y=5)
+              lstfrm = StringVar()
+              attach_list=Listbox(attachlbframe, height=13, width=44,listvariable=lstfrm, bg="white")
+              attach_list.place(x=5, y=5)
+              attach_list.bind('<Double-Button-1>',inv_empsfile_image)
+              lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+              btn17=Button(attachlbframe, width=20, text="Add attacment file...",command=inv_UploadAction)
+              btn17.place(x=60, y=260)
+              btn18=Button(attachlbframe, width=20, text="Remove attacment",command=inv_deletefile)
+              btn18.place(x=60, y=295)
+              lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+              lbl_tt_info.place(x=740, y=370)
+
+              ready_frame=Frame(send_precp, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+              
+              sendatalbframe = LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+              sendatalbframe.place(x=5, y=5)
+              your_cemail_label = Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+              your_cemail_entry = Entry(sendatalbframe, width=40)
+              your_cemail_entry.place(x=195, y=30)
+
+              your_cpass_label = Label(sendatalbframe, text="Your Password").place(x=5, y=60)
+              your_cpass_entry = Entry(sendatalbframe, width=40,show='*')
+              your_cpass_entry.place(x=195, y=60)
+              
+            else:
+              pass
+
+        def cancel_newline_pay():
+          mark_inv.destroy()
+
+
+
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('TNotebook.Tab', background="#999999", padding=5)
+        mark_Notebook = ttk.Notebook(mark_inv)
+        Mark_Invoice = Frame(mark_Notebook, height=470, width=750)
+        mark_Notebook.add(Mark_Invoice, text="Mark Invoice")
+        mark_Notebook.place(x=0, y=0)
+
+        inv_bal_label=Label(Mark_Invoice, text="Invoice Balance").place(x=10, y=10)
+        inv_bal_entry=Label(Mark_Invoice, width=25,fg="red",bg="white",text=bal,font=("Arial",10,"bold"))
+        inv_bal_entry.place(x=130, y=10)
+        labelframe5 = LabelFrame(Mark_Invoice,text="Payement Record Details",bg="#f5f3f2")
+        labelframe5.place(x=10,y=60,width=670,height=250)
+        inv_amnt_entry = Entry(labelframe5,width=28)
+        inv_amnt_entry.place(x=30,y=45)
+        inv_amnt_entry.delete(0, END)
+        inv_amnt_entry.insert(0, bal)
+        inv_pdate_label = Label(labelframe5, text="Payement Date:",bg="#f5f3f2").place(x=250,y=20)
+        inv_pdate_entry = DateEntry(labelframe5,width=28)
+        inv_pdate_entry.place(x=220,y=45)
+        inv_pby_label = Label(labelframe5, text="Paid By:",bg="#f5f3f2").place(x=450,y=20)
+        term_sql = "SELECT terms_of_payment FROM terms_of_payment"
+        fbcursor.execute(term_sql,)
+        term_data = fbcursor.fetchall()
+        tdata = []
+        for i in term_data:
+          tdata.append(i[0])
+        inv_pby_combo = ttk.Combobox(labelframe5, value=tdata)
+        inv_pby_combo.place(x=450,y=45)
+        inv_pby_combo.bind("<<ComboboxSelected>>")
+        inv_des_label=Label(labelframe5, text="Description").place(x=30, y=80)
+        inv_des_entry =Entry(labelframe5, width=100)
+        inv_des_entry.place(x=30, y=120)
+        checkvar=IntVar()
+        inv_pfull_check = Checkbutton(labelframe5,text="Paid in full and close invoice",variable=checkvar,onvalue=1,offvalue=0,bg="#f5f3f2")
+        inv_pfull_check.place(x=30 ,y=150)
+        inv_precp_label = Label(labelframe5,text="Payement Reciepts",bg="#f5f3f2").place(x=300,y=145)
+        checkvar1=IntVar()
+        inv_send_precp = Checkbutton(labelframe5,text="Send Payement Reciept",variable=checkvar1,onvalue=1,offvalue=0,bg="#f5f3f2")
+        inv_send_precp.place(x=320 ,y=170)
+        checkvar2=IntVar()
+        inv_att_upinv = Checkbutton(labelframe5,text="Attach updated invoice",variable=checkvar2,onvalue=1,offvalue=0,bg="#f5f3f2")
+        inv_att_upinv.place(x=320 ,y=200)
+
+        inv_pok_btn =Button(Mark_Invoice,compound = LEFT,image=tick , text="Save payement", width=100,command=add_newline_pay)
+        inv_pok_btn.place(x=10, y=350)
+        inv_pcan_btn =Button(Mark_Invoice,compound = LEFT,image=cancel, text="Cancel", width=100,command=cancel_newline_pay)
+        inv_pcan_btn.place(x=500, y=350)
+    
 
     
   #voidinvoice
@@ -24899,19 +25952,9 @@ def view_invs_rir():
                   dgt="Yes"
                 else:
                   dgt="No"
-                  if crcy_tp_ps=="before amount":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-                    count_prd +=1
-                  elif crcy_tp_ps=="after amount":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
-                    count_prd +=1
-                  elif crcy_tp_ps=="before amount with space":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                  elif crcy_tp_ps=="after amount with space":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-                    count_prd +=1
-                  else:
-                    pass
+                
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],dgt,i[13]))
+                count_prd +=1
 
       elif int(taxtype[0])==3:
               rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
@@ -24931,19 +25974,8 @@ def view_invs_rir():
                       dlt="Yes"
                     else:
                       dlt="No"
-                    if crcy_tp_ps=="before amount":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-                        count_prd +=1
-                    elif crcy_tp_ps=="after amount":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-                        count_prd +=1
-                    elif crcy_tp_ps=="before amount with space":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
-                    elif crcy_tp_ps=="after amount with space":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-                        count_prd +=1
-                    else:
-                        pass
+                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],dgt,dlt,i[13]))
+                    count_prd +=1
 
       else:
               
@@ -24956,19 +25988,8 @@ def view_invs_rir():
               for record in prd_tree.get_children():
                 prd_tree.delete(record)
               for i in main_prd_val:
-                      if crcy_tp_ps=="before amount":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-                        count_prd +=1
-                      elif crcy_tp_ps=="after amount":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-                        count_prd +=1
-                      elif crcy_tp_ps=="before amount with space":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-                      elif crcy_tp_ps=="after amount with space":
-                        prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-                        count_prd +=1
-                      else:
-                        pass
+                      prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[13]))
+                      count_prd +=1
           
       sm_qry="select sum(price) from storingproduct where invoice_number=%s"
       sm_qry_val=(inv_nmb_rir.get(),)
@@ -25269,6 +26290,9 @@ def view_invs_rir():
     discount=smr_discount
     terms=trms.get(1.0,END)
     term_of_payment=cmb_trms.get()
+
+    em_on=nev1.cget("text")
+    pr_on=nev2.cget("text")
     if int(dtl_tx[12])==3:
       tax2=tax2_rir.get()
       tax1=tax1_rir.get()
@@ -25294,53 +26318,53 @@ def view_invs_rir():
       if stop_recurring_check==1:
         if int(dtl_tx[12])==3:
           
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
         elif int(dtl_tx[12])==2:
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
         else:
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,stop_recurring,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,stop_recurring_check,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
       else:
         if int(dtl_tx[12])==3:
           print("welcome")
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
         elif int(dtl_tx[12])==2:
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
         else:
-          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,invoice_number,)
+          rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+          rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,recurring_period,next_invoice,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,recurring_period_month,em_on,pr_on,invoice_number,)
           fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
           fbilldb.commit()
 
     else:
       if int(dtl_tx[12])==3:
         
-        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,invoice_number,)
+        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,tax2=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,tax2,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,em_on,pr_on,invoice_number,)
         fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
         fbilldb.commit()
       elif int(dtl_tx[12])==2:
-        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,invoice_number,)
+        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,tax1=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,tax1,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,em_on,pr_on,invoice_number,)
         fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
         fbilldb.commit()
       else:
-        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s where invoice_number=%s"
-        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,invoice_number,)
+        rir_tbl_edit="update invoice set invoice_number=%s,invodate=%s,duedate=%s,invoicetot=%s,extracostname=%s,extracost=%s,template=%s,salesper=%s,discourate=%s,category=%s,businessname=%s,businessaddress=%s,shipname=%s,shipaddress=%s,cpemail=%s,cpmobileforsms=%s,recurring_check=%s,recurring_period=%s,next_invoice=%s,stop_recurring=%s,discount=%s,terms=%s,term_of_payment=%s,quantity=%s,title_text=%s,header_text=%s,footer_text=%s,comments=%s,privatenotes=%s,subtotal=%s,stop_recurring_check=%s,recurring_period_month=%s,emailon=%s,printon=%s where invoice_number=%s"
+        rir_tbl_edit_val=(invoice_number,invodate,duedate,invoicetot,extracostname,extracost,template,salesper,discourate,category,businessname,businessaddress,shipname,shipaddress,cpemail,cpmobileforsms,recurring_check,None,None,None,discount,terms,term_of_payment,quantity,title_text,header_text,footer_text,comments,privatenotes,subtotal,None,None,em_on,pr_on,invoice_number,)
         fbcursor.execute(rir_tbl_edit,rir_tbl_edit_val)
         fbilldb.commit()
 
@@ -39772,14 +40796,7 @@ def view_invs_rir():
         rir_pdf.save()
         win32api.ShellExecute(0,"",os.getcwd()+"/recurring_reports/"+invnumber+".pdf",None,".",0)
     nev2.config(text=date.today())
-    try:
-        rir_inv_nbs = rir_tree.item(rir_tree.focus())["values"][1]
-    except:
-        messagebox.showerror("F-Billing Revolution","Customer is required,please select customer before printing") 
-    sql_mrk_void="update invoice set printon=%s where invoice_number=%s"
-    sql_mrk_voi_val=(date.today(),rir_inv_nbs)
-    fbcursor.execute(sql_mrk_void,sql_mrk_voi_val)
-    fbilldb.commit()
+    
 
   def rir2_send_mails():
       # try:
@@ -49837,70 +50854,70 @@ def view_invs_rir():
       #--
 
       
-  try:
-    firFrame=Frame(pop, bg="#f5f3f2", height=60)
-    firFrame.pack(side="top", fill=X)
+  
+  firFrame=Frame(pop, bg="#f5f3f2", height=60)
+  firFrame.pack(side="top", fill=X)
 
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
 
-    create = Button(firFrame,compound="top", text="Select\nCustomer",relief=RAISED, image=customer,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=customer_invoice_recurring)
-    create.pack(side="left", pady=3, ipadx=4)
-
-
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
-
-    add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=recurring_New_newline)
-    add.pack(side="left", pady=3, ipadx=4)
-
-    dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
-    dele.pack(side="left", pady=3, ipadx=4)
-
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
-
-    prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=priv_vi_ed)
-    prev.pack(side="left", pady=3, ipadx=4)
-
-    prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_prnt_inv_rir)
-    prin.pack(side="left", pady=3, ipadx=4)
-
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
-
-    mail= Button(firFrame,compound="top", text="Email\nInvoice",relief=RAISED, image=photo6,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir2_addemail_order)
-    mail.pack(side="left", pady=3, ipadx=4)
-
-    sms1= Button(firFrame,compound="top", text="Send SMS\nnotification",relief=RAISED, image=photo10,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sms_recurring)
-    sms1.pack(side="left", pady=3, ipadx=4)
-
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
-
-    mark= Button(firFrame,compound="top", text="Mark invoice\nas 'Paid'",relief=RAISED, image=mark1,bg="#f5f3f2", fg="black", height=55, bd=1, width=57,command=markinvoice_recurring)
-    mark.pack(side="left", pady=3, ipadx=4)
-
-    void= Button(firFrame,compound="top", text="Void\ninvoice",relief=RAISED, image=mark2,bg="#f5f3f2", fg="black", height=55, bd=1, width=56,command=rir_voidinvoice_recurring)
-    void.pack(side="left", pady=3, ipadx=4)
+  create = Button(firFrame,compound="top", text="Select\nCustomer",relief=RAISED, image=customer,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=customer_invoice_recurring)
+  create.pack(side="left", pady=3, ipadx=4)
 
 
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
 
-    calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
-    calc.pack(side="left", pady=3, ipadx=4)
+  add= Button(firFrame,compound="top", text="Add new\nline item",relief=RAISED, image=addnew,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=recurring_New_newline)
+  add.pack(side="left", pady=3, ipadx=4)
 
-    w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=5)
+  dele= Button(firFrame,compound="top", text="Delete line\nitem",relief=RAISED, image=delete,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_delete)
+  dele.pack(side="left", pady=3, ipadx=4)
 
-    calc= Button(firFrame,compound="top", text="Save",relief=RAISED, image=saves,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sv_edit)
-    calc.pack(side="right", pady=3, ipadx=4)
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
 
-    fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
-    fir1Frame.pack(side="top", fill=X)
+  prev= Button(firFrame,compound="top", text="Preview\nInvoice",relief=RAISED, image=photo4,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=priv_vi_ed)
+  prev.pack(side="left", pady=3, ipadx=4)
+
+  prin= Button(firFrame,compound="top", text="Print \nInvoice",relief=RAISED, image=photo5,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir_prnt_inv_rir)
+  prin.pack(side="left", pady=3, ipadx=4)
+
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
+
+  mail= Button(firFrame,compound="top", text="Email\nInvoice",relief=RAISED, image=photo6,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=rir2_addemail_order)
+  mail.pack(side="left", pady=3, ipadx=4)
+
+  sms1= Button(firFrame,compound="top", text="Send SMS\nnotification",relief=RAISED, image=photo10,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sms_recurring)
+  sms1.pack(side="left", pady=3, ipadx=4)
+
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
+
+  mark= Button(firFrame,compound="top", text="Mark invoice\nas 'Paid'",relief=RAISED, image=mark1,bg="#f5f3f2", fg="black", height=55, bd=1, width=57,command=rir_mrk_inv)
+  mark.pack(side="left", pady=3, ipadx=4)
+
+  void= Button(firFrame,compound="top", text="Void\ninvoice",relief=RAISED, image=mark2,bg="#f5f3f2", fg="black", height=55, bd=1, width=56,command=rir_voidinvoice_recurring)
+  void.pack(side="left", pady=3, ipadx=4)
+
+
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
+
+  calc= Button(firFrame,compound="top", text="Open\nCalculator",relief=RAISED, image=photo9,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=clcu_rcrir)
+  calc.pack(side="left", pady=3, ipadx=4)
+
+  w = Canvas(firFrame, width=1, height=65, bg="#b3b3b3", bd=0)
+  w.pack(side="left", padx=5)
+
+  calc= Button(firFrame,compound="top", text="Save",relief=RAISED, image=saves,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=sv_edit)
+  calc.pack(side="right", pady=3, ipadx=4)
+
+  fir1Frame=Frame(pop, height=180,bg="#f5f3f2")
+  fir1Frame.pack(side="top", fill=X)
     #---------------------------------------------------------------------------------------------Customer Selection Functiopn
-    def name_sltd(event):
+  def name_sltd(event):
       
     
       sdrt_qsy='select * from customer where businessname=%s'
@@ -50244,268 +51261,145 @@ def view_invs_rir():
             pass
 
 
-      #=---------------------------------------------------------------------------------------Table
-      # sql_yty='select taxtype from company'
-      # fbcursor.execute(sql_yty)
-      # taxtype=fbcursor.fetchone()
-      # if int(taxtype[0])==3:
-      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      #   main_prd_val=fbcursor.fetchall()
-      #   count_prd=0
-      #   for record in prd_tree.get_children():
-      #     prd_tree.delete(record)
-
-      #   for i in main_prd_val:
-      #         if i[11] is not None:
-      #           dgt="Yes"
-      #         else:
-      #           dgt="No"
-      #         if i[12] is not None:
-      #           dlt="Yes"
-      #         else:
-      #           dlt="No"
-      #         if crcy_tp_ps=="before amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="after amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="before amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
-      #         elif crcy_tp_ps=="after amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-      #             count_prd +=1
-      #         else:
-      #             pass
-
-      # elif int(taxtype[0])==2:
-        
-      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      #   main_prd_val=fbcursor.fetchall()
-      #   count_prd=0
-      #   for record in prd_tree.get_children():
-      #     prd_tree.delete(record)
-      #   for i in main_prd_val:
-      #         if i[11] is not None:
-      #           dgt="Yes"
-      #         else:
-      #           dgt="No"
-      #         if crcy_tp_ps=="before amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="after amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,str(i[13])+str(crcy_tp)))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="before amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-      #         elif crcy_tp_ps=="after amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-      #             count_prd +=1
-      #         else:
-      #             pass
-      # else:
-      #   rir_prd_table_sql="select * from storingproduct where invoice_number=%s"
-      #   rir_prd_table_sql_qry=(inv_nmb_rir.get(),)
-      #   fbcursor.execute(rir_prd_table_sql,rir_prd_table_sql_qry)
-      #   main_prd_val=fbcursor.fetchall()
-      #   count_prd=0
-      #   for record in prd_tree.get_children():
-      #     prd_tree.delete(record)
-      #   for i in main_prd_val:
-      #         if crcy_tp_ps=="before amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="after amount":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-      #             count_prd +=1
-      #         elif crcy_tp_ps=="before amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-      #         elif crcy_tp_ps=="after amount with space":
-      #             prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-      #             count_prd +=1
-      #         else:
-      #             pass
+  cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
       
-      #--------------------------------------------------------------------------------------recurring
-      if dtl_inv[24] is not None:
-        stp_rir.select()
-      else:
-        stp_rir.deselect()
-      if dtl_inv[27] is not None:
-        stp_rir2.select()
-      else:
-        stp_rir2.deselect()
+  sdrt_qsy='select businessname from customer'
+  fbcursor.execute(sdrt_qsy)
+  dtl_rir=fbcursor.fetchall()
 
-      dt_nxt_inv.delete(0,END)
-      dt_nxt_inv.insert(0,dtl_inv[26])
-      dt_stp_inv.delete(0,END)
-      dt_stp_inv.insert(0,dtl_inv[27])
+  sdrts_qsy='select * from customer where businessname=%s'
+  sdrt_qry_qtr=(cusr_selct,)
+  fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
+  dtl_rissr_cus=fbcursor.fetchone()
 
-      #-------------------------------------------------------------------------------------Header Fotter
-      cmp_ttl.delete(0,END)
-      cmp_ttl.insert(0,dtl_inv[39])
-      cmp_ht.delete(0,END)
-      cmp_ht.insert(0,dtl_inv[40])
-      cmp_ft.delete(0,END)
-      cmp_ft.insert(0,dtl_inv[41])
-      #=======================================================================private note
-      prv_nt.delete(1.0,END)
-      prv_nt.insert(1.0,dtl_inv[45])
-      #=======================================================================terms
-      trms.delete(1.0,END)
-      trms.insert(1.0,dtl_inv[35])
-      #=======================================================================comments
-      cmm.delete(1.0,END)
-      cmm.insert(1.0,dtl_inv[44])
-
-
-    cusr_selct=rir_tree.item(rir_tree.focus())["values"][5]#---------------------------------values Insertion edit
-      
-    sdrt_qsy='select businessname from customer'
-    fbcursor.execute(sdrt_qsy)
-    dtl_rir=fbcursor.fetchall()
-
-    sdrts_qsy='select * from customer where businessname=%s'
-    sdrt_qry_qtr=(cusr_selct,)
-    fbcursor.execute(sdrts_qsy,sdrt_qry_qtr)
-    dtl_rissr_cus=fbcursor.fetchone()
-
-    sdou_qsy='select * from invoice where businessname=%s'
-    sdou_qsy_qry=(cusr_selct,)
-    fbcursor.execute(sdou_qsy,sdou_qsy_qry)
-    dtl_inv=fbcursor.fetchone()
-    #-----------------------------------------------------------------------------------button >>
-    def cpy_dts():
+  sdou_qsy='select * from invoice where businessname=%s'
+  sdou_qsy_qry=(cusr_selct,)
+  fbcursor.execute(sdou_qsy,sdou_qsy_qry)
+  dtl_inv=fbcursor.fetchone()
+  #-----------------------------------------------------------------------------------button >>
+  def cpy_dts():
       
       shp_to_rir.delete(0,END)
       shp_to_rir.insert(0,cust_selction_nm.get())
       shp_to_adr_rir.delete(1.0,END)
       shp_to_adr_rir.insert(1.0,address_rir.get(1.0,END))
       pass
-    labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
-    labelframe1.place(x=10,y=5,width=640,height=160)
-    order = Label(labelframe1, text="Order to").place(x=10,y=5)
+  labelframe1 = LabelFrame(fir1Frame,text="Customers",font=("arial",15))
+  labelframe1.place(x=10,y=5,width=640,height=160)
+  order = Label(labelframe1, text="Order to").place(x=10,y=5)
     
-    cust_selction_nm=StringVar()
-    cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
-    cmb_main_bx.insert(0,dtl_inv[18])
+  cust_selction_nm=StringVar()
+  cmb_main_bx = ttk.Combobox(labelframe1,width=28, textvariable=cust_selction_nm)
+  cmb_main_bx.insert(0,dtl_inv[18])
 
-    rir_dt_cst=[]
-    for i in dtl_rir:
+  rir_dt_cst=[]
+  for i in dtl_rir:
       rir_dt_cst.append(i[0])
       
-    cmb_main_bx['values']=rir_dt_cst
+  cmb_main_bx['values']=rir_dt_cst
     
-    cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
-    cmb_main_bx.place(x=80,y=5)
+  cmb_main_bx.bind('<<ComboboxSelected>>',name_sltd)
+  cmb_main_bx.place(x=80,y=5)
 
     
-    sdrt_qsy='select * from customer where businessname=%s'
-    sdrt_qry_qtr=(cusr_selct,)
-    fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
-    dtl_rir_cus=fbcursor.fetchone()
+  sdrt_qsy='select * from customer where businessname=%s'
+  sdrt_qry_qtr=(cusr_selct,)
+  fbcursor.execute(sdrt_qsy,sdrt_qry_qtr)
+  dtl_rir_cus=fbcursor.fetchone()
 
+
+
+  sdous_qsy='select distinct term_of_payment from invoice'
+  fbcursor.execute(sdous_qsy)
+  dtl_inv_all=fbcursor.fetchall()
+
+
+  address=Label(labelframe1,text="Address").place(x=10,y=30)
+  address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
+  address_rir.delete(1.0,END)
+  address_rir.insert(1.0,dtl_inv[19])
+  address_rir.place(x=80,y=30,height=70)
+
+  ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
+  shp_to_rir=Entry(labelframe1,width=30)
+  shp_to_rir.delete(0,END)
+  shp_to_rir.insert(0,dtl_inv[20])
+  shp_to_rir.place(x=402,y=3)
+  address1=Label(labelframe1,text="Address").place(x=340,y=30)
+  shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
+  shp_to_adr_rir.delete(1.0,END)
+  shp_to_adr_rir.insert(1.0,dtl_inv[21])
+  shp_to_adr_rir.place(x=402,y=30,height=70)
+
+  btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
       
+  labelframe2 = LabelFrame(fir1Frame,text="")
+  labelframe2.place(x=10,y=130,width=640,height=42)
+  email=Label(labelframe2,text="Email").place(x=10,y=5)
+  emil_rir=Entry(labelframe2,width=30)
+  emil_rir.delete(0,END)
+  emil_rir.insert(0,dtl_inv[22])
 
+  emil_rir.place(x=80,y=5)
+  sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
+  sms_shpto_rir=Entry(labelframe2,width=30)
+  sms_shpto_rir.delete(0,END)
+  sms_shpto_rir.insert(0,dtl_inv[23])
+  sms_shpto_rir.place(x=402,y=5)
     
+  global inv_nmb_rir
+  labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
+  labelframe.place(x=652,y=5,width=290,height=170)
+  order=Label(labelframe,text="Invoice#").place(x=5,y=5)
+  inv_nmb_rir=Entry(labelframe,width=25)
+  inv_nmb_rir.delete(0,END)
+  inv_nmb_rir.insert(0,dtl_inv[1])
+  inv_nmb_rir.place(x=100,y=5,)
+  orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
+  inv_dt_rir=DateEntry(labelframe,width=20)
+  inv_dt_rir.delete(1,END)
+  inv_dt_rir.insert(0,dtl_inv[2])
+  inv_dt_rir.place(x=150,y=33)
+  chk_dur=IntVar()
+  duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
+  due_dt_rir=DateEntry(labelframe,width=20)
+  due_dt_rir.delete(0,END)
+  due_dt_rir.insert(0,dtl_inv[2])
+  due_dt_rir.place(x=150,y=62)
+  terms=Label(labelframe,text="Terms").place(x=5,y=92)
+  cmb_trms=StringVar()
+  trms_cmb=ttk.Combobox(labelframe,width=25,textvariable=cmb_trms)
 
-    
-
-    sdous_qsy='select distinct term_of_payment from invoice'
-    fbcursor.execute(sdous_qsy)
-    dtl_inv_all=fbcursor.fetchall()
-
-
-    address=Label(labelframe1,text="Address").place(x=10,y=30)
-    address_rir=scrolledtext.ScrolledText(labelframe1,width=23,)
-    address_rir.delete(1.0,END)
-    address_rir.insert(1.0,dtl_inv[19])
-    address_rir.place(x=80,y=30,height=70)
-
-    ship=Label(labelframe1,text="Ship to").place(x=342,y=5)
-    shp_to_rir=Entry(labelframe1,width=30)
-    shp_to_rir.delete(0,END)
-    shp_to_rir.insert(0,dtl_inv[20])
-    shp_to_rir.place(x=402,y=3)
-    address1=Label(labelframe1,text="Address").place(x=340,y=30)
-    shp_to_adr_rir=scrolledtext.ScrolledText(labelframe1,width=23)
-    shp_to_adr_rir.delete(1.0,END)
-    shp_to_adr_rir.insert(1.0,dtl_inv[21])
-    shp_to_adr_rir.place(x=402,y=30,height=70)
-
-    btn1=Button(labelframe1,width=3,height=2,compound = LEFT,text=">>",command=cpy_dts).place(x=280, y=50)
-      
-    labelframe2 = LabelFrame(fir1Frame,text="")
-    labelframe2.place(x=10,y=130,width=640,height=42)
-    email=Label(labelframe2,text="Email").place(x=10,y=5)
-    emil_rir=Entry(labelframe2,width=30)
-    emil_rir.delete(0,END)
-    emil_rir.insert(0,dtl_inv[22])
-
-    emil_rir.place(x=80,y=5)
-    sms=Label(labelframe2,text="SMS Number").place(x=328,y=5)
-    sms_shpto_rir=Entry(labelframe2,width=30)
-    sms_shpto_rir.delete(0,END)
-    sms_shpto_rir.insert(0,dtl_inv[23])
-    sms_shpto_rir.place(x=402,y=5)
-    
-    global inv_nmb_rir
-    labelframe = LabelFrame(fir1Frame,text="Invoice",font=("arial",15))
-    labelframe.place(x=652,y=5,width=290,height=170)
-    order=Label(labelframe,text="Invoice#").place(x=5,y=5)
-    inv_nmb_rir=Entry(labelframe,width=25)
-    inv_nmb_rir.delete(0,END)
-    inv_nmb_rir.insert(0,dtl_inv[1])
-    inv_nmb_rir.place(x=100,y=5,)
-    orderdate=Label(labelframe,text="Invoice date").place(x=5,y=33)
-    inv_dt_rir=DateEntry(labelframe,width=20)
-    inv_dt_rir.delete(1,END)
-    inv_dt_rir.insert(0,dtl_inv[2])
-    inv_dt_rir.place(x=150,y=33)
-    chk_dur=IntVar()
-    duedate=Checkbutton(labelframe,variable = chk_dur,text="Due date",onvalue =0 ,offvalue = 1).place(x=5,y=62)
-    due_dt_rir=DateEntry(labelframe,width=20)
-    due_dt_rir.delete(0,END)
-    due_dt_rir.insert(0,dtl_inv[2])
-    due_dt_rir.place(x=150,y=62)
-    terms=Label(labelframe,text="Terms").place(x=5,y=92)
-    cmb_trms=StringVar()
-    trms_cmb=ttk.Combobox(labelframe,width=25,textvariable=cmb_trms)
-
-    dtl_trm=[]
-    for i in dtl_inv_all:
+  dtl_trm=[]
+  for i in dtl_inv_all:
       dtl_trm.append(i[0])
 
-    trms_cmb['values']=dtl_trm
-    trms_cmb.delete(0,END)
-    trms_cmb.insert(0,dtl_inv[35])
-    trms_cmb.place(x=100,y=92)
+  trms_cmb['values']=dtl_trm
+  trms_cmb.delete(0,END)
+  trms_cmb.insert(0,dtl_inv[35])
+  trms_cmb.place(x=100,y=92)
 
-    ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
-    refhash=Entry(labelframe,width=27)
-    refhash.insert(0,dtl_inv[43])
-    refhash.place(x=100,y=118)
+  ref=Label(labelframe,text="Order ref#").place(x=5,y=118)
+  refhash=Entry(labelframe,width=27)
+  refhash.insert(0,dtl_inv[43])
+  refhash.place(x=100,y=118)
 
       
-    #----------------------------------------------------------------------------------------------product Table
-    sql_yty='select taxtype from company'
-    fbcursor.execute(sql_yty)
-    taxtype=fbcursor.fetchone()
-    sqlr= 'select currencysign from company'
-    fbcursor.execute(sqlr)
-    crncy=fbcursor.fetchone()
-    crcy_tp=crncy[0]
-    sqlrt= 'select currsignplace from company'
-    fbcursor.execute(sqlrt)
-    post_rp=fbcursor.fetchone()
-    crcy_tp_ps=post_rp[0]
+  #----------------------------------------------------------------------------------------------product Table
+  sql_yty='select taxtype from company'
+  fbcursor.execute(sql_yty)
+  taxtype=fbcursor.fetchone()
+  sqlr= 'select currencysign from company'
+  fbcursor.execute(sqlr)
+  crncy=fbcursor.fetchone()
+  crcy_tp=crncy[0]
+  sqlrt= 'select currsignplace from company'
+  fbcursor.execute(sqlrt)
+  post_rp=fbcursor.fetchone()
+  crcy_tp_ps=post_rp[0]
     
-    global prd_tree
-    if int(taxtype[0])==2:
+  global prd_tree
+  if int(taxtype[0])==2:
         fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
         fir2Frame.pack(side="top", fill=X)
         listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
@@ -50547,25 +51441,15 @@ def view_invs_rir():
                 dgt="Yes"
               else:
                 dgt="No"
-              if crcy_tp_ps=="before amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+str(i[13])))
-                  count_prd +=1
-              elif crcy_tp_ps=="after amount":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                    count_prd +=1
-              elif crcy_tp_ps=="before amount with space":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,str(crcy_tp)+" "+str(i[13])))
-                    count_prd +=1
-              elif crcy_tp_ps=="after amount with space":
-                    prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,str(i[13])+" "+str(crcy_tp)))
-                    count_prd +=1
-              else:
-                    pass
+              
+              prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],dgt,i[13]))
+              count_prd +=1
+              
               
         
         prd_tree.pack(fill="both", expand=1)
 
-    elif int(taxtype[0])==3:
+  elif int(taxtype[0])==3:
         
         fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
         fir2Frame.pack(side="top", fill=X)
@@ -50611,25 +51495,15 @@ def view_invs_rir():
                 dlt="Yes"
               else:
                 dlt="No"
-              if crcy_tp_ps=="before amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+str(i[13])))
-                  count_prd +=1
-              elif crcy_tp_ps=="after amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],dgt,dlt,str(i[13])+str(crcy_tp)))
-                  count_prd +=1
-              elif crcy_tp_ps=="before amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],dgt,dlt,str(crcy_tp)+" "+str(i[13])))
-                  count_prd +=1
-              elif crcy_tp_ps=="after amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],dgt,dlt,str(i[13])+" "+str(crcy_tp)))
-                  count_prd +=1
-              else:
-                  pass
+             
+              prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],dgt,dlt,i[13]))
+              count_prd +=1
+             
 
         prd_tree.pack(fill="both", expand=1)
         
 
-    else:
+  else:
         fir2Frame=Frame(pop, height=150,width=100,bg="#f5f3f2")
         fir2Frame.pack(side="top", fill=X)
         listFrame = Frame(fir2Frame, bg="white", height=140,borderwidth=5,  relief=RIDGE)
@@ -50663,84 +51537,74 @@ def view_invs_rir():
         for record in prd_tree.get_children():
           prd_tree.delete(record)
         for i in main_prd_val:
-                if crcy_tp_ps=="before amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+str(i[8]),i[9],i[10],str(crcy_tp)+str(i[13])))
-                  count_prd +=1
-                elif crcy_tp_ps=="after amount":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+str(str(crcy_tp)),i[9],i[10],str(i[13])+str(crcy_tp)))
-                  count_prd +=1
-                elif crcy_tp_ps=="before amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(crcy_tp)+" "+str(i[8]),i[9],i[10],str(crcy_tp)+" "+str(i[13])))
-                  count_prd +=1
-                elif crcy_tp_ps=="after amount with space":
-                  prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],str(i[8])+" "+str(crcy_tp),i[9],i[10],str(i[13])+" "+str(crcy_tp)))
-                  count_prd +=1
-                else:
-                  pass
+                
+                prd_tree.insert(parent='', index='end', iid=count_prd, values=(i[5],i[6],i[7],i[8],i[9],i[10],i[13]))
+                count_prd +=1
+            
         
         prd_tree.pack(fill="both", expand=1)
       
 
-    listFrame.pack(side="top", fill="both", padx=5, pady=3, expand=1)
+  listFrame.pack(side="top", fill="both", padx=5, pady=3, expand=1)
 
-    fir3Frame=Frame(pop,height=200,width=700,bg="#f5f3f2")
-    fir3Frame.place(x=0,y=490)
+  fir3Frame=Frame(pop,height=200,width=700,bg="#f5f3f2")
+  fir3Frame.place(x=0,y=490)
 
-    tabStyle = ttk.Style()
-    tabStyle.theme_use('default')
-    tabStyle.configure('TNotebook.Tab', background="#999999", width=12, padding=5)
-    myNotebook=ttk.Notebook(fir3Frame)
-    invoiceFrame = Frame(myNotebook, height=200, width=800)
-    recurFrame = Frame(myNotebook, height=200, width=800)
-    payementFrame = Frame(myNotebook, height=200, width=800)
-    headerFrame = Frame(myNotebook, height=200, width=800)
-    commentFrame = Frame(myNotebook, height=200, width=800)
-    termsFrame = Frame(myNotebook, height=200, width=800)
-    noteFrame = Frame(myNotebook, height=200, width=800)
-    documentFrame = Frame(myNotebook, height=200, width=800)
+  tabStyle = ttk.Style()
+  tabStyle.theme_use('default')
+  tabStyle.configure('TNotebook.Tab', background="#999999", width=12, padding=5)
+  myNotebook=ttk.Notebook(fir3Frame)
+  invoiceFrame = Frame(myNotebook, height=200, width=800)
+  recurFrame = Frame(myNotebook, height=200, width=800)
+  payementFrame = Frame(myNotebook, height=200, width=800)
+  headerFrame = Frame(myNotebook, height=200, width=800)
+  commentFrame = Frame(myNotebook, height=200, width=800)
+  termsFrame = Frame(myNotebook, height=200, width=800)
+  noteFrame = Frame(myNotebook, height=200, width=800)
+  documentFrame = Frame(myNotebook, height=200, width=800)
       
-    myNotebook.add(invoiceFrame,compound="left", text="Invoice")
-    myNotebook.add(recurFrame,compound="left", text="Recurring")
-    myNotebook.add(payementFrame,compound="left", text="Payements")
-    myNotebook.add(headerFrame,compound="left",  text="Header/Footer")
-    myNotebook.add(commentFrame,compound="left",  text="Comments")
-    myNotebook.add(termsFrame,compound="left", text="Terms")
-    myNotebook.add(noteFrame,compound="left",  text="Private notes")
-    myNotebook.add(documentFrame,compound="left",  text="Documents")
-    myNotebook.pack(expand = 1, fill ="both")  
+  myNotebook.add(invoiceFrame,compound="left", text="Invoice")
+  myNotebook.add(recurFrame,compound="left", text="Recurring")
+  myNotebook.add(payementFrame,compound="left", text="Payements")
+  myNotebook.add(headerFrame,compound="left",  text="Header/Footer")
+  myNotebook.add(commentFrame,compound="left",  text="Comments")
+  myNotebook.add(termsFrame,compound="left", text="Terms")
+  myNotebook.add(noteFrame,compound="left",  text="Private notes")
+  myNotebook.add(documentFrame,compound="left",  text="Documents")
+  myNotebook.pack(expand = 1, fill ="both")  
     # --------------------------------------------------------------------------------------Invoice in edit
 
 
 
-    labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
-    labelframe1.place(x=1,y=1,width=800,height=170)
-    cost=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
-    sql_ytyf='select distinct extracostname,template from invoice'
-    fbcursor.execute(sql_ytyf)
-    dt_tmp=fbcursor.fetchall()
-    dtl_nm_ext=[]
-    for i in dt_tmp:
+  labelframe1 = LabelFrame(invoiceFrame,text="",font=("arial",15))
+  labelframe1.place(x=1,y=1,width=800,height=170)
+  cost=Label(labelframe1,text="Extra cost name").place(x=2,y=5)
+  sql_ytyf='select distinct extracostname,template from invoice'
+  fbcursor.execute(sql_ytyf)
+  dt_tmp=fbcursor.fetchall()
+  dtl_nm_ext=[]
+  for i in dt_tmp:
       dtl_nm_ext.append(i[0])
-    ext_dt=StringVar()
-    cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20, textvariable=ext_dt)
-    cmb_ext_nm.delete(0,END)
-    cmb_ext_nm.insert(0,dtl_inv[11])
-    cmb_ext_nm.place(x=115,y=5)
+  ext_dt=StringVar()
+  cmb_ext_nm=ttk.Combobox(labelframe1, value=dtl_nm_ext,width=20, textvariable=ext_dt)
+  cmb_ext_nm.delete(0,END)
+  cmb_ext_nm.insert(0,dtl_inv[11])
+  cmb_ext_nm.place(x=115,y=5)
 
-    rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
-    dsc_rt=Entry(labelframe1,width=6)
-    dsc_rt.delete(0,END)
-    dsc_rt.insert(0,dtl_inv[15])
-    dsc_rt.place(x=460,y=5)
+  rate=Label(labelframe1,text="Discount rate").place(x=370,y=5)
+  dsc_rt=Entry(labelframe1,width=6)
+  dsc_rt.delete(0,END)
+  dsc_rt.insert(0,dtl_inv[15])
+  dsc_rt.place(x=460,y=5)
 
-    cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
-    global rir_cost3
-    rir_cost3=Entry(labelframe1,width=10)
-    rir_cost3.delete(0,END)
-    rir_cost3.insert(0,dtl_inv[12])
-    rir_cost3.place(x=115,y=35)
+  cost2=Label(labelframe1,text="Extra cost").place(x=35,y=35)
+  global rir_cost3
+  rir_cost3=Entry(labelframe1,width=10)
+  rir_cost3.delete(0,END)
+  rir_cost3.insert(0,dtl_inv[12])
+  rir_cost3.place(x=115,y=35)
 
-    if int(taxtype[0])==3:
+  if int(taxtype[0])==3:
       tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
       tax1_rir=Entry(labelframe1,width=7)
       tax1_rir.delete(0,END)
@@ -50752,162 +51616,162 @@ def view_invs_rir():
       tax2_rir.delete(0,END)
       tax2_rir.insert(0,dtl_inv[36])
       tax2_rir.place(x=460,y=60)
-    elif int(taxtype[0])==2:
+  elif int(taxtype[0])==2:
       tax=Label(labelframe1,text="Tax1").place(x=420,y=35)
       tax1_rir=Entry(labelframe1,width=7)
       tax1_rir.delete(0,END)
       tax1_rir.insert(0,dtl_inv[16])
       tax1_rir.place(x=460,y=35)
-    else:
+  else:
       pass
 
-    template=Label(labelframe1,text="Template").place(x=37,y=70)
-    dtl_tmpl=[]
-    for i in dt_tmp:
+  template=Label(labelframe1,text="Template").place(x=37,y=70)
+  dtl_tmpl=[]
+  for i in dt_tmp:
       dtl_tmpl.append(i[1])
-    tmpl_dt=StringVar()
-    tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=30, textvariable=tmpl_dt)
-    tmp_rir.delete(0,END)
-    tmp_rir.insert(0,dtl_inv[13])
-    tmp_rir['value']=("Professional 1 (logo on left side)","Professional 2 (logo on right side)","Simplified 1 (logo on left side)","Simplified 2 (logo on right side)","Business Classic")
-    tmp_rir.place(x=115,y=70)
+  tmpl_dt=StringVar()
+  tmp_rir=ttk.Combobox(labelframe1, value=dtl_tmpl,width=30, textvariable=tmpl_dt)
+  tmp_rir.delete(0,END)
+  tmp_rir.insert(0,dtl_inv[13])
+  tmp_rir['value']=("Professional 1 (logo on left side)","Professional 2 (logo on right side)","Simplified 1 (logo on left side)","Simplified 2 (logo on right side)","Business Classic")
+  tmp_rir.place(x=115,y=70)
 
-    sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
-    sl_prsn=Entry(labelframe1,width=18)
-    sl_prsn.delete(0,END)
-    sl_prsn.insert(0,"Administrator")
-    sl_prsn.place(x=115,y=100)
-    category=Label(labelframe1,text="Category").place(x=300,y=100)
-    ct_rir=Entry(labelframe1,width=22)
-    ct_rir.delete(0,END)
-    ct_rir.insert(0,dtl_inv[17])
-    ct_rir.place(x=370,y=100)
+  sales=Label(labelframe1,text="Sales Person").place(x=25,y=100)
+  sl_prsn=Entry(labelframe1,width=18)
+  sl_prsn.delete(0,END)
+  sl_prsn.insert(0,"Administrator")
+  sl_prsn.place(x=115,y=100)
+  category=Label(labelframe1,text="Category").place(x=300,y=100)
+  ct_rir=Entry(labelframe1,width=22)
+  ct_rir.delete(0,END)
+  ct_rir.insert(0,dtl_inv[17])
+  ct_rir.place(x=370,y=100)
   
       
-    statusfrme = LabelFrame(labelframe1,text="Status",font=("arial",15))
-    statusfrme.place(x=540,y=0,width=160,height=160)
-    rir_draft=Label(statusfrme, text="Draft",font=("arial", 15, "bold"), fg="grey")
-    rir_draft.place(x=50, y=3)
-    emon=StringVar()
-    pron=StringVar()
+  statusfrme = LabelFrame(labelframe1,text="Status",font=("arial",15))
+  statusfrme.place(x=540,y=0,width=160,height=160)
+  rir_draft=Label(statusfrme, text="Draft",font=("arial", 15, "bold"), fg="grey")
+  rir_draft.place(x=50, y=3)
+  emon=StringVar()
+  pron=StringVar()
     
-    global nav1, nav2
-    on1=Label(statusfrme, text="Emailed on:").place( y=50)
-    nev1=Label(statusfrme, text="Never")
-    if dtl_inv[5] is not None:
+  global nav1, nav2
+  on1=Label(statusfrme, text="Emailed on:").place( y=50)
+  nev1=Label(statusfrme, text="Never")
+  if dtl_inv[5] is not None:
       nev1.config(text=dtl_inv[5])
-    else:
+  else:
       nev1.config(text="Never")
 
-    nev1.place(x=80,y=50)
-    on2=Label(statusfrme, text="Printed on:").place( y=90)
-    nev2=Label(statusfrme, text="Never")
-    if dtl_inv[6] is not None:
+  nev1.place(x=80,y=50)
+  on2=Label(statusfrme, text="Printed on:").place( y=90)
+  nev2=Label(statusfrme, text="Never")
+  if dtl_inv[6] is not None:
       nev2.config(text=dtl_inv[6])
-    else:
+  else:
       nev2.config(text="Never")
-    nev2.place(x=80,y=90)
+  nev2.place(x=80,y=90)
 
-    text1=Label(headerFrame,text="Title text").place(x=50,y=5)
+  text1=Label(headerFrame,text="Title text").place(x=50,y=5)
 
-    sdous_qsy='select distinct title_text from invoice'
-    fbcursor.execute(sdous_qsy)
-    inf_ttl=fbcursor.fetchall()
+  sdous_qsy='select distinct title_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inf_ttl=fbcursor.fetchall()
 
-    sdous_qsy='select distinct header_text from invoice'
-    fbcursor.execute(sdous_qsy)
-    inv_ht=fbcursor.fetchall()
+  sdous_qsy='select distinct header_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inv_ht=fbcursor.fetchall()
 
-    sdous_qsy='select distinct footer_text from invoice'
-    fbcursor.execute(sdous_qsy)
-    inv_ft=fbcursor.fetchall()
-    ttl_inv=StringVar()
-    hd_inv=StringVar()
-    fd_inv=StringVar()
-    cmp_ttl=ttk.Combobox(headerFrame,width=60, textvariable=ttl_inv)
-    cmp_ttl.delete(0,END)
-    cmp_ttl.insert(0,dtl_inv[39])
-    dtl_hd=[]
-    for i in inf_ttl:
+  sdous_qsy='select distinct footer_text from invoice'
+  fbcursor.execute(sdous_qsy)
+  inv_ft=fbcursor.fetchall()
+  ttl_inv=StringVar()
+  hd_inv=StringVar()
+  fd_inv=StringVar()
+  cmp_ttl=ttk.Combobox(headerFrame,width=60, textvariable=ttl_inv)
+  cmp_ttl.delete(0,END)
+  cmp_ttl.insert(0,dtl_inv[39])
+  dtl_hd=[]
+  for i in inf_ttl:
       dtl_hd.append(i[0])
-    cmp_ttl['value']=dtl_hd
+  cmp_ttl['value']=dtl_hd
     
-    cmp_ttl.place(x=125,y=5)
-    text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
-    cmp_ht=ttk.Combobox(headerFrame,width=60,textvariable=hd_inv)
-    cmp_ht.delete(0,END)
-    cmp_ht.insert(0,dtl_inv[40])
-    dtl_ht=[]
-    for i in inv_ht:
+  cmp_ttl.place(x=125,y=5)
+  text2=Label(headerFrame,text="Page header text").place(x=2,y=45)
+  cmp_ht=ttk.Combobox(headerFrame,width=60,textvariable=hd_inv)
+  cmp_ht.delete(0,END)
+  cmp_ht.insert(0,dtl_inv[40])
+  dtl_ht=[]
+  for i in inv_ht:
         dtl_ht.append(i[0])
-    cmp_ht['value']=dtl_ht
-    cmp_ht.place(x=125,y=45)
-    text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
-    cmp_ft=ttk.Combobox(headerFrame,width=60,textvariable=fd_inv)
-    cmp_ft.delete(0,END)
-    cmp_ft.insert(0,dtl_inv[41])
-    dtl_ft=[]
-    for i in inv_ft:
+  cmp_ht['value']=dtl_ht
+  cmp_ht.place(x=125,y=45)
+  text3=Label(headerFrame,text="Footer text").place(x=35,y=85)
+  cmp_ft=ttk.Combobox(headerFrame,width=60,textvariable=fd_inv)
+  cmp_ft.delete(0,END)
+  cmp_ft.insert(0,dtl_inv[41])
+  dtl_ft=[]
+  for i in inv_ft:
       dtl_ft.append(i[0])
-    cmp_ft['value']=dtl_ft
-    cmp_ft.place(x=125,y=85)
+  cmp_ft['value']=dtl_ft
+  cmp_ft.place(x=125,y=85)
 
     
 
-    text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)")
-    text.place(x=10,y=10)
-    prv_nt=Text(noteFrame,width=100,height=7)
-    prv_nt.delete(1.0,END)
-    prv_nt.insert(1.0,dtl_inv[45])
-    prv_nt.place(x=10,y=32)
+  text=Label(noteFrame,text="Private notes(not shown on invoice/order/estemates)")
+  text.place(x=10,y=10)
+  prv_nt=Text(noteFrame,width=100,height=7)
+  prv_nt.delete(1.0,END)
+  prv_nt.insert(1.0,dtl_inv[45])
+  prv_nt.place(x=10,y=32)
 
-    trms=Text(termsFrame,width=100,height=9)
-    trms.delete(1.0,END)
-    trms.insert(1.0,dtl_inv[35])
-    trms.place(x=10,y=10)
+  trms=Text(termsFrame,width=100,height=9)
+  trms.delete(1.0,END)
+  trms.insert(1.0,dtl_inv[35])
+  trms.place(x=10,y=10)
 
-    cmm=Text(commentFrame,width=100,height=9)
-    cmm.delete(1.0,END)
-    cmm.insert(1.0,dtl_inv[44])
-    cmm.place(x=10,y=10)
+  cmm=Text(commentFrame,width=100,height=9)
+  cmm.delete(1.0,END)
+  cmm.insert(1.0,dtl_inv[44])
+  cmm.place(x=10,y=10)
 
-    btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
-    btn2=Button(documentFrame,height=2,width=3,text="-").place(x=5,y=50)
-    text=Label(documentFrame,text="Attached documents or image files.If you attach large email then email taken long time to send").place(x=50,y=10)
-    cusventtree=ttk.Treeview(documentFrame, height=5)
-    cusventtree["columns"]=["1","2","3"]
-    cusventtree.column("#0", width=20)
-    cusventtree.column("1", width=250)
-    cusventtree.column("2", width=250)
-    cusventtree.column("2", width=200)
-    cusventtree.heading("#0",text="", anchor=W)
-    cusventtree.heading("1",text="Attach to Email")
-    cusventtree.heading("2",text="Filename")
-    cusventtree.heading("3",text="Filesize")  
-    cusventtree.place(x=50, y=45)
+  btn1=Button(documentFrame,height=2,width=3,text="+").place(x=5,y=10)
+  btn2=Button(documentFrame,height=2,width=3,text="-").place(x=5,y=50)
+  text=Label(documentFrame,text="Attached documents or image files.If you attach large email then email taken long time to send").place(x=50,y=10)
+  cusventtree=ttk.Treeview(documentFrame, height=5)
+  cusventtree["columns"]=["1","2","3"]
+  cusventtree.column("#0", width=20)
+  cusventtree.column("1", width=250)
+  cusventtree.column("2", width=250)
+  cusventtree.column("2", width=200)
+  cusventtree.heading("#0",text="", anchor=W)
+  cusventtree.heading("1",text="Attach to Email")
+  cusventtree.heading("2",text="Filename")
+  cusventtree.heading("3",text="Filesize")  
+  cusventtree.place(x=50, y=45)
       
     
-    sqlr= 'select currencysign from company'
-    fbcursor.execute(sqlr)
-    crncy=fbcursor.fetchone()
-    crcy_tp=crncy[0]
-    sqlrt= 'select currsignplace from company'
-    fbcursor.execute(sqlrt)
-    post_rp=fbcursor.fetchone()
-    crcy_tp_ps=post_rp[0]
+  sqlr= 'select currencysign from company'
+  fbcursor.execute(sqlr)
+  crncy=fbcursor.fetchone()
+  crcy_tp=crncy[0]
+  sqlrt= 'select currsignplace from company'
+  fbcursor.execute(sqlrt)
+  post_rp=fbcursor.fetchone()
+  crcy_tp_ps=post_rp[0]
     
     
 
-    sm_qry="select sum(price) from storingproduct where invoice_number=%s"
-    sm_qry_val=(inv_nmb_rir.get(),)
-    fbcursor.execute(sm_qry,sm_qry_val)
-    smry_value=fbcursor.fetchone()
-    #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
-    in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
-    in_tt_qry_val=(inv_nmb_rir.get(),)
-    fbcursor.execute(in_tt_qry,in_tt_qry_val)
-    inv_value=fbcursor.fetchone()
-    if int(taxtype[0])==2:
+  sm_qry="select sum(price) from storingproduct where invoice_number=%s"
+  sm_qry_val=(inv_nmb_rir.get(),)
+  fbcursor.execute(sm_qry,sm_qry_val)
+  smry_value=fbcursor.fetchone()
+  #33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333Summary Calculations
+  in_tt_qry="select sum(totpaid),sum(balance) from invoice where invoice_number=%s"
+  in_tt_qry_val=(inv_nmb_rir.get(),)
+  fbcursor.execute(in_tt_qry,in_tt_qry_val)
+  inv_value=fbcursor.fetchone()
+  if int(taxtype[0])==2:
       smr_discount=dsc_rt.get()
       
       smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
@@ -50915,24 +51779,24 @@ def view_invs_rir():
       smr_ext_cst=rir_cost3.get()
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1))-float(smr_discount)
 
-    elif int(taxtype[0])==3:
+  elif int(taxtype[0])==3:
       smr_discount=dsc_rt.get()
       
       smr_tax1=float(smry_value[0])*float(tax1_rir.get())/100
       smr_tax2=float(smry_value[0])*float(tax2_rir.get())/100
       smr_ext_cst=rir_cost3.get()
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get())+float(smr_tax1)+float(smr_tax2))-float(smr_discount)
-    else:
+  else:
       smr_discount=dsc_rt.get()
 
       smr_ext_cst=rir_cost3.get()
       smr_iv_ttl=(float(smry_value[0])+float(rir_cost3.get()))-float(smr_discount)
     
-    sum1=0.0
+  sum1=0.0
     
     
     
-    if int(taxtype[0])==2:
+  if int(taxtype[0])==2:
       fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
       fir4Frame.place(x=740,y=520)
       summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
@@ -50977,7 +51841,7 @@ def view_invs_rir():
       balance1.place(x=130 ,y=126)
       
      
-    elif int(taxtype[0])==3:
+  elif int(taxtype[0])==3:
       fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
       fir4Frame.place(x=740,y=520)
       summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
@@ -51027,7 +51891,7 @@ def view_invs_rir():
       balance1.place(x=130 ,y=126)
       
       
-    else:
+  else:
         fir4Frame=Frame(pop,height=190,width=210,bg="#f5f3f2")
         fir4Frame.place(x=740,y=520)
         summaryfrme = LabelFrame(fir4Frame,text="Summary",font=("arial",15))
@@ -51069,7 +51933,7 @@ def view_invs_rir():
         
 
     #---------------------------------------------------------------------------------------recuring frame
-    def reir_chk():
+  def reir_chk():
         if chk_sts.get() == 0:
           rir_spn_bx['state'] = DISABLED
           e1['state'] = DISABLED
@@ -51085,7 +51949,7 @@ def view_invs_rir():
           stp_rir2['state'] = NORMAL
           dt_stp_inv['state'] = NORMAL
           rir_recalc_1['state'] = NORMAL
-    def recalc_rir():
+  def recalc_rir():
         sql_rec='select * from company '
         fbcursor.execute(sql_rec)
         cmp_dtl=fbcursor.fetchone()
@@ -51190,54 +52054,54 @@ def view_invs_rir():
           dt_nxt_inv.delete(0,END)
           dt_nxt_inv.insert(0,nxt_inv)
 
-    labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
-    labelframe2.place(x=1,y=1,width=730,height=170)
+  labelframe2 = LabelFrame(recurFrame,text="",font=("arial",15))
+  labelframe2.place(x=1,y=1,width=730,height=170)
 
-    chk_sts=IntVar()
+  chk_sts=IntVar()
 
-    stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
-    if int(dtl_inv[47])==1:
+  stp_rir=Checkbutton(labelframe2,variable = chk_sts,text="Recurring",onvalue =1 ,offvalue = 0, command=reir_chk)
+  if int(dtl_inv[47])==1:
       stp_rir.select()
-    else:
+  else:
       stp_rir.deselect()
     
     
 
-    stp_rir.place(x=40,y=5)
+  stp_rir.place(x=40,y=5)
 
-    text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
-    rir_spn_bx = Spinbox(labelframe2,from_=1,to=10,width=15,justify=RIGHT)
-    rir_spn_bx.delete(0,END)
-    rir_spn_bx.insert(0,dtl_inv[24])
-    rir_spn_bx.place(x=270,y=30)
+  text1=Label(labelframe2,text="Recurring Period(Interval)").place(x=130,y=30)
+  rir_spn_bx = Spinbox(labelframe2,from_=1,to=10,width=15,justify=RIGHT)
+  rir_spn_bx.delete(0,END)
+  rir_spn_bx.insert(0,dtl_inv[24])
+  rir_spn_bx.place(x=270,y=30)
 
-    main_cus_rir=StringVar()
-    e1 = ttk.Combobox(labelframe2,width=15, textvariable=main_cus_rir)
-    e1['values']=('month(s)',"day(s)")
-    e1.insert(0,dtl_inv[25])
-    e1.place(x=380,y=30)
-    e1.current(0)
+  main_cus_rir=StringVar()
+  e1 = ttk.Combobox(labelframe2,width=15, textvariable=main_cus_rir)
+  e1['values']=('month(s)',"day(s)")
+  e1.insert(0,dtl_inv[25])
+  e1.place(x=380,y=30)
+  e1.current(0)
 
-    por_sql_st='select * from company'
-    fbcursor.execute(por_sql_st)
-    cmpy_dtl=fbcursor.fetchone()
+  por_sql_st='select * from company'
+  fbcursor.execute(por_sql_st)
+  cmpy_dtl=fbcursor.fetchone()
 
-    sql='select dateformat from company'
-    fbcursor.execute(sql)
-    date_frmat=fbcursor.fetchone()
+  sql='select dateformat from company'
+  fbcursor.execute(sql)
+  date_frmat=fbcursor.fetchone()
 
-    stop = datetime.today().date()
-    if date_frmat[0] == "mm-dd-yyyy":
+  stop = datetime.today().date()
+  if date_frmat[0] == "mm-dd-yyyy":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm-dd-yyyy",state=NORMAL)
         stop_date = datetime.strftime(stop,"%m-%d-%Y")
         nxt_inv = datetime.strftime(stop,"%m-%d-%Y")
-    elif date_frmat[0] == "dd-mm-yyyy":
+  elif date_frmat[0] == "dd-mm-yyyy":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd-mm-yyyy",state=NORMAL)
         stop_date = datetime.strftime(stop,"%d-%m-%Y")
         nxt_inv = datetime.strftime(stop,"%d-%m-%Y")
-    elif date_frmat[0] == "yyyy.mm.dd":
+  elif date_frmat[0] == "yyyy.mm.dd":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy.mm.dd",state=NORMAL)
         s = datetime.strftime(stop,"%Y-%m-%d")
@@ -51245,17 +52109,17 @@ def view_invs_rir():
         stop_date = '{0}.{1:02}.{2:02}'.format(stop_d.year,stop_d.month,stop_d.day)
         nxt = datetime.strptime(s,"%Y-%m-%d")
         nxt_inv = '{0}.{1:02}.{2:02}'.format(nxt.year,nxt.month,nxt.day)
-    elif date_frmat[0] == "mm/dd/yyyy":
+  elif date_frmat[0] == "mm/dd/yyyy":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="mm/dd/yyyy",state=NORMAL)
         stop_date = datetime.strftime(stop,"%m/%d/%Y")
         nxt_inv = datetime.strftime(stop,"%m/%d/%Y")
-    elif date_frmat[0] == "dd/mm/yyyy":
+  elif date_frmat[0] == "dd/mm/yyyy":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd/mm/yyyy",state=NORMAL)
         stop_date = datetime.strftime(stop,"%d/%m/%Y")
         nxt_inv = datetime.strftime(stop,"%d/%m/%Y")
-    elif date_frmat[0] == "dd.mm.yyyy":
+  elif date_frmat[0] == "dd.mm.yyyy":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="dd.mm.yyyy",state=NORMAL)
         s = datetime.strftime(stop,"%Y-%m-%d")
@@ -51263,12 +52127,12 @@ def view_invs_rir():
         stop_date = '{0:02}.{1:02}.{2:02}'.format(stop_d.day,stop_d.month,stop_d.year)
         nxt = datetime.strptime(s,"%Y-%m-%d")
         nxt_inv = '{0:02}.{1:02}.{2:02}'.format(nxt.day,nxt.month,nxt.year)
-    elif date_frmat[0] == "yyyy/mm/dd":
+  elif date_frmat[0] == "yyyy/mm/dd":
         dt_nxt_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,date_pattern="yyyy/mm/dd",state=NORMAL)
         stop_date = datetime.strftime(stop,"%Y/%m/%d")
         nxt_inv = datetime.strftime(stop,"%Y/%m/%d")
-    else:
+  else:
         dt_nxt_inv = DateEntry(labelframe2,width=20,state=NORMAL)
         dt_stp_inv = DateEntry(labelframe2,width=20,state=NORMAL)
         s = datetime.strftime(stop,"%Y-%m-%d")
@@ -51277,48 +52141,48 @@ def view_invs_rir():
         nxt = datetime.strptime(s,"%Y-%m-%d")
         nxt_inv = '{0}/{1}/{2:02}'.format(nxt.month,nxt.day,nxt.year % 100)
 
-    if int(dtl_inv[50])==1:
-        dt_stp_inv["state"]=NORMAL
-    else:
-        dt_stp_inv["state"]=DISABLED
-    dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
-    dt_nxt_inv.place(x=380,y=60)
+  if int(dtl_inv[50])==1:
+    dt_stp_inv["state"]=NORMAL
+  else:
+    dt_stp_inv["state"]=DISABLED
+  dt_nxt=Label(labelframe2,text="Next Invoice").place(x=300,y=60)
+  dt_nxt_inv.place(x=380,y=60)
 
-    def stp_dt():
+  def stp_dt():
       if stp_chk.get()==0:
         dt_stp_inv["state"] =DISABLED
       else:
         dt_stp_inv["state"] =NORMAL
 
-    stp_chk=IntVar()
-    stp_rir2=Checkbutton(labelframe2,variable = stp_chk,text="Stop Recurring After",onvalue =1 ,state=NORMAL,offvalue = 0, command=stp_dt)
+  stp_chk=IntVar()
+  stp_rir2=Checkbutton(labelframe2,variable = stp_chk,text="Stop Recurring After",onvalue =1 ,state=NORMAL,offvalue = 0, command=stp_dt)
 
 
-    if int(dtl_inv[50])==1:
+  if int(dtl_inv[50])==1:
       stp_rir2.select() 
-    else:
+  else:
 
       stp_rir2.deselect() 
 
           
-    stp_rir2.place(x=240,y=85)
+  stp_rir2.place(x=240,y=85)
 
     # 
-    dt_stp_inv.place(x=380,y=90)
+  dt_stp_inv.place(x=380,y=90)
 
 
-    rir_recalc_1 = Button(labelframe2,compound=LEFT,image=recalc,text="Recalculate",width=80,height=12,state=NORMAL,command=recalc_rir)
-    rir_recalc_1.place(x=550,y=70)
+  rir_recalc_1 = Button(labelframe2,compound=LEFT,image=recalc,text="Recalculate",width=80,height=12,state=NORMAL,command=recalc_rir)
+  rir_recalc_1.place(x=550,y=70)
 
 
-    if chk_sts.get() == 0:
+  if chk_sts.get() == 0:
           rir_spn_bx['state'] = DISABLED
           e1['state'] = DISABLED
           dt_nxt_inv['state'] = DISABLED
           stp_rir2['state'] = DISABLED
           dt_stp_inv['state'] = DISABLED
           rir_recalc_1['state'] = DISABLED
-    else:
+  else:
           rir_spn_bx['state'] = NORMAL
           e1['state'] = NORMAL
           dt_nxt_inv['state'] = NORMAL
@@ -51328,65 +52192,45 @@ def view_invs_rir():
 
     
     #-------------------------------------------------------------------------------------------payment frame
-    labelframe3 = LabelFrame(payementFrame,text="",font=("arial",15))
-    labelframe3.place(x=1,y=1,width=730,height=170)
+  labelframe3 = LabelFrame(payementFrame,text="",font=("arial",15))
+  labelframe3.place(x=1,y=1,width=730,height=170)
 
-    pym_rir_tr=ttk.Treeview(labelframe3, height=7)
-    pym_rir_tr["columns"]=["1","2","3","4","5"]
-    pym_rir_tr.column("#0", width=20)
-    pym_rir_tr.column("1", width=200)
-    pym_rir_tr.column("2", width=100)
-    pym_rir_tr.column("3", width=100)
-    pym_rir_tr.column("4", width=200)
-    pym_rir_tr.column("5", width=100)
-    pym_rir_tr.heading("#0",text="", anchor=W)
-    pym_rir_tr.heading("1",text="Payment ID")
-    pym_rir_tr.heading("2",text="Payement Date")
-    pym_rir_tr.heading("3",text="Paid By")  
-    pym_rir_tr.heading("4",text="Description")
-    pym_rir_tr.heading("5",text="Amount")
+  pym_rir_tr=ttk.Treeview(labelframe3, height=7)
+  pym_rir_tr["columns"]=["1","2","3","4","5"]
+  pym_rir_tr.column("#0", width=20)
+  pym_rir_tr.column("1", width=200)
+  pym_rir_tr.column("2", width=100)
+  pym_rir_tr.column("3", width=100)
+  pym_rir_tr.column("4", width=200)
+  pym_rir_tr.column("5", width=100)
+  pym_rir_tr.heading("#0",text="", anchor=W)
+  pym_rir_tr.heading("1",text="Payment ID")
+  pym_rir_tr.heading("2",text="Payement Date")
+  pym_rir_tr.heading("3",text="Paid By")  
+  pym_rir_tr.heading("4",text="Description")
+  pym_rir_tr.heading("5",text="Amount")
 
-    rir_main_table_sql="select * from markinvoice where invoice_number=%s"
-    rir_main_table_sql_val=(inv_nmb_rir.get(),)
-    fbcursor.execute(rir_main_table_sql,rir_main_table_sql_val)
-    main_rir_val=fbcursor.fetchall()
-    count_rir=0
+  rir_main_table_sql="select * from markinvoice where invoice_number=%s"
+  rir_main_table_sql_val=(inv_nmb_rir.get(),)
+  fbcursor.execute(rir_main_table_sql,rir_main_table_sql_val)
+  main_rir_val=fbcursor.fetchall()
+  count_rir=0
 
-    for i in main_rir_val:
-        sqlr= 'select currencysign from company'
-        fbcursor.execute(sqlr)
-        crncy=fbcursor.fetchone()
-        crcy_tp=crncy[0]
-        sqlrt= 'select currsignplace from company'
-        fbcursor.execute(sqlrt)
-        post_rp=fbcursor.fetchone()
-        crcy_tp_ps=post_rp[0]
+  for i in main_rir_val:
         
-        if crcy_tp_ps=="before amount":
-          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(crncy_tp)+str(i[4])))
-          count_rir +=1
-        elif crcy_tp_ps=="after amount":
-          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(i[4])+str(crncy_tp)))
-          count_rir +=1
-        elif crcy_tp_ps=="before amount with space":
-          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(crncy_tp)+" "+str(i[4])))
-          count_rir +=1
-        elif crcy_tp_ps=="after amount with space":
-          pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],str(i[4])+" "+str(crncy_tp)))
-          count_rir +=1
-        else:
-          pass
+        
+        pym_rir_tr.insert(parent='', index='end', iid=count_rir, text='hello', values=(i[0],i[1],i[2],i[3],i[4]))
+        count_rir +=1
         
 
-    pym_rir_tr.place(x=0, y=0)
+  pym_rir_tr.place(x=0, y=0)
     
 
-    fir5Frame=Frame(pop,height=38,width=210)
-    fir5Frame.place(x=735,y=485)
-    btndown=Button(fir5Frame, compound="left", text="Line Down").place(x=75, y=0)
-    btnup=Button(fir5Frame, compound="left", text="Line Up").place(x=150, y=0)
-  except:
-    pass
+  fir5Frame=Frame(pop,height=38,width=210)
+  fir5Frame.place(x=735,y=485)
+  btndown=Button(fir5Frame, compound="left", text="Line Down").place(x=75, y=0)
+  btnup=Button(fir5Frame, compound="left", text="Line Up").place(x=150, y=0)
+ 
 
 
 #--------------------------------------------------------------------------------------Top Buttons
