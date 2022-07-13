@@ -27521,7 +27521,7 @@ def mainpage():
         fbcursor.execute(comp_sql,)
         comp_data_1 = fbcursor.fetchone()
         for record in add_newline_tree_1.get_children():
-          storingproduct = add_newline_tree_1.item(record)["values"]
+          storingproduct = add_new line_tree_1.item(record)["values"]
           if not comp_data_1:
             storepro_sql = "INSERT INTO storingproduct(invoice_number,sku,name,description,unitprice,quantity,peices,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
             storepro_val = (invoice_number_1,storingproduct[0],storingproduct[1],storingproduct[2],storingproduct[3],storingproduct[4],storingproduct[5],storingproduct[6])
